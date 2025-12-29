@@ -77,7 +77,7 @@ const App: React.FC = () => {
   const [draggingId, setDraggingId] = useState<WindowId | null>(null);
   const [hoveredWindowId, setHoveredWindowId] = useState<WindowId | null>(null);
   const [dockDirection, setDockDirection] = useState<DockDirection>(null);
-  const [placingId, setPlacingId] = useState<WindowId | null>(null); // 현재 배치가 필요한 위젯 ID
+  const [placingId, setPlacingId] = useState<WindowId | null>(null); 
   
   const [showPresets, setShowPresets] = useState(false);
   const [presets, setPresets] = useState<Preset[]>(() => {
@@ -112,94 +112,64 @@ const App: React.FC = () => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [windows, theme, presets]);
 
-  // [수정됨] 4방향 스캔 및 다중 위젯 확장 지원 fillGap
   const fillGap = useCallback((closedWin: WindowState, currentWins: WindowState[]) => {
     if (closedWin.isFloating) return currentWins; 
 
-    // 복사본 생성 및 닫힌 윈도우 'isOpen' false 처리 (계산에서 제외하기 위함)
     const nextWins = currentWins.map(w => w.id === closedWin.id ? { ...w, isOpen: false } : { ...w });
-    
-    // 현재 화면에 열려 있고 타일링 된 위젯들만 대상으로 함
     const openWins = nextWins.filter(w => w.isOpen && !w.isFloating);
-    const t = closedWin; // Target
+    const t = closedWin; 
 
-    // 헬퍼 함수: 특정 방향의 이웃 위젯들이 타겟 위젯의 변(Side)을 완전히 커버하는지 확인
     const coversRange = (wins: WindowState[], start: number, end: number, propPos: 'gx' | 'gy', propSize: 'gw' | 'gh') => {
       if (wins.length === 0) return false;
-      
-      // 위치 순으로 정렬
       const sorted = [...wins].sort((a, b) => a[propPos] - b[propPos]);
-      
-      // 시작점 확인
       if (Math.abs(sorted[0][propPos] - start) > 0.1) return false;
-      
-      // 중간 연결 확인
       let currentEnd = sorted[0][propPos] + sorted[0][propSize];
       for (let i = 1; i < sorted.length; i++) {
-        if (Math.abs(sorted[i][propPos] - currentEnd) > 0.1) return false; // 끊김 발생
+        if (Math.abs(sorted[i][propPos] - currentEnd) > 0.1) return false; 
         currentEnd += sorted[i][propSize];
       }
-      
-      // 끝점 확인
       return Math.abs(currentEnd - end) < 0.1;
     };
 
-    // 1. 우측 이웃 확인 (Right Neighbors) -> 왼쪽으로 확장
-    const rightNeighbors = openWins.filter(w => 
-      Math.abs(w.gx - (t.gx + t.gw)) < 0.1 && // X축 접함
-      w.gy >= t.gy - 0.1 && (w.gy + w.gh) <= (t.gy + t.gh) + 0.1 // Y축 범위 내
-    );
-
+    const rightNeighbors = openWins.filter(w => Math.abs(w.gx - (t.gx + t.gw)) < 0.1 && w.gy >= t.gy - 0.1 && (w.gy + w.gh) <= (t.gy + t.gh) + 0.1);
     if (coversRange(rightNeighbors, t.gy, t.gy + t.gh, 'gy', 'gh')) {
-      rightNeighbors.forEach(w => {
-        w.gx = t.gx; // 위치를 타겟 위치로 당김
-        w.gw += t.gw; // 너비를 타겟만큼 확장
-      });
+      rightNeighbors.forEach(w => { w.gx = t.gx; w.gw += t.gw; });
       return nextWins;
     }
 
-    // 2. 좌측 이웃 확인 (Left Neighbors) -> 오른쪽으로 확장
-    const leftNeighbors = openWins.filter(w => 
-      Math.abs((w.gx + w.gw) - t.gx) < 0.1 &&
-      w.gy >= t.gy - 0.1 && (w.gy + w.gh) <= (t.gy + t.gh) + 0.1
-    );
-
+    const leftNeighbors = openWins.filter(w => Math.abs((w.gx + w.gw) - t.gx) < 0.1 && w.gy >= t.gy - 0.1 && (w.gy + w.gh) <= (t.gy + t.gh) + 0.1);
     if (coversRange(leftNeighbors, t.gy, t.gy + t.gh, 'gy', 'gh')) {
-      leftNeighbors.forEach(w => {
-        w.gw += t.gw; // 너비만 확장
-      });
+      leftNeighbors.forEach(w => { w.gw += t.gw; });
       return nextWins;
     }
 
-    // 3. 하단 이웃 확인 (Bottom Neighbors) -> 위쪽으로 확장
-    const bottomNeighbors = openWins.filter(w => 
-      Math.abs(w.gy - (t.gy + t.gh)) < 0.1 &&
-      w.gx >= t.gx - 0.1 && (w.gx + w.gw) <= (t.gx + t.gw) + 0.1
-    );
-
+    const bottomNeighbors = openWins.filter(w => Math.abs(w.gy - (t.gy + t.gh)) < 0.1 && w.gx >= t.gx - 0.1 && (w.gx + w.gw) <= (t.gx + t.gw) + 0.1);
     if (coversRange(bottomNeighbors, t.gx, t.gx + t.gw, 'gx', 'gw')) {
-      bottomNeighbors.forEach(w => {
-        w.gy = t.gy; // 위치를 위로 당김
-        w.gh += t.gh; // 높이 확장
-      });
+      bottomNeighbors.forEach(w => { w.gy = t.gy; w.gh += t.gh; });
       return nextWins;
     }
 
-    // 4. 상단 이웃 확인 (Top Neighbors) -> 아래쪽으로 확장
-    const topNeighbors = openWins.filter(w => 
-      Math.abs((w.gy + w.gh) - t.gy) < 0.1 &&
-      w.gx >= t.gx - 0.1 && (w.gx + w.gw) <= (t.gx + t.gw) + 0.1
-    );
-
+    const topNeighbors = openWins.filter(w => Math.abs((w.gy + w.gh) - t.gy) < 0.1 && w.gx >= t.gx - 0.1 && (w.gx + w.gw) <= (t.gx + t.gw) + 0.1);
     if (coversRange(topNeighbors, t.gx, t.gx + t.gw, 'gx', 'gw')) {
-      topNeighbors.forEach(w => {
-        w.gh += t.gh; // 높이 확장
-      });
+      topNeighbors.forEach(w => { w.gh += t.gh; });
       return nextWins;
     }
 
     return nextWins;
   }, []);
+
+  const getResizableEdges = useCallback((target: WindowState) => {
+    if (target.isFloating) return { top: true, bottom: true, left: true, right: true };
+    const others = windows.filter(w => w.id !== target.id && w.isOpen && !w.isFloating);
+    const overlap = (aStart: number, aSize: number, bStart: number, bSize: number) => Math.max(aStart, bStart) < Math.min(aStart + aSize, bStart + bSize);
+
+    return {
+      top: others.some(w => Math.abs((w.gy + w.gh) - target.gy) < 0.1 && overlap(target.gx, target.gw, w.gx, w.gw)),
+      bottom: others.some(w => Math.abs(w.gy - (target.gy + target.gh)) < 0.1 && overlap(target.gx, target.gw, w.gx, w.gw)),
+      left: others.some(w => Math.abs((w.gx + w.gw) - target.gx) < 0.1 && overlap(target.gy, target.gh, w.gy, w.gh)),
+      right: others.some(w => Math.abs(w.gx - (target.gx + target.gw)) < 0.1 && overlap(target.gy, target.gh, w.gy, w.gh)),
+    };
+  }, [windows]);
 
   const handleMove = useCallback((id: WindowId, x: number, y: number) => {
     setDraggingId(id);
@@ -212,8 +182,6 @@ const App: React.FC = () => {
         let next = prev.map(w => ({...w}));
         const source = next.find(w => w.id === id);
 
-        // [중요 수정] Center(스왑) 모드일 때는 기존 자리를 메꾸는 fillGap을 실행하지 않음
-        // 이렇게 해야 주변 위젯들의 크기가 변하지 않고 두 위젯만 위치를 맞바꿀 수 있음
         if (dockDirection !== 'center' && source && !source.isFloating && source.isOpen) {
           next = fillGap(source, next);
         }
@@ -223,18 +191,13 @@ const App: React.FC = () => {
 
         if (dockDirection === 'center') {
           if (!s.isFloating && !t.isFloating) {
-            // 1. 둘 다 타일형 위젯인 경우: 좌표와 크기만 서로 교환 (스왑)
             const temp = { gx: s.gx, gy: s.gy, gw: s.gw, gh: s.gh };
             s.gx = t.gx; s.gy = t.gy; s.gw = t.gw; s.gh = t.gh;
             t.gx = temp.gx; t.gy = temp.gy; t.gw = temp.gw; t.gh = temp.gh;
           } else if (s.isFloating && !t.isFloating) {
-            // 2. 소스가 플로팅(신규)이고 타겟이 타일형인 경우: 소스가 타겟 자리를 차지하고, 타겟은 플로팅으로 전환(교체)
             s.gx = t.gx; s.gy = t.gy; s.gw = t.gw; s.gh = t.gh;
-            
-            // 타겟을 플로팅 상태로 전환 (화면 중앙)
             t.isFloating = true;
-            t.width = 480; 
-            t.height = 360;
+            t.width = 480; t.height = 360;
             t.x = (window.innerWidth - 480) / 2;
             t.y = (window.innerHeight - 360) / 2;
             t.zIndex = Math.max(...next.map(n => n.zIndex)) + 1;
@@ -246,12 +209,10 @@ const App: React.FC = () => {
           else if (dockDirection === 'bottom') { const splitH = Math.max(MIN_H, Math.floor(t.gh / 2)); t.gh -= splitH; s.gx = t.gx; s.gy = t.gy + t.gh; s.gw = t.gw; s.gh = splitH; }
         }
         
-        s.isFloating = false;
-        s.isOpen = true; 
-        s.isMinimized = false;
+        s.isFloating = false; s.isOpen = true; s.isMinimized = false;
         return syncWindowsToGrid(next, colWidth, rowHeight);
       });
-      if (id === placingId) setPlacingId(null); // 배치 완료 시 상태 해제
+      if (id === placingId) setPlacingId(null); 
     } else {
       setWindows(prev => syncWindowsToGrid(prev, colWidth, rowHeight));
     }
@@ -266,113 +227,199 @@ const App: React.FC = () => {
         return prev.map(w => w.id === id ? { ...w, ...rect } : w);
       }
 
-      const nextWins = prev.map(w => ({ ...w }));
+      // Calculate Target Grid Coords
       const targetGw = Math.max(MIN_W, Math.round((rect.width + 6) / colWidth));
       const targetGh = Math.max(MIN_H, Math.round((rect.height + 6) / rowHeight));
       const targetGx = Math.max(0, Math.round((rect.x - MARGIN) / colWidth));
       const targetGy = Math.max(0, Math.round((rect.y - MARGIN) / rowHeight));
-      const deltaGw = targetGw - win.gw; const deltaGh = targetGh - win.gh;
-      const deltaGx = targetGx - win.gx; const deltaGy = targetGy - win.gy;
+
+      const deltaW = targetGw - win.gw;
+      const deltaX = targetGx - win.gx;
+      const deltaH = targetGh - win.gh;
+      const deltaY = targetGy - win.gy;
+
+      if (deltaW === 0 && deltaX === 0 && deltaH === 0 && deltaY === 0) return prev;
+
+      const candidates = prev.filter(w => w.isOpen && !w.isFloating);
+      const overlap = (aStart: number, aSize: number, bStart: number, bSize: number) => Math.max(aStart, bStart) < Math.min(aStart + aSize, bStart + bSize);
       
-      if (deltaGw !== 0 || deltaGx !== 0) {
-        const edgeX = (deltaGw !== 0 && deltaGx === 0) ? (win.gx + win.gw) : win.gx;
-        const isEast = (deltaGw !== 0 && deltaGx === 0);
-        const selfSide = nextWins.filter(w => w.isOpen && !w.isFloating && (isEast ? Math.abs(w.gx + w.gw - edgeX) < 0.1 : Math.abs(w.gx - edgeX) < 0.1));
-        const otherSide = nextWins.filter(w => w.isOpen && !w.isFloating && (isEast ? Math.abs(w.gx - edgeX) < 0.1 : Math.abs(w.gx + w.gw - edgeX) < 0.1));
-        let delta = isEast ? deltaGw : -deltaGx;
-        let minAllowed = -edgeX; let maxAllowed = GRID_COLS - edgeX;
-        selfSide.forEach(w => { minAllowed = Math.max(minAllowed, MIN_W - w.gw); });
-        otherSide.forEach(w => { maxAllowed = Math.min(maxAllowed, w.gw - MIN_W); });
-        const finalDelta = Math.max(minAllowed, Math.min(maxAllowed, delta));
-        if (finalDelta !== 0) {
-          if (isEast) { selfSide.forEach(w => { w.gw += finalDelta; }); otherSide.forEach(w => { w.gx += finalDelta; w.gw -= finalDelta; }); }
-          else { selfSide.forEach(w => { w.gx -= finalDelta; w.gw += finalDelta; }); otherSide.forEach(w => { w.gw -= finalDelta; }); }
+      let seam = 0;
+      let axis: 'x' | 'y' = 'x';
+      let draggingFirstSide = false; // Is the dragged handle on the 'First' side of the seam? (Left/Top side)
+      let calculatedShift = 0;
+
+      // Determine Axis and Seam
+      if (deltaX !== 0 || deltaW !== 0) {
+        axis = 'x';
+        if (deltaX !== 0) { // Dragging Left Handle
+            seam = win.gx;
+            draggingFirstSide = false; // Dragging the 'Second' side (Right side widget, left handle)
+            calculatedShift = deltaX; // Moving left reduces X (negative shift), moving right increases X
+        } else { // Dragging Right Handle
+            seam = win.gx + win.gw;
+            draggingFirstSide = true; // Dragging the 'First' side (Left side widget, right handle)
+            calculatedShift = deltaW; // Moving right increases Width (positive shift)
+        }
+      } else {
+        axis = 'y';
+        if (deltaY !== 0) { // Dragging Top Handle
+            seam = win.gy;
+            draggingFirstSide = false;
+            calculatedShift = deltaY;
+        } else { // Dragging Bottom Handle
+            seam = win.gy + win.gh;
+            draggingFirstSide = true;
+            calculatedShift = deltaH;
         }
       }
-      if (deltaGh !== 0 || deltaGy !== 0) {
-        const edgeY = (deltaGh !== 0 && deltaGy === 0) ? (win.gy + win.gh) : win.gy;
-        const isSouth = (deltaGh !== 0 && deltaGy === 0);
-        const selfSide = nextWins.filter(w => w.isOpen && !w.isFloating && (isSouth ? Math.abs(w.gy + w.gh - edgeY) < 0.1 : Math.abs(w.gy - edgeY) < 0.1));
-        const otherSide = nextWins.filter(w => w.isOpen && !w.isFloating && (isSouth ? Math.abs(w.gy - edgeY) < 0.1 : Math.abs(w.gy + w.gh - edgeY) < 0.1));
-        let delta = isSouth ? deltaGh : -deltaGy;
-        let minAllowed = -edgeY; let maxAllowed = GRID_ROWS - edgeY;
-        selfSide.forEach(w => { minAllowed = Math.max(minAllowed, MIN_H - w.gh); });
-        otherSide.forEach(w => { maxAllowed = Math.min(maxAllowed, w.gh - MIN_H); });
-        const finalDelta = Math.max(minAllowed, Math.min(maxAllowed, delta));
-        if (finalDelta !== 0) {
-          if (isSouth) { selfSide.forEach(w => { w.gh += finalDelta; }); otherSide.forEach(w => { w.gy += finalDelta; w.gh -= finalDelta; }); }
-          else { selfSide.forEach(w => { w.gy -= finalDelta; w.gh += finalDelta; }); otherSide.forEach(w => { w.gh -= finalDelta; }); }
-        }
+
+      // Find all widgets touching the seam
+      const firstSideCandidates = candidates.filter(w => 
+         axis === 'x' 
+           ? Math.abs((w.gx + w.gw) - seam) < 0.1 
+           : Math.abs((w.gy + w.gh) - seam) < 0.1
+      );
+      
+      const secondSideCandidates = candidates.filter(w => 
+         axis === 'x' 
+           ? Math.abs(w.gx - seam) < 0.1 
+           : Math.abs(w.gy - seam) < 0.1
+      );
+
+      // Iteratively find the connected group along the seam
+      // Start with the dragged widget
+      const connectedFirstSide = new Set<string>();
+      const connectedSecondSide = new Set<string>();
+      
+      if (draggingFirstSide) connectedFirstSide.add(win.id);
+      else connectedSecondSide.add(win.id);
+
+      let changed = true;
+      while(changed) {
+        changed = false;
+        
+        // Find SecondSide widgets overlapping with any ConnectedFirstSide
+        firstSideCandidates.forEach(f => {
+            if (connectedFirstSide.has(f.id)) {
+                secondSideCandidates.forEach(s => {
+                    if (!connectedSecondSide.has(s.id)) {
+                        const isOverlapping = axis === 'x' 
+                            ? overlap(f.gy, f.gh, s.gy, s.gh)
+                            : overlap(f.gx, f.gw, s.gx, s.gw);
+                        if (isOverlapping) {
+                            connectedSecondSide.add(s.id);
+                            changed = true;
+                        }
+                    }
+                });
+            }
+        });
+
+        // Find FirstSide widgets overlapping with any ConnectedSecondSide
+        secondSideCandidates.forEach(s => {
+            if (connectedSecondSide.has(s.id)) {
+                firstSideCandidates.forEach(f => {
+                    if (!connectedFirstSide.has(f.id)) {
+                        const isOverlapping = axis === 'x' 
+                            ? overlap(f.gy, f.gh, s.gy, s.gh)
+                            : overlap(f.gx, f.gw, s.gx, s.gw);
+                        if (isOverlapping) {
+                            connectedFirstSide.add(f.id);
+                            changed = true;
+                        }
+                    }
+                });
+            }
+        });
       }
+
+      const firstGroup = candidates.filter(w => connectedFirstSide.has(w.id));
+      const secondGroup = candidates.filter(w => connectedSecondSide.has(w.id));
+
+      if (firstGroup.length === 0 || secondGroup.length === 0) return prev;
+
+      // Calculate Limits
+      // Max Positive Shift (Move Seam Right/Down): 
+      // Limited by SecondGroup shrinking (size - MIN)
+      let maxPositive = 1000;
+      secondGroup.forEach(w => {
+          const size = axis === 'x' ? w.gw : w.gh;
+          maxPositive = Math.min(maxPositive, size - (axis === 'x' ? MIN_W : MIN_H));
+      });
+
+      // Max Negative Shift (Move Seam Left/Up):
+      // Limited by FirstGroup shrinking (size - MIN)
+      let maxNegative = 1000;
+      firstGroup.forEach(w => {
+          const size = axis === 'x' ? w.gw : w.gh;
+          maxNegative = Math.min(maxNegative, size - (axis === 'x' ? MIN_W : MIN_H));
+      });
+
+      // Clamp Shift
+      const finalShift = Math.max(-maxNegative, Math.min(maxPositive, calculatedShift));
+
+      if (finalShift === 0) return prev;
+
+      // Apply Shift
+      const nextWins = prev.map(w => ({...w}));
+      
+      // Update First Group (Expand if +, Shrink if -)
+      firstGroup.forEach(fw => {
+          const target = nextWins.find(n => n.id === fw.id)!;
+          if (axis === 'x') target.gw += finalShift;
+          else target.gh += finalShift;
+      });
+
+      // Update Second Group (Shrink if +, Expand if -) AND Move Position
+      secondGroup.forEach(sw => {
+          const target = nextWins.find(n => n.id === sw.id)!;
+          if (axis === 'x') {
+              target.gx += finalShift;
+              target.gw -= finalShift;
+          } else {
+              target.gy += finalShift;
+              target.gh -= finalShift;
+          }
+      });
+
       return syncWindowsToGrid(nextWins, colWidth, rowHeight);
     });
   }, [colWidth, rowHeight, syncWindowsToGrid]);
 
   const toggleWindow = (id: WindowId) => {
-    // [수정] 배치 모드(placingId 존재)일 때, 해당 위젯(placingId)을 제외한 다른 위젯 조작은 차단.
-    // 즉, 배치 중인 위젯의 닫기/토글은 허용.
     if (placingId && placingId !== id) return; 
-
-    // [수정] 배치 중인 위젯을 토글(닫기)하는 경우, 배치 모드 해제
-    if (placingId === id) {
-        setPlacingId(null);
-    }
+    if (placingId === id) setPlacingId(null);
 
     setWindows(prev => {
       const target = prev.find(w => w.id === id);
       if (!target) return prev;
       
       if (target.isOpen) {
-        // [수정] 플로팅 상태(배치 대기 중)인 위젯을 닫을 때는 fillGap을 타지 않고 바로 닫음
         if (target.isFloating) {
            return prev.map(w => w.id === id ? { ...w, isOpen: false, isFloating: false } : w);
         }
-
-        // [정책 추가] 캔버스에 위젯이 1개만 있을 경우: 위젯 삭제 후 빈 캔버스
         const tiledWindows = prev.filter(w => w.isOpen && !w.isFloating);
         if (tiledWindows.length === 1 && tiledWindows[0].id === id) {
              return prev.map(w => w.id === id ? { ...w, isOpen: false } : w);
         }
-
         const next = fillGap(target, prev);
         return syncWindowsToGrid(next, colWidth, rowHeight);
       } else {
-        // 기존에 열려있는 윈도우가 있는지 확인
         const anyOpen = prev.some(w => w.isOpen && w.id !== id);
-
         if (!anyOpen) {
-          // 1. 캔버스에 위젯이 하나도 없을 경우: 전체 화면 채움 (픽셀 좌표 즉시 계산)
           const next = prev.map(w => w.id === id ? { 
-            ...w, 
-            isOpen: true, 
-            isFloating: false,
-            gx: 0, 
-            gy: 0, 
-            gw: GRID_COLS, 
-            gh: GRID_ROWS,
-            zIndex: 10
+            ...w, isOpen: true, isFloating: false, gx: 0, gy: 0, gw: GRID_COLS, gh: GRID_ROWS, zIndex: 10
           } : w);
           return syncWindowsToGrid(next, colWidth, rowHeight);
         } else {
-          // 2. 캔버스에 위젯이 있을 경우: 가운데 플로팅 + 배치 모드 진입
           const winWidth = 480;
           const winHeight = 360;
           const centerX = (window.innerWidth - winWidth) / 2;
           const centerY = (window.innerHeight - winHeight) / 2;
-          
           const maxZ = Math.max(0, ...prev.map(p => p.zIndex));
-          
-          setPlacingId(id); // 배치 모드 진입
-          
+          setPlacingId(id); 
           return prev.map(w => w.id === id ? { 
-            ...w, 
-            isOpen: true, 
-            isFloating: true,
-            x: centerX,
-            y: centerY,
-            width: winWidth,
-            height: winHeight,
-            zIndex: maxZ + 1
+            ...w, isOpen: true, isFloating: true, x: centerX, y: centerY, width: winWidth, height: winHeight, zIndex: maxZ + 1
           } : w);
         }
       }
@@ -389,7 +436,7 @@ const App: React.FC = () => {
     setWindows(syncWindowsToGrid(preset.windows, colWidth, rowHeight));
     setActivePresetId(preset.id);
     setShowPresets(false);
-    setPlacingId(null); // 프리셋 로드 시 배치 모드 강제 해제
+    setPlacingId(null); 
   };
 
   const deletePreset = (id: string) => {
@@ -405,7 +452,6 @@ const App: React.FC = () => {
     <div className={`fixed inset-0 overflow-hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0a0a0a] text-white' : 'bg-[#f2f4f7] text-slate-800'}`}>
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)`, backgroundSize: `${colWidth}px ${rowHeight}px`, transform: `translate(${MARGIN}px, ${MARGIN}px)` }} />
       
-      {/* Placement Mode 안내 오버레이 */}
       {placingId && (
         <div className="fixed inset-0 pointer-events-none z-[10002] flex items-start justify-center pt-8 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="px-6 py-3 bg-blue-600 text-white rounded-full shadow-2xl flex items-center gap-3 border border-white/20">
@@ -426,7 +472,8 @@ const App: React.FC = () => {
             dockDirection={dockDirection}
             gridCols={GRID_COLS}
             gridRows={GRID_ROWS}
-            isPlacingMode={!!placingId} // 신규 위젯 배치 중인지 여부 전달
+            isPlacingMode={!!placingId} 
+            resizableEdges={getResizableEdges(win)} 
             onSetHoveredWindow={setHoveredWindowId}
             onSetDockDirection={setDockDirection}
             onBringToFront={() => setFocusedWindow(win.id)}
@@ -494,7 +541,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Dock UI - 배치 중일 때 완전 숨김 (translate-y-full) */}
       <div 
         className={`fixed bottom-0 left-0 right-0 h-28 flex items-center justify-center pointer-events-auto z-[9999] transition-all duration-500 ease-in-out ${
           placingId ? 'translate-y-[150%] opacity-0 pointer-events-none' : (

@@ -12,7 +12,8 @@ interface WindowProps {
   dockDirection: DockDirection;
   gridCols: number;
   gridRows: number;
-  isPlacingMode: boolean; // 배치 모드 활성화 여부
+  isPlacingMode: boolean;
+  resizableEdges: { top: boolean; bottom: boolean; left: boolean; right: boolean }; // 리사이징 가능 방향
   onSetHoveredWindow: (id: WindowId | null) => void;
   onSetDockDirection: (dir: DockDirection) => void;
   onBringToFront: () => void;
@@ -33,6 +34,7 @@ const Window: React.FC<WindowProps> = ({
   gridCols,
   gridRows,
   isPlacingMode,
+  resizableEdges,
   onSetHoveredWindow,
   onSetDockDirection,
   onBringToFront, 
@@ -114,11 +116,6 @@ const Window: React.FC<WindowProps> = ({
   };
 
   const ghost = ghostStyle();
-
-  const canResizeN = win.gy > 0;
-  const canResizeS = win.gy + win.gh < gridRows;
-  const canResizeW = win.gx > 0;
-  const canResizeE = win.gx + win.gw < gridCols;
 
   // 인디케이터 노출 조건:
   // 1. 일반 드래그: 내가 드래그 중이 아니고, 내 위에 마우스가 올라왔을 때
@@ -224,13 +221,23 @@ const Window: React.FC<WindowProps> = ({
         </div>
       )}
 
-      {/* Resize Handles - 외부 경계면은 비활성화 */}
+      {/* Resize Handles - 이웃한 위젯이 있는 경계선(Joint)에서만 활성화 */}
       {!isSelfDragging && !isDraggingId && !win.isFloating && (
         <>
-          {canResizeN && <div className="absolute top-0 inset-x-0 h-1.5 cursor-ns-resize z-10" onMouseDown={e => handleResizeStart(e, 'n')} />}
-          {canResizeS && <div className="absolute bottom-0 inset-x-0 h-1.5 cursor-ns-resize z-10" onMouseDown={e => handleResizeStart(e, 's')} />}
-          {canResizeW && <div className="absolute left-0 inset-y-0 w-1.5 cursor-ew-resize z-10" onMouseDown={e => handleResizeStart(e, 'w')} />}
-          {canResizeE && <div className="absolute right-0 inset-y-0 w-1.5 cursor-ew-resize z-10" onMouseDown={e => handleResizeStart(e, 'e')} />}
+          {resizableEdges.top && <div className="absolute top-0 inset-x-0 h-1.5 cursor-ns-resize z-10" onMouseDown={e => handleResizeStart(e, 'n')} />}
+          {resizableEdges.bottom && <div className="absolute bottom-0 inset-x-0 h-1.5 cursor-ns-resize z-10" onMouseDown={e => handleResizeStart(e, 's')} />}
+          {resizableEdges.left && <div className="absolute left-0 inset-y-0 w-1.5 cursor-ew-resize z-10" onMouseDown={e => handleResizeStart(e, 'w')} />}
+          {resizableEdges.right && <div className="absolute right-0 inset-y-0 w-1.5 cursor-ew-resize z-10" onMouseDown={e => handleResizeStart(e, 'e')} />}
+        </>
+      )}
+
+      {/* Resize Handles for Floating Windows (Always available) */}
+      {!isSelfDragging && !isDraggingId && win.isFloating && (
+         <>
+          <div className="absolute top-0 inset-x-0 h-1.5 cursor-ns-resize z-10" onMouseDown={e => handleResizeStart(e, 'n')} />
+          <div className="absolute bottom-0 inset-x-0 h-1.5 cursor-ns-resize z-10" onMouseDown={e => handleResizeStart(e, 's')} />
+          <div className="absolute left-0 inset-y-0 w-1.5 cursor-ew-resize z-10" onMouseDown={e => handleResizeStart(e, 'w')} />
+          <div className="absolute right-0 inset-y-0 w-1.5 cursor-ew-resize z-10" onMouseDown={e => handleResizeStart(e, 'e')} />
         </>
       )}
 
