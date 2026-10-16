@@ -30,22 +30,24 @@ export default function DonationList() {
 
   return (
     <div ref={ref} className="h-full flex flex-col">
-      <div role="tablist" className="flex border-b border-slate-200 dark:border-white/10 shrink-0">
-        {TABS.map((x) => (
-          <button
-            key={x.id}
-            role="tab"
-            aria-selected={tab === x.id}
-            onClick={() => { setTab(x.id); setSearching(false); }}
-            className={`relative flex-1 h-9 text-[13px] font-black flex items-center justify-center gap-1.5 ${tab === x.id ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-gray-400'}`}
-          >
-            {t(x.label)}
-            {tab !== x.id && <Badge count={unseen[x.id]} />}
-            {tab === x.id && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full bg-blue-600" />}
-          </button>
-        ))}
+      {/* 세그먼트 컨트롤 (iOS 26: 높이 32, 선택 칸 흰색) */}
+      <div className="px-3 pb-2 shrink-0">
+        <div role="tablist" className="segmented h-8">
+          {TABS.map((x) => (
+            <button
+              key={x.id}
+              role="tab"
+              aria-selected={tab === x.id}
+              onClick={() => { setTab(x.id); setSearching(false); }}
+              className="relative text-[13px] flex items-center justify-center gap-1.5 text-black dark:text-white"
+            >
+              {t(x.label)}
+              {tab !== x.id && <Badge count={unseen[x.id]} />}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="flex items-center justify-between gap-2 px-2 h-10 shrink-0 border-b border-slate-100 dark:border-white/5">
+      <div className="flex items-center justify-between gap-2 px-2 h-10 shrink-0 border-b border-black/10 dark:border-white/15">
         <div>{tab === 'all' && <FilterButton />}</div>
         {tab === 'draw' ? <DrawToolbar searching={searching} onSearchChange={setSearching} /> : <SortButton />}
       </div>

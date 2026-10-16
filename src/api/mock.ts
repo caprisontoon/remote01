@@ -25,7 +25,7 @@ const HELP = 'https://help.toon.at/hc/ko';
 export function initialData(now = Date.now()): RemoteData {
   return {
     session: { phase: 'splash', showAd: false },
-    notice: { text: '[이벤트 수상] 2025 투네이션 어워드 수상자 발표', url: `${HELP}/articles/award-2025`, background: '#eef4ff', color: '#1d4ed8' },
+    notice: { text: '[이벤트 수상] 2025 투네이션 어워드 수상자 발표', url: `${HELP}/articles/award-2025` },
     alarms: [
       { id: 'n1', title: '[점검] 1월 3일(수) 임시 점검 안내', url: `${HELP}/articles/maintenance`, createdAt: now - 3600e3, read: false },
       { id: 'n2', title: '[업데이트] 리모컨 2.0 출시 안내', url: `${HELP}/articles/remocon-2`, createdAt: now - 86400e3, read: false },

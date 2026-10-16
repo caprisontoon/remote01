@@ -18,7 +18,7 @@ export function WallpaperModal({ onClose }: { onClose: () => void }) {
       {items.length === 0 ? (
         <Empty>{'벽지에 등록한 후원이 없습니다.\n후원 리스트에서 [벽지 등록] 버튼으로 추가할 수 있습니다.'}</Empty>
       ) : (
-        <ul className="divide-y divide-slate-100 dark:divide-white/5">
+        <ul className="divide-y divide-black/[0.08] dark:divide-white/10">
           {items.map((d) => (
             <li key={d.id} className="flex items-center gap-3 px-5 py-3 text-xs">
               <div className="flex-1 min-w-0">

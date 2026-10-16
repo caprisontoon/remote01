@@ -29,7 +29,7 @@ export function MobileApp() {
   const [page, setPage] = useState<Page>(null);
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-[#0b0b0d] text-slate-800 dark:text-gray-100">
+    <div className="h-full flex flex-col bg-white dark:bg-[#000000] text-black dark:text-white">
       <header className="h-12 shrink-0 flex items-center gap-2 px-3 border-b border-slate-100 dark:border-white/10">
         <button onClick={() => openUrl('https://toon.at')} aria-label="투네이션 홈페이지 새 창"><Logo className="text-sm" /></button>
         <div className="ml-auto flex items-center">
@@ -47,19 +47,21 @@ export function MobileApp() {
       </main>
 
       {/* 기능 버튼 (p107) */}
-      <nav className="shrink-0 grid grid-cols-2 gap-2 p-2 bg-slate-900 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-        <button onClick={() => setSheet('widgets')} className="relative h-12 rounded-xl bg-white/10 text-white flex items-center justify-center gap-2 font-bold text-sm">
+      <nav className="shrink-0 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="grid grid-cols-2 gap-1.5 p-1.5 rounded-full glass">
+        <button onClick={() => setSheet('widgets')} className="relative h-12 rounded-full text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center gap-2 font-medium text-[15px]">
           <Command size={18} /> 리모컨 위젯
           <Badge count={pendingCount} className="absolute top-1.5 right-3" />
         </button>
-        <button onClick={() => setSheet('quick')} className={`h-12 rounded-xl flex items-center justify-center gap-2 font-bold text-sm ${paused ? 'bg-red-500 text-white' : 'bg-white/10 text-white'}`}>
+        <button onClick={() => setSheet('quick')} className={`h-12 rounded-full flex items-center justify-center gap-2 font-medium text-[15px] ${paused ? 'bg-red-500 text-white' : 'text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10'}`}>
           <Pause size={16} /><SkipForward size={16} /> {t('퀵 제어')}
         </button>
+        </div>
       </nav>
 
       {sheet === 'widgets' && (
         <Sheet title="리모컨 위젯" onClose={() => setSheet(null)}>
-          <ul className="divide-y divide-slate-100 dark:divide-white/5">
+          <ul className="divide-y divide-black/[0.08] dark:divide-white/10">
             {MOBILE_ORDER.map((id) => {
               const m = WIDGETS[id];
               const Icon = m.icon;
@@ -100,8 +102,8 @@ export function MobileApp() {
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
     <div className="fixed inset-0 z-[15000] bg-black/40 flex items-end" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="pop w-full max-h-[80vh] overflow-auto rounded-t-2xl bg-white dark:bg-[#1c1c1e] pb-[env(safe-area-inset-bottom)]">
-        <div className="sticky top-0 flex items-center justify-between h-12 px-4 bg-white dark:bg-[#1c1c1e] border-b border-slate-100 dark:border-white/10">
+      <div className="pop w-full max-h-[80vh] overflow-auto rounded-t-sheet bg-white dark:bg-[#1c1c1e] shadow-sheet pb-[env(safe-area-inset-bottom)]">
+        <div className="sticky top-0 flex items-center justify-between h-14 px-5 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur">
           <h2 className="text-sm font-black">{title}</h2>
           <button aria-label="닫기" onClick={onClose} className="p-1.5 text-slate-400"><X size={18} /></button>
         </div>
@@ -113,7 +115,7 @@ function Sheet({ title, onClose, children }: { title: string; onClose: () => voi
 
 function FullPage({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-[14000] flex flex-col bg-white dark:bg-[#0b0b0d]">
+    <div className="fixed inset-0 z-[14000] flex flex-col bg-white dark:bg-[#000000]">
       <header className="h-12 shrink-0 flex items-center gap-2 px-2 border-b border-slate-100 dark:border-white/10">
         <button aria-label="뒤로 가기" onClick={onBack} className="p-2"><ArrowLeft size={18} /></button>
         <h2 className="text-sm font-black">{title}</h2>
@@ -138,7 +140,7 @@ function SettingsPage({ onBack, onOpen }: { onBack: () => void; onOpen: (tab: 'b
   const t = useT();
   const [wallpaper, setWallpaper] = useState(false);
   const [logout, setLogout] = useState(false);
-  const item = 'w-full flex items-center justify-between px-4 h-12 text-sm font-semibold border-b border-slate-100 dark:border-white/5';
+  const item = 'w-full flex items-center justify-between px-4 h-12 text-sm font-semibold border-b border-black/[0.08] dark:border-white/10';
   return (
     <FullPage title={t('설정')} onBack={onBack}>
       <button className={item} onClick={() => onOpen('basic')}>{t('기본')} <ChevronRight size={16} className="text-slate-300" /></button>

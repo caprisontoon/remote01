@@ -80,7 +80,7 @@ function createMain() {
     frame: false,
     show: false,
     title: 'TOONA 리모컨',
-    backgroundColor: '#eef1f5',
+    backgroundColor: '#f2f2f7',
     webPreferences,
   });
   if (state.maximized) main.maximize();

@@ -24,9 +24,9 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
   return (
     <Modal title={t('설정')} onClose={onClose} width="max-w-2xl">
       <div className="flex min-h-[380px]">
-        <nav className="w-36 shrink-0 border-r border-slate-100 dark:border-white/10 p-2 space-y-1">
+        <nav className="w-40 shrink-0 p-3 space-y-1 bg-[#f2f2f7] dark:bg-black/30">
           {tabs.map((x) => (
-            <button key={x.id} onClick={() => setTab(x.id)} className={`w-full h-9 px-3 rounded-lg text-left text-xs font-bold ${tab === x.id ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+            <button key={x.id} onClick={() => setTab(x.id)} className={`w-full h-10 px-3 rounded-xl text-left text-[13px] font-medium ${tab === x.id ? 'bg-blue-600 text-white' : 'text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10'}`}>
               {t(x.label)}
             </button>
           ))}
@@ -41,33 +41,32 @@ export function BasicSettings() {
   const t = useT();
   const s = useStore(settingsStore, (x) => x);
   const [logout, setLogout] = useState(false);
-  const row = 'flex items-center justify-between gap-4 py-3 border-b border-slate-100 dark:border-white/5';
-  const seg = (on: boolean) => `h-8 px-3 rounded-lg text-xs font-bold ${on ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-gray-300'}`;
+  const row = 'flex items-center justify-between gap-4 py-3 border-b border-black/[0.08] dark:border-white/10';
   return (
     <div className="text-xs">
       <div className={row}>
         <span className="font-bold">{t('테마')}</span>
-        <div className="flex gap-1">
-          <button className={seg(s.theme === 'dark')} onClick={() => api.updateSettings({ theme: 'dark' })}>{t('다크 모드')}</button>
-          <button className={seg(s.theme === 'light')} onClick={() => api.updateSettings({ theme: 'light' })}>{t('라이트 모드')}</button>
+        <div className="segmented h-8 w-56 text-[13px]">
+          <button aria-pressed={s.theme === 'light'} onClick={() => api.updateSettings({ theme: 'light' })}>{t('라이트 모드')}</button>
+          <button aria-pressed={s.theme === 'dark'} onClick={() => api.updateSettings({ theme: 'dark' })}>{t('다크 모드')}</button>
         </div>
       </div>
       <div className={row}>
         <span className="font-bold">{t('텍스트 크기')}</span>
-        <div className="flex gap-1">
+        <div className="segmented h-8 w-56 text-[13px]">
           {([100, 125, 150] as const).map((n) => (
-            <button key={n} className={seg(s.textScale === n)} onClick={() => api.updateSettings({ textScale: n })}>{n}%</button>
+            <button key={n} aria-pressed={s.textScale === n} onClick={() => api.updateSettings({ textScale: n })}>{n}%</button>
           ))}
         </div>
       </div>
       <div className={row}>
         <label htmlFor="lang" className="font-bold">{t('언어')}</label>
-        <select id="lang" value={s.language} onChange={(e) => api.updateSettings({ language: e.target.value as 'ko' | 'en' })} className="h-8 px-2 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5">
+        <select id="lang" value={s.language} onChange={(e) => api.updateSettings({ language: e.target.value as 'ko' | 'en' })} className="h-8 px-3 rounded-full bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)]">
           <option value="ko">한국어</option>
           <option value="en">English</option>
         </select>
       </div>
-      <div className="py-3 border-b border-slate-100 dark:border-white/5 space-y-3">
+      <div className="py-3 border-b border-black/[0.08] dark:border-white/10 space-y-3">
         <span className="font-bold">{t('후원 차단 설정')}</span>
         <div className="flex items-center justify-between gap-4 pl-3">
           <span>{t('차단 버튼 표시')}</span>
@@ -141,7 +140,7 @@ export function ShortcutSettings() {
       <ul className="space-y-2">
         {shortcuts.map((sc) => (
           <li key={sc.id} className="flex items-center gap-2">
-            <select aria-label="기능 선택" value={sc.action} onChange={(e) => update(shortcuts.map((x) => (x.id === sc.id ? { ...x, action: e.target.value as ShortcutAction } : x)))} className="h-9 w-48 px-2 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5">
+            <select aria-label="기능 선택" value={sc.action} onChange={(e) => update(shortcuts.map((x) => (x.id === sc.id ? { ...x, action: e.target.value as ShortcutAction } : x)))} className="h-9 w-48 px-2 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40">
               <option value="">기능 선택</option>
               {ACTIONS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
             </select>

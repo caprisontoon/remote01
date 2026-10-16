@@ -35,7 +35,7 @@ export default function Usage() {
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2">
         {ITEMS.map((i) => (
-          <div key={i.key} className={`rounded-xl border border-slate-200 dark:border-white/10 p-2 flex flex-col items-center gap-1.5 ${master ? '' : 'opacity-50'}`}>
+          <div key={i.key} className={`rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] p-2 flex flex-col items-center gap-1.5 ${master ? '' : 'opacity-50'}`}>
             <span className="text-xs font-bold">{i.label}</span>
             <Toggle size="sm" on={usage[i.key]} disabled={!master} onChange={(v) => api.setUsage(i.key, v)} label={i.label} />
           </div>

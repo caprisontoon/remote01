@@ -60,14 +60,14 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
     <div className="relative h-full" onMouseLeave={() => setHover(null)}>
       <div ref={scroller} onScroll={measure} className="h-full overflow-auto">
         {compact ? (
-          <ul className="divide-y divide-slate-100 dark:divide-white/5">
+          <ul className="divide-y divide-black/[0.08] dark:divide-white/10">
             {list.map((d) => (
               <Card key={d.id} d={d} now={now} blocked={blocked.includes(d.donorId)} playing={playingIds.includes(d.id)} open={expanded === d.id} onToggle={() => setExpanded((v) => (v === d.id ? null : d.id))} />
             ))}
           </ul>
         ) : (
           <table className="w-full table-fixed border-collapse text-[11px]">
-            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-[#18181b] text-slate-500 dark:text-gray-400 border-b border-slate-200 dark:border-white/10">
+            <thead className="sticky top-0 z-10 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur text-black/50 dark:text-white/55 border-b border-black/10 dark:border-white/15">
               <tr>
                 {tab === 'all' && <ResizableTh col="all.kind" width={76}>{t('후원')}</ResizableTh>}
                 <ResizableTh col={`${tab}.nick`} width={170}>{t('닉네임(ID)')}</ResizableTh>
@@ -84,13 +84,13 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
                   <tr
                     key={d.id}
                     data-id={d.id}
-                    className={`group border-b border-slate-100 dark:border-white/5 transition-all hover:relative hover:z-[1] hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${
+                    className={`group border-b border-black/[0.08] dark:border-white/10 transition-all hover:relative hover:z-[1] hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${
                       isBlocked ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03] dark:text-gray-500' : playing ? 'playing-row bg-red-50 dark:bg-red-500/10' : 'bg-white dark:bg-transparent hover:bg-slate-50 dark:hover:bg-white/5'
                     }`}
                   >
                     {tab === 'all' && <td className="py-2.5 px-2.5 font-bold truncate">{KIND_LABEL[d.kind]}</td>}
                     <td className="py-2 px-2.5">
-                      <div className="font-bold truncate text-slate-800 dark:text-gray-100">{d.nickname}</div>
+                      <div className="font-bold truncate text-black dark:text-white">{d.nickname}</div>
                       <div className="text-[10px] text-slate-400 truncate">({d.account})</div>
                     </td>
                     <td className="py-2.5 px-2.5 text-center font-black tabular-nums">{formatCash(d.cash)}</td>
@@ -131,7 +131,7 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
 
       <div className="absolute right-3 bottom-3 flex flex-col items-end gap-2 z-20">
         {showTop && (
-          <button onClick={() => scroller.current?.scrollTo({ top: 0, behavior: 'smooth' })} className="h-8 px-3 rounded-full bg-white dark:bg-[#27272a] border border-slate-200 dark:border-white/10 shadow-lg text-[11px] font-bold flex items-center gap-1">
+          <button onClick={() => scroller.current?.scrollTo({ top: 0, behavior: 'smooth' })} className="h-8 px-3 rounded-full glass text-[11px] font-bold flex items-center gap-1">
             <ArrowUp size={13} /> Top
           </button>
         )}

@@ -56,7 +56,7 @@ export function ThumbPreview({ d }: { d: Donation }) {
     <div className="w-[240px] rounded-xl overflow-hidden bg-white dark:bg-[#1f1f22] border border-slate-200 dark:border-white/10 shadow-2xl">
       <img src={d.thumbnail} alt="" className="w-full aspect-video object-cover bg-slate-200" />
       <div className="p-2.5">
-        <div className="text-[11px] font-bold text-slate-800 dark:text-gray-100 line-clamp-2">{d.kind === 'video' ? d.title : `${d.item} ${d.quantity ?? 1}개`}</div>
+        <div className="text-[11px] font-bold text-black dark:text-white line-clamp-2">{d.kind === 'video' ? d.title : `${d.item} ${d.quantity ?? 1}개`}</div>
         {d.text && <div className="mt-1 text-[11px] text-slate-500 line-clamp-2">{d.text}</div>}
         {d.kind === 'video' && d.url && (
           <button className="mt-2 w-full h-7 rounded-md bg-slate-800 text-white text-[11px] font-bold flex items-center justify-center gap-1" onClick={() => openUrl(d.url!)}>
@@ -92,7 +92,7 @@ export function FilterButton() {
         </button>
       </Tooltip>
       {open && (
-        <div className="pop absolute left-0 top-9 z-50 w-[320px] rounded-xl bg-white dark:bg-[#1f1f22] border border-slate-200 dark:border-white/10 shadow-2xl">
+        <div className="pop absolute left-0 top-9 z-50 w-[320px] rounded-[22px] glass-strong">
           <div className="flex items-center justify-between px-4 h-10 border-b border-slate-100 dark:border-white/10">
             <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
               <input type="checkbox" className="accent-blue-600" checked={allOn} onChange={() => api.updateSettings({ filters: allOn ? [] : FILTER_KINDS })} />
@@ -132,7 +132,7 @@ export function SortButton() {
         </button>
       </Tooltip>
       {open && (
-        <div className="pop absolute right-0 top-9 z-50 w-36 py-1 rounded-xl bg-white dark:bg-[#1f1f22] border border-slate-200 dark:border-white/10 shadow-2xl">
+        <div className="pop absolute right-0 top-9 z-50 w-36 py-1 rounded-[22px] glass-strong">
           {SORTS.map((s) => (
             <button key={s.id} onClick={() => { api.updateSettings({ sort: s.id }); close(); }} className="w-full flex items-center justify-between px-3 h-8 text-xs hover:bg-slate-50 dark:hover:bg-white/5">
               {t(s.label)} {sort === s.id && <Check size={13} className="text-blue-600" />}
@@ -165,7 +165,7 @@ export function ResizableTh({ col, width, children, className = '' }: { col: str
   };
   const w = widths[col] ?? width;
   return (
-    <th style={w ? { width: w } : undefined} className={`relative py-2 px-2.5 font-bold text-left border-r border-slate-100 dark:border-white/5 last:border-r-0 ${className}`}>
+    <th style={w ? { width: w } : undefined} className={`relative py-2 px-2.5 font-bold text-left border-r border-black/[0.08] dark:border-white/10 last:border-r-0 ${className}`}>
       {children}
       <span role="separator" aria-label="셀 넓이 조절" onPointerDown={start} className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-blue-400/40" />
     </th>

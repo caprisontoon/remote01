@@ -26,7 +26,7 @@ export default function ToneAd() {
 
   return (
     <div ref={ref} className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-3 h-9 shrink-0 border-b border-slate-100 dark:border-white/5 text-xs">
+      <div className="flex items-center justify-between px-3 h-9 shrink-0 border-b border-black/[0.08] dark:border-white/10 text-xs">
         <span className="flex items-center gap-1.5 font-bold">미집행 광고 <Badge count={pendingCount} /></span>
         <span className="flex items-center gap-1.5">
           <span className="font-semibold">광고 자동 재생</span>
@@ -39,7 +39,7 @@ export default function ToneAd() {
       {ads.length === 0 ? (
         <Empty>집행할 광고가 없습니다.</Empty>
       ) : compact ? (
-        <ul className="flex-1 overflow-auto divide-y divide-slate-100 dark:divide-white/5">
+        <ul className="flex-1 overflow-auto divide-y divide-black/[0.08] dark:divide-white/10">
           {sorted.map((a) => (
             <li key={a.id} className={a.playedAt ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03]' : ''}>
               <button className="w-full flex items-center gap-2 p-2.5 text-left" onClick={() => setOpen((v) => (v === a.id ? null : a.id))}>
@@ -65,7 +65,7 @@ export default function ToneAd() {
       ) : (
         <div className="flex-1 overflow-auto">
           <table className="w-full table-fixed border-collapse text-[11px]">
-            <thead className="sticky top-0 bg-slate-50 dark:bg-[#18181b] text-slate-500">
+            <thead className="sticky top-0 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur text-black/50 dark:text-white/55">
               <tr>
                 <th className="w-[110px] py-2 px-2 text-left">광고주 명</th>
                 <th className="w-[72px] py-2 px-2 text-center">후원 캐시</th>
@@ -75,7 +75,7 @@ export default function ToneAd() {
             </thead>
             <tbody>
               {sorted.map((a) => (
-                <tr key={a.id} onClick={() => setDetail(a)} className={`group cursor-pointer border-b border-slate-100 dark:border-white/5 transition-all hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${a.playedAt ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03]' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+                <tr key={a.id} onClick={() => setDetail(a)} className={`group cursor-pointer border-b border-black/[0.08] dark:border-white/10 transition-all hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${a.playedAt ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03]' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}>
                   <td className="py-2 px-2 truncate font-semibold">{a.advertiser}</td>
                   <td className="py-2 px-2 text-center font-black tabular-nums">{formatCash(a.cash)}</td>
                   <td className="py-1.5 px-2">

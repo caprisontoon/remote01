@@ -27,7 +27,7 @@ export default function Pending() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 px-3 h-9 shrink-0 text-xs font-bold border-b border-slate-100 dark:border-white/5">
+      <div className="flex items-center gap-2 px-3 h-9 shrink-0 text-xs font-bold border-b border-black/[0.08] dark:border-white/10">
         대기 중인 후원 <Badge count={pending.length} />
       </div>
       {pending.length === 0 ? (
@@ -49,13 +49,13 @@ function Card({ p, now, onOpen }: { p: PendingItem; now: number; onOpen: () => v
   const urgent = remain < 15_000;
   const cashLabel = p.kind === 'video' ? '후원캐시' : '성공캐시';
   return (
-    <li className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] overflow-hidden">
+    <li className="rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] overflow-hidden">
       <div className="grid grid-cols-2 text-[11px]">
         <div className={`${KIND[p.kind].color} text-white font-bold flex items-center justify-center h-8`}>{KIND[p.kind].label}</div>
-        <div className="flex flex-col justify-center px-2 h-8 min-w-0 border-b border-slate-100 dark:border-white/5">
+        <div className="flex flex-col justify-center px-2 h-8 min-w-0 border-b border-black/[0.08] dark:border-white/10">
           <span className="font-bold truncate">{p.nickname}</span>
         </div>
-        <div className="px-2 h-7 flex items-center border-r border-slate-100 dark:border-white/5">
+        <div className="px-2 h-7 flex items-center border-r border-black/[0.08] dark:border-white/10">
           [{cashLabel}] <b className="ml-1">{formatCash(p.cash)}</b>
         </div>
         <div className={`px-2 h-7 flex items-center gap-1 tabular-nums ${urgent ? 'text-red-500 font-bold' : 'text-slate-500'}`}>
@@ -84,7 +84,7 @@ function Card({ p, now, onOpen }: { p: PendingItem; now: number; onOpen: () => v
         )}
         {p.kind === 'video' && (
           <>
-            <button onClick={onOpen} className="col-span-2 flex items-center gap-2 rounded-lg border border-slate-200 dark:border-white/10 p-1.5 text-left hover:bg-slate-50 dark:hover:bg-white/5">
+            <button onClick={onOpen} className="col-span-2 flex items-center gap-2 rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] p-1.5 text-left hover:bg-slate-50 dark:hover:bg-white/5">
               <img src={p.thumbnail} alt="" className="w-16 aspect-video rounded object-cover" />
               <span className="flex-1 min-w-0 text-[11px] font-semibold truncate">{p.title}</span>
               <span className="text-[11px] font-bold text-blue-600 shrink-0">{t('미리보기')} ▶</span>
@@ -121,7 +121,7 @@ function PlayQuestion({ p, now, onBack }: { p: Extract<PendingItem, { kind: 'pla
   const modeLabel = { choice: '[객관식]', initial: '[주관식]', drawing: '[그림]' }[p.mode];
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 px-2 h-9 border-b border-slate-100 dark:border-white/5 shrink-0">
+      <div className="flex items-center gap-2 px-2 h-9 border-b border-black/[0.08] dark:border-white/10 shrink-0">
         <button aria-label="뒤로 가기" onClick={onBack} className="p-1 rounded hover:bg-slate-100 dark:hover:bg-white/10"><ArrowLeft size={15} /></button>
         <span className="text-xs font-bold">플레이 후원 정답 입력</span>
         <span className="ml-auto text-[11px] tabular-nums text-red-500 font-bold">남은 시간 {mmss(p.deadline - now)}</span>
@@ -146,13 +146,13 @@ function PlayQuestion({ p, now, onBack }: { p: Extract<PendingItem, { kind: 'pla
               onChange={(e) => setAnswer(e.target.value.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣\s]/g, ''))}
               placeholder="정답 입력 (한글만 가능)"
               maxLength={p.answerLength ?? 20}
-              className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5"
+              className="w-full h-9 px-3 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40"
             />
             {p.answerLength && <p className="text-[11px] text-slate-400">[글자 수 : {p.answerLength}]</p>}
           </>
         )}
       </div>
-      <div className="p-2 grid grid-cols-2 gap-1.5 border-t border-slate-100 dark:border-white/5">
+      <div className="p-2 grid grid-cols-2 gap-1.5 border-t border-black/[0.08] dark:border-white/10">
         <Button variant="ghost" onClick={() => { api.giveUpPlay(p.id); onBack(); }}>포기</Button>
         <Button disabled={!answer.trim()} onClick={() => { api.submitPlay(p.id, answer); onBack(); }}>정답 제출</Button>
       </div>
@@ -165,7 +165,7 @@ function VideoPreview({ p, onBack }: { p: Extract<PendingItem, { kind: 'video' }
   const t = useT();
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 px-2 h-9 border-b border-slate-100 dark:border-white/5 shrink-0">
+      <div className="flex items-center gap-2 px-2 h-9 border-b border-black/[0.08] dark:border-white/10 shrink-0">
         <button aria-label="뒤로 가기" onClick={onBack} className="p-1 rounded hover:bg-slate-100 dark:hover:bg-white/10"><ArrowLeft size={15} /></button>
         <span className="text-xs font-bold">영상 후원 미리보기</span>
       </div>
@@ -178,7 +178,7 @@ function VideoPreview({ p, onBack }: { p: Extract<PendingItem, { kind: 'video' }
         <div className="text-[11px] text-slate-500">{p.nickname} · {formatCash(p.cash)} 캐시</div>
         <button onClick={() => openUrl(p.url)} className="text-[11px] font-bold text-blue-600 flex items-center gap-1"><ExternalLink size={12} /> 영상 보러 가기</button>
       </div>
-      <div className="p-2 grid grid-cols-2 gap-1.5 border-t border-slate-100 dark:border-white/5">
+      <div className="p-2 grid grid-cols-2 gap-1.5 border-t border-black/[0.08] dark:border-white/10">
         <Button onClick={() => { api.acceptPending(p.id); onBack(); }}>{t('수락')}</Button>
         <Button variant="ghost" onClick={() => { api.rejectPending(p.id); onBack(); }}>{t('거절')}</Button>
       </div>

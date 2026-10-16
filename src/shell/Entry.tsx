@@ -11,7 +11,7 @@ const LOGIN_HELP = 'https://toon.at/streamer/login';
 const ID_MAX = 25;
 
 function Screen({ children }: { children: React.ReactNode }) {
-  return <div className="fixed inset-0 z-[25000] flex items-center justify-center bg-slate-50 dark:bg-[#0b0b0d] p-4 overflow-auto">{children}</div>;
+  return <div className="fixed inset-0 z-[25000] flex items-center justify-center bg-[#f2f2f7] dark:bg-black p-4 overflow-auto">{children}</div>;
 }
 
 /** 스플래시 (p30) — 로고/네이밍 확정 전 임시 */
@@ -61,7 +61,7 @@ export function Login() {
     const res = await api.loginWithSns(provider);
     if (!res.ok) setError('로그인에 실패했습니다.');
   };
-  const field = 'w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-sm';
+  const field = 'w-full h-11 px-4 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 text-sm';
 
   return (
     <Screen>
@@ -115,7 +115,7 @@ export function Accounts() {
         <ul className="space-y-2">
           {accounts.map((a) => (
             <li key={a.id}>
-              <button onClick={() => api.selectAccount(a.id)} className="w-full h-14 px-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 flex items-center gap-3 hover:border-blue-400">
+              <button onClick={() => api.selectAccount(a.id)} className="w-full h-14 px-4 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 flex items-center gap-3 hover:border-blue-400">
                 <span className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 font-black flex items-center justify-center">{a.nickname[0]}</span>
                 <span className="text-sm font-bold">{a.nickname}</span>
               </button>

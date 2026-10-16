@@ -26,12 +26,12 @@ export default function QuickControl({ only }: { only?: QuickKind[] }) {
             <button
               onClick={() => api.togglePause(g.kind)}
               aria-pressed={paused[g.kind]}
-              className={`rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-colors ${paused[g.kind] ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-slate-800 text-white hover:bg-slate-700 dark:bg-white/10 dark:hover:bg-white/15'}`}
+              className={`rounded-[20px] font-medium text-[13px] flex items-center justify-center gap-1.5 transition-colors ${paused[g.kind] ? 'bg-red-500 text-white shadow-[0_6px_20px_rgba(255,56,60,0.35)]' : 'bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/85'}`}
             >
               {paused[g.kind] ? <Play size={16} /> : <Pause size={16} />}
               {t(g.pause)}
             </button>
-            <button onClick={() => api.skip(g.kind)} className="rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-white/5 dark:text-gray-100 dark:hover:bg-white/10">
+            <button onClick={() => api.skip(g.kind)} className="rounded-[20px] font-medium text-[13px] flex items-center justify-center gap-1.5 bg-[rgba(120,120,128,0.16)] text-black hover:bg-[rgba(120,120,128,0.24)] dark:bg-[rgba(120,120,128,0.32)] dark:text-white">
               <SkipForward size={16} />
               {t(g.skip)}
             </button>

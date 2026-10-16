@@ -27,7 +27,7 @@ function VoteSetup() {
   const refs = useRef<Partial<Record<VoteField, HTMLElement | null>>>({});
   const set = (patch: Partial<VoteForm>) => setForm((f) => ({ ...f, ...patch }));
   const digits = (v: string) => v.replace(/\D/g, '');
-  const field = 'h-9 px-3 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs w-full';
+  const field = 'h-9 px-3 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 text-xs w-full';
 
   const applyPreset = (i: number) => {
     const p = presets[i];
@@ -127,7 +127,7 @@ function VoteSetup() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 dark:border-white/10 p-2.5 space-y-2">
+        <div className="rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] p-2.5 space-y-2">
           <div className="flex items-center justify-between">
             <span className="font-bold flex items-center gap-1"><CalendarClock size={14} /> 투표 시작 예약</span>
             <Toggle size="sm" on={form.reserve} onChange={(v) => set({ reserve: v })} label="투표 시작 예약" />
@@ -139,7 +139,7 @@ function VoteSetup() {
         </div>
       </div>
       {/* 플로팅 버튼: 스크롤해도 위치 고정 (p76 ①) */}
-      <div className="shrink-0 p-2 border-t border-slate-100 dark:border-white/5">
+      <div className="shrink-0 p-2 border-t border-black/[0.08] dark:border-white/10">
         <Button className="w-full h-10" onClick={start}>{t('투표 시작')}</Button>
       </div>
     </div>
@@ -183,7 +183,7 @@ function VoteRunning() {
           </div>
         )}
       </div>
-      <div className="shrink-0 p-2 grid grid-cols-2 gap-1.5 border-t border-slate-100 dark:border-white/5">
+      <div className="shrink-0 p-2 grid grid-cols-2 gap-1.5 border-t border-black/[0.08] dark:border-white/10">
         {status === 'running' && <Button variant="ghost" onClick={api.pauseVote}>{t('투표 정지')}</Button>}
         {status === 'paused' && <Button onClick={api.resumeVote}>{t('투표 재개')}</Button>}
         {status === 'reserved' && <Button variant="ghost" disabled>예약 대기 중</Button>}

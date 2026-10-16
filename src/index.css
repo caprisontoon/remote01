@@ -13,6 +13,70 @@ body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   user-select: none;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Liquid Glass (docs/design/ios26-tokens.md §2)
+ * 키트: 흰 65% 채우기 + 0 8 40 그림자 + Glass(frost 7, light 0.8). 웹에서는 블러 + 안쪽 하이라이트로 근사한다.
+ */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
+}
+.dark .glass {
+  background: rgba(44, 44, 48, 0.62);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+}
+/* 알림창: frost 12, 조금 더 불투명 */
+.glass-strong {
+  background: rgba(245, 245, 245, 0.82);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.dark .glass-strong {
+  background: rgba(38, 38, 40, 0.86);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 세그먼트 컨트롤 (높이 32, Fills/Tertiary 바탕, 선택 칸 흰색) */
+.segmented {
+  display: flex;
+  padding: 2px;
+  border-radius: 9999px;
+  background: rgba(118, 118, 128, 0.12);
+}
+.dark .segmented {
+  background: rgba(118, 118, 128, 0.24);
+}
+.segmented > button {
+  flex: 1;
+  border-radius: 9999px;
+  font-weight: 500;
+  transition: background-color 0.15s, box-shadow 0.15s;
+}
+.segmented > button[aria-selected='true'],
+.segmented > button[aria-pressed='true'] {
+  background: #fff;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+.dark .segmented > button[aria-selected='true'],
+.dark .segmented > button[aria-pressed='true'] {
+  background: #636366;
 }
 
 input,

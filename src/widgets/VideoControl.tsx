@@ -12,7 +12,7 @@ export default function VideoControl() {
   return (
     <div className="p-3 grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-2">
       {rows.map((r) => (
-        <div key={r.key} className="rounded-xl border border-slate-200 dark:border-white/10 p-3">
+        <div key={r.key} className="rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] p-3">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-bold">{r.label}</span>
             <Toggle on={video[r.key]} onChange={(v) => api.setVideo({ [r.key]: v })} label={r.label} />

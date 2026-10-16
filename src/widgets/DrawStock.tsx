@@ -13,7 +13,7 @@ export function DrawStock() {
   return (
     <div className="text-xs">
       <label className="sr-only" htmlFor="draw-board">뽑기 이름</label>
-      <select id="draw-board" value={board.id} onChange={(e) => setId(e.target.value)} className="w-full h-8 mb-2 px-2 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 font-semibold">
+      <select id="draw-board" value={board.id} onChange={(e) => setId(e.target.value)} className="w-full h-8 mb-2 px-2 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 font-semibold">
         {boards.map((b) => (
           <option key={b.id} value={b.id}>{b.name}</option>
         ))}
@@ -27,7 +27,7 @@ export function DrawStock() {
         </thead>
         <tbody>
           {board.prizes.map((p) => (
-            <tr key={p.name} className="border-b border-slate-100 dark:border-white/5">
+            <tr key={p.name} className="border-b border-black/[0.08] dark:border-white/10">
               <td className="py-1.5 px-2">{p.name}</td>
               <td className={`py-1.5 px-2 text-right tabular-nums font-semibold ${p.remain <= 1 ? 'text-red-500' : ''}`}>{p.remain}/{p.total}</td>
             </tr>

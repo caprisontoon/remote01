@@ -42,7 +42,7 @@ export function DrawToolbar({ searching, onSearchChange }: { searching: boolean;
           </button>
         </Tooltip>
         {stockOpen && (
-          <div className="pop absolute right-0 top-9 z-50 w-64 p-3 rounded-xl bg-white dark:bg-[#1f1f22] border border-slate-200 dark:border-white/10 shadow-2xl">
+          <div className="pop absolute right-0 top-9 z-50 w-64 p-3 rounded-[22px] glass-strong">
             <div className="mb-2 text-xs font-bold">뽑기 잔여 수량</div>
             <DrawStock />
           </div>
@@ -92,7 +92,7 @@ function DrawRows({ list, compact, selectable }: { list: Donation[]; compact: bo
     return (
       <div className="h-full flex flex-col">
         {selectable && (
-          <div className="flex items-center justify-between px-3 h-9 border-b border-slate-100 dark:border-white/5 text-[11px]">
+          <div className="flex items-center justify-between px-3 h-9 border-b border-black/[0.08] dark:border-white/10 text-[11px]">
             <label className="flex items-center gap-2 font-bold"><input type="checkbox" className="accent-blue-600" checked={allChecked} onChange={toggleAll} /> {t('전체 선택')}</label>
             {sel.length > 0 && (
               <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ function DrawRows({ list, compact, selectable }: { list: Donation[]; compact: bo
             )}
           </div>
         )}
-        <ul className="flex-1 overflow-auto divide-y divide-slate-100 dark:divide-white/5">
+        <ul className="flex-1 overflow-auto divide-y divide-black/[0.08] dark:divide-white/10">
           {list.map((d) => (
             <li key={d.id} data-id={d.id} className={`${d.completed ? 'bg-slate-100 dark:bg-white/[0.03] text-slate-400' : playingIds.includes(d.id) ? 'playing-row bg-red-50 dark:bg-red-500/10' : ''}`}>
               <div className="flex gap-2 p-3">
@@ -133,7 +133,7 @@ function DrawRows({ list, compact, selectable }: { list: Donation[]; compact: bo
   return (
     <div className="h-full overflow-auto">
       <table className="w-full table-fixed border-collapse text-[11px]">
-        <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-[#18181b] text-slate-500 dark:text-gray-400 border-b border-slate-200 dark:border-white/10">
+        <thead className="sticky top-0 z-10 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur text-black/50 dark:text-white/55 border-b border-black/10 dark:border-white/15">
           <tr>
             {selectable && (
               <th className="w-[54px] py-2 px-2 text-left">
@@ -147,7 +147,7 @@ function DrawRows({ list, compact, selectable }: { list: Donation[]; compact: bo
                     </Tooltip>
                   )}
                   {menuOpen && sel.length > 0 && (
-                    <div className="pop absolute left-0 top-6 z-50 w-28 py-1 rounded-lg bg-white dark:bg-[#1f1f22] border border-slate-200 dark:border-white/10 shadow-xl">
+                    <div className="pop absolute left-0 top-6 z-50 w-28 py-1 rounded-2xl glass-strong">
                       <button onClick={() => setConfirm(true)} className="w-full h-8 px-3 text-left text-xs font-bold text-slate-700 dark:text-gray-200 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-white/5">{t('완료 처리')}</button>
                     </div>
                   )}
@@ -163,7 +163,7 @@ function DrawRows({ list, compact, selectable }: { list: Donation[]; compact: bo
         </thead>
         <tbody>
           {list.map((d) => (
-            <tr key={d.id} data-id={d.id} className={`group border-b border-slate-100 dark:border-white/5 transition-all hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${d.completed ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03]' : playingIds.includes(d.id) ? 'playing-row bg-red-50 dark:bg-red-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+            <tr key={d.id} data-id={d.id} className={`group border-b border-black/[0.08] dark:border-white/10 transition-all hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${d.completed ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03]' : playingIds.includes(d.id) ? 'playing-row bg-red-50 dark:bg-red-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}>
               {selectable && (
                 <td className="py-2 px-2"><input type="checkbox" aria-label="선택" className="accent-blue-600" disabled={d.completed} checked={checked.has(d.id)} onChange={() => toggle(d.id)} /></td>
               )}
@@ -210,9 +210,9 @@ function DrawSearch({ compact }: { compact: boolean }) {
 
   return (
     <div className="h-full flex flex-col">
-      <form className="flex items-center gap-2 px-3 py-2 border-b border-slate-100 dark:border-white/5" onSubmit={(e) => { e.preventDefault(); run(query); }}>
+      <form className="flex items-center gap-2 px-3 py-2 border-b border-black/[0.08] dark:border-white/10" onSubmit={(e) => { e.preventDefault(); run(query); }}>
         <div className="relative flex-1">
-          <input ref={input} value={query.keyword} onChange={(e) => setQuery({ ...query, keyword: e.target.value })} placeholder="뽑기 검색" className="w-full h-8 pl-3 pr-7 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs" />
+          <input ref={input} value={query.keyword} onChange={(e) => setQuery({ ...query, keyword: e.target.value })} placeholder="뽑기 검색" className="w-full h-8 pl-3 pr-7 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 text-xs" />
           {query.keyword && (
             <button type="button" aria-label="검색어 지우기" onClick={() => { setQuery({ ...query, keyword: '' }); input.current?.focus(); }} className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400"><X size={13} /></button>
           )}
@@ -245,7 +245,7 @@ function DrawSearch({ compact }: { compact: boolean }) {
 
 function SearchOptions({ boards, value, onClose, onSearch }: { boards: { id: string; name: string }[]; value: DrawSearchQuery; onClose: () => void; onSearch: (q: DrawSearchQuery) => void }) {
   const [q, setQ] = useState(value);
-  const field = 'h-9 w-full px-2 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs';
+  const field = 'h-9 w-full px-2 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 text-xs';
   return (
     <Modal title="뽑기 검색 옵션" onClose={onClose} footer={<Button onClick={() => onSearch(q)}>검색</Button>}>
       <div className="p-5 grid grid-cols-[72px_1fr] gap-x-3 gap-y-3 items-center text-xs">

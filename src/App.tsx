@@ -23,7 +23,7 @@ function useTheme() {
   const theme = useStore(settingsStore, (s) => s.theme);
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    document.body.style.background = theme === 'dark' ? '#0b0b0d' : '#eef1f5';
+    document.body.style.background = theme === 'dark' ? '#000000' : '#f2f2f7';
   }, [theme]);
 }
 
@@ -100,7 +100,7 @@ function PcRemote() {
   return (
     // 리모컨 전체 최소 크기: 그 이하로 줄이면 스크롤 (p9) ※ 디자인팀 확인 필요 — 임시 값
     <div className="h-full w-full overflow-auto">
-      <div className="h-full min-w-[900px] min-h-[560px] flex flex-col bg-[#eef1f5] dark:bg-[#0b0b0d] text-slate-800 dark:text-gray-100">
+      <div className="h-full min-w-[900px] min-h-[560px] flex flex-col bg-[#f2f2f7] dark:bg-[#000000] text-black dark:text-white">
         <TitleBar />
         <main className="relative flex-1 min-h-0">
           <Canvas bottomInset={pinned ? DOCK_HEIGHT + 8 : 0} />

@@ -95,7 +95,7 @@ export function PresetsPanel() {
           }
         >
           <div className="p-5">
-            <input autoFocus maxLength={20} value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && save()} placeholder="예) 토크 방송" className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs" />
+            <input autoFocus maxLength={20} value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && save()} placeholder="예) 토크 방송" className="w-full h-9 px-3 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 text-xs" />
           </div>
         </Modal>
       )}

@@ -29,7 +29,7 @@ export default function Crew() {
           <MemberTable members={r.ranking} ranked />
           <div className="rounded-lg bg-slate-50 dark:bg-white/5 px-3 py-2 flex justify-between font-bold"><span>총 후원 캐시</span><span>{formatCash(r.totalCash)} 캐시</span></div>
         </div>
-        <div className="p-2 border-t border-slate-100 dark:border-white/5"><Button className="w-full" onClick={api.closeCrewResult}>확인</Button></div>
+        <div className="p-2 border-t border-black/[0.08] dark:border-white/10"><Button className="w-full" onClick={api.closeCrewResult}>확인</Button></div>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function Crew() {
           {crew.members.length ? <MemberTable members={crew.members} /> : <Empty>{'등록된 크루원이 없습니다.\n크루원 설정을 통해 크루원을 추가해 주세요.'}</Empty>}
         </div>
       </div>
-      <div className="p-2 border-t border-slate-100 dark:border-white/5">
+      <div className="p-2 border-t border-black/[0.08] dark:border-white/10">
         {live ? <Button variant="danger" className="w-full" onClick={() => setConfirm('end')}>방송 종료</Button> : <Button className="w-full" disabled={!crew.members.length} onClick={() => setConfirm('start')}>방송 시작</Button>}
       </div>
       {confirm === 'start' && <Confirm message={'방송 시작\n\n크루 방송을 시작 하시겠습니까?'} onConfirm={() => { api.startCrew(); setConfirm(null); }} onCancel={() => setConfirm(null)} />}
@@ -90,7 +90,7 @@ function MemberTable({ members, ranked }: { members: CrewMember[]; ranked?: bool
         </thead>
         <tbody>
           {members.map((m, i) => (
-            <tr key={m.name} className="border-b border-slate-100 dark:border-white/5">
+            <tr key={m.name} className="border-b border-black/[0.08] dark:border-white/10">
               {ranked && <td className="py-1.5 px-2 font-black">{i + 1}</td>}
               <td className="py-1.5 px-2">{m.rank}</td>
               <td className="py-1.5 px-2 font-semibold">{m.name}</td>
