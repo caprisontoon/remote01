@@ -10,7 +10,7 @@ import type { Shortcut, ShortcutAction } from '../types';
 import { Button, Confirm, Modal, Toggle } from '../components/ui';
 import { uid } from '../api/mockData';
 
-type Tab = 'basic' | 'shortcut' | 'info';
+type Tab = 'basic' | 'shortcut' | 'live' | 'info';
 
 /** 설정 (p14~16, 웹 p87, 모바일 p104~105) */
 export function SettingsModal({ onClose }: { onClose: () => void }) {
@@ -19,6 +19,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
   const tabs: { id: Tab; label: string }[] = [
     { id: 'basic', label: '기본' },
     { id: 'shortcut', label: '단축키' },
+    { id: 'live', label: '투네이션 연동' },
     { id: 'info', label: '정보' },
   ];
   return (
@@ -31,7 +32,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
             </button>
           ))}
         </nav>
-        <div className="flex-1 p-5 overflow-auto">{tab === 'basic' ? <BasicSettings /> : tab === 'shortcut' ? <ShortcutSettings /> : <InfoSettings />}</div>
+        <div className="flex-1 p-5 overflow-auto">{tab === 'basic' ? <BasicSettings /> : tab === 'shortcut' ? <ShortcutSettings /> : tab === 'live' ? <LiveSettings /> : <InfoSettings />}</div>
       </div>
     </Modal>
   );
@@ -178,6 +179,80 @@ export function InfoSettings() {
         <dt className="text-slate-500">공식 홈페이지</dt>
         <dd><button className="text-blue-600 font-bold inline-flex items-center gap-1" onClick={() => openUrl('https://toon.at')}>https://toon.at <ExternalLink size={11} /></button></dd>
       </dl>
+    </div>
+  );
+}
+
+/**
+ * 투네이션 연동: 알림창 웹소켓으로 실제 후원을 받아 후원 리스트에 보여준다.
+ * 일시정지·스킵 같은 제어는 아직 서버 프로토콜이 확인되지 않아 연동되지 않는다.
+ */
+export function LiveSettings() {
+  const saved = useStore(settingsStore, (x) => x.liveAlertbox);
+  const live = useData((d) => d.live);
+  const [input, setInput] = useState(saved);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [raw, setRaw] = useState<string | null>(null);
+
+  if (!desktop) return <div className="h-full min-h-[200px] flex items-center justify-center text-xs text-black/50 dark:text-white/50">설치형(PC) 리모컨에서만 이용할 수 있습니다.</div>;
+
+  const connect = async () => {
+    setBusy(true);
+    setError(null);
+    const res = await desktop!.toonation.connect(input);
+    setBusy(false);
+    if (res.ok) api.updateSettings({ liveAlertbox: input.trim() });
+    else setError(res.error);
+  };
+  const disconnect = async () => {
+    await desktop!.toonation.disconnect();
+    api.updateSettings({ liveAlertbox: '' });
+  };
+  const status =
+    live.state === 'connected' ? { dot: 'bg-green-500', text: `연결됨 · 받은 후원 ${live.received}건` }
+    : live.state === 'connecting' ? { dot: 'bg-amber-500', text: '연결 중…' }
+    : live.state === 'error' ? { dot: 'bg-red-500', text: live.message + (live.retrying ? ' (자동 재시도)' : '') }
+    : { dot: 'bg-slate-400', text: '연결 안 됨 · 가상 후원으로 체험 중' };
+
+  return (
+    <div className="text-[13px] space-y-4">
+      <p className="text-black/60 dark:text-white/60 leading-relaxed">
+        투네이션 <b>통합 알림창(알림박스) URL</b>을 넣으면 실제 후원이 후원 리스트에 실시간으로 들어옵니다.
+        URL은 투네이션 크리에이터 페이지 &gt; 통합 알림창에서 복사할 수 있습니다.
+      </p>
+      <div className="flex items-center gap-2 rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] px-4 py-3">
+        <span className={`w-2.5 h-2.5 rounded-full ${status.dot}`} />
+        <span className="font-medium break-all">{status.text}</span>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="password"
+          autoComplete="off"
+          aria-label="알림창 URL"
+          placeholder="https://toon.at/widget/alertbox/…"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="flex-1 h-10 px-4 rounded-full bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40"
+        />
+        {live.state === 'off' ? (
+          <Button className="h-10" disabled={!input.trim() || busy} onClick={connect}>{busy ? '연결 중…' : '연결'}</Button>
+        ) : (
+          <Button variant="ghost" className="h-10" onClick={disconnect}>연결 해제</Button>
+        )}
+      </div>
+      {error && <p className="text-red-500">{error}</p>}
+      <ul className="text-[12px] text-black/50 dark:text-white/50 space-y-1 list-disc pl-4">
+        <li>알림창 URL은 비밀번호처럼 다뤄 주세요. 이 PC에만 저장되고 다음 실행 때 자동으로 연결됩니다.</li>
+        <li>지금은 <b>후원 받기</b>만 연동됩니다. 일시정지·스킵·차단 같은 제어는 리모컨 안에서만 바뀌고 실제 방송에는 아직 반영되지 않습니다.</li>
+        <li>연결되면 체험용 가상 후원은 멈추고 실제 후원만 보입니다.</li>
+      </ul>
+      {live.state === 'connected' && (
+        <div>
+          <Button variant="ghost" onClick={async () => setRaw(JSON.stringify(await desktop!.toonation.rawMessages(), null, 2))}>받은 원본 메시지 보기 (진단용)</Button>
+          {raw && <pre className="mt-2 max-h-48 overflow-auto rounded-xl bg-black/5 dark:bg-white/5 p-3 text-[11px] select-text whitespace-pre-wrap">{raw}</pre>}
+        </div>
+      )}
     </div>
   );
 }

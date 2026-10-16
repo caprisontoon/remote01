@@ -62,11 +62,24 @@ export default function App() {
     const offChanged = desktop.widgets.onChanged((list) => uiStore.set({ detached: list }));
     const offShortcut = desktop.onShortcut((action) => SHORTCUT_RUN[action as ShortcutAction]?.());
     desktop.setShortcuts(settingsStore.get().shortcuts);
+    // 투네이션 실시간 후원 수신: 상태·후원을 공유 상태로 넣는다
+    const offLiveStatus = desktop.toonation.onStatus(api.setLiveStatus);
+    const offLiveDonation = desktop.toonation.onDonation(api.ingestLive);
     return () => {
       offChanged();
       offShortcut();
+      offLiveStatus();
+      offLiveDonation();
     };
   }, []);
+
+  // 저장된 알림창 키가 있으면 로그인 후 자동 연결
+  useEffect(() => {
+    if (!desktop || detachedWidgetId || phase !== 'ready') return;
+    const key = settingsStore.get().liveAlertbox;
+    if (key) void desktop.toonation.connect(key);
+    return () => void desktop?.toonation.disconnect();
+  }, [phase]);
 
   if (detachedWidgetId && detachedWidgetId in WIDGETS) return <DetachedWidget id={detachedWidgetId as WidgetId} />;
 

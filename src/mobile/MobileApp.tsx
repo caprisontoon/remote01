@@ -6,6 +6,7 @@ import { useT } from '../lib/i18n';
 import { openUrl } from '../platform';
 import type { WidgetId } from '../types';
 import { Badge, Confirm } from '../components/ui';
+import { WidgetErrorBoundary } from '../components/ErrorBoundary';
 import { AlarmButton, Logo } from '../shell/TitleBar';
 import { BasicSettings, InfoSettings, ShortcutSettings } from '../shell/Settings';
 import { WallpaperModal } from '../shell/Wallpaper';
@@ -130,7 +131,7 @@ function WidgetPage({ id, onBack }: { id: WidgetId; onBack: () => void }) {
   const Body = WIDGET_COMPONENTS[id];
   return (
     <FullPage title={t(WIDGETS[id].title)} onBack={onBack}>
-      <div className="h-full"><Body /></div>
+      <div className="h-full"><WidgetErrorBoundary name={id}><Body /></WidgetErrorBoundary></div>
     </FullPage>
   );
 }

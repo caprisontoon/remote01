@@ -5,6 +5,7 @@ import { useT } from '../lib/i18n';
 import type { WidgetId } from '../types';
 import { WIDGETS, isFixedWidget } from '../widgets/meta';
 import { Tooltip } from '../components/ui';
+import { WidgetErrorBoundary } from '../components/ErrorBoundary';
 
 /**
  * 위젯 공통 틀: 헤더(드래그 손잡이 + 제목 + 버튼) + 본문.
@@ -67,7 +68,7 @@ export function WidgetFrame({
         </div>
       </header>
       <div className="flex-1 min-h-0 overflow-auto" style={scale !== 100 ? { zoom: scale / 100 } : undefined}>
-        {children}
+        <WidgetErrorBoundary name={id}>{children}</WidgetErrorBoundary>
       </div>
     </section>
   );

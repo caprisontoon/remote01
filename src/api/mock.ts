@@ -54,6 +54,7 @@ export function initialData(now = Date.now()): RemoteData {
     wallpaper: [],
     toasts: [],
     version: APP_VERSION,
+    live: { state: 'off' },
   };
 }
 
@@ -177,6 +178,8 @@ export class MockBackend implements RemoteBackend {
   }
 
   private incoming() {
+    // 실서버 후원을 받는 중에는 가상 후원을 만들지 않는다
+    if (this.d.live.state !== 'off') return;
     const kind = pick(INCOMING_KINDS);
     const now = Date.now();
     // 뽑기 10연차: 한 번에 여러 행이 들어오고 함께 재생된다 (p43 ※)
@@ -196,7 +199,7 @@ export class MockBackend implements RemoteBackend {
   }
 
   private incomingPending() {
-    if (this.d.pending.length >= 6) return;
+    if (this.d.live.state !== 'off' || this.d.pending.length >= 6) return;
     const p = makePending(pick(['quest', 'luckybox', 'play'] as const), Date.now());
     this.set((s) => ({ pending: [...s.pending, p] }));
   }
@@ -500,6 +503,24 @@ export class MockBackend implements RemoteBackend {
   }
   setAdAutoPlay(on: boolean) {
     this.set({ adAutoPlay: on });
+  }
+
+  // ------------------------------------------------------------------ 실시간 후원 수신
+
+  setLiveStatus(live: RemoteData['live']) {
+    const wasConnected = this.d.live.state === 'connected';
+    this.set({ live });
+    if (live.state === 'connected' && !wasConnected) {
+      // 처음 연결되면 가상 후원은 지우고 실제 후원만 보여준다
+      // 대기 중인 후원도 아직 실서버로 받지 못하므로 가상 항목을 비운다
+      this.set((s) => ({ donations: s.donations.filter((d) => d.id.startsWith('live-')), pending: [], playingIds: [], unseen: { all: 0, game: 0, draw: 0 } }));
+      this.playQueue = [];
+    }
+  }
+
+  ingestLive(d: Donation) {
+    if (this.d.donations.some((x) => x.id === d.id)) return;
+    this.addToList([d], true);
   }
 
   // ------------------------------------------------------------------ 토스트

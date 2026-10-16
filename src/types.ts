@@ -278,4 +278,6 @@ export interface Settings {
   filters: DonationKind[];
   sort: SortOrder;
   columnWidths: Record<string, number>;
+  /** 투네이션 알림창 URL 또는 키 (실시간 후원 수신용, 이 기기에만 저장) */
+  liveAlertbox: string;
 }

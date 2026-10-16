@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useData } from '../lib/hooks';
 import { Empty } from '../components/ui';
 
 /** 뽑기 잔여 수량 표 (p46 팝업, p73 위젯 공용). 소진형 뽑기만 선택할 수 있다. */
 export function DrawStock() {
-  const boards = useData((d) => d.drawBoards.filter((b) => b.consumable));
+  const allBoards = useData((d) => d.drawBoards);
+  const boards = useMemo(() => allBoards.filter((b) => b.consumable), [allBoards]);
   const [id, setId] = useState<string | null>(null);
   if (boards.length === 0) return <Empty>등록된 소진형 뽑기가 없습니다.</Empty>;
   const board = boards.find((b) => b.id === id) ?? boards[0];

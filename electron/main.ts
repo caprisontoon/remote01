@@ -5,6 +5,7 @@ import { BrowserWindow, app, globalShortcut, ipcMain, shell, type IpcMainEvent, 
 import fs from 'node:fs';
 import path from 'node:path';
 import { attachedGroup, snap, type Box } from './magnet';
+import { ToonationFeed } from './toonation';
 
 const DEV_URL = process.env.VITE_DEV_SERVER_URL;
 const MAIN_MIN = { width: 900, height: 600 }; // ※ 기획서: 디자인팀 확인 필요 — 임시 값
@@ -276,6 +277,20 @@ ipcMain.handle('shortcuts:set', (_e, list: { id: string; action: string; acceler
     }
   });
 });
+
+// 투네이션 실시간 후원 수신. 받은 원본 메시지 20개는 필드 확인(진단)용으로 보관한다.
+const rawMessages: unknown[] = [];
+const toonation = new ToonationFeed(
+  (status) => main?.webContents.send('toonation:status', status),
+  (donation) => main?.webContents.send('toonation:donation', donation),
+  (raw) => {
+    rawMessages.unshift(raw);
+    rawMessages.length = Math.min(rawMessages.length, 20);
+  },
+);
+ipcMain.handle('toonation:connect', (_e, input: string) => toonation.connect(input));
+ipcMain.handle('toonation:disconnect', () => toonation.disconnect());
+ipcMain.handle('toonation:rawMessages', () => rawMessages);
 
 ipcMain.on('app:openExternal', (_e, url: string) => {
   if (/^https?:\/\//.test(url)) void shell.openExternal(url);

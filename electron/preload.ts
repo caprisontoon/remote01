@@ -36,6 +36,13 @@ contextBridge.exposeInMainWorld('toona', {
   },
   setShortcuts: (list: unknown) => ipcRenderer.invoke('shortcuts:set', list),
   onShortcut: (cb: (action: string) => void) => on('shortcut', cb),
+  toonation: {
+    connect: (input: string) => ipcRenderer.invoke('toonation:connect', input),
+    disconnect: () => ipcRenderer.invoke('toonation:disconnect'),
+    rawMessages: () => ipcRenderer.invoke('toonation:rawMessages'),
+    onStatus: (cb: (s: unknown) => void) => on('toonation:status', cb),
+    onDonation: (cb: (d: unknown) => void) => on('toonation:donation', cb),
+  },
   openExternal: (url: string) => ipcRenderer.send('app:openExternal', url),
   quit: () => ipcRenderer.send('app:quit'),
 });

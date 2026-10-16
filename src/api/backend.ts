@@ -1,4 +1,5 @@
 import type { AlertKey, Donation, Notice, QuickKind, UsageKey, VolumeKey, VoteForm } from '../types';
+import type { LiveStatus } from './toonation';
 
 export interface DrawSearchQuery {
   boardId: string | 'all';
@@ -81,6 +82,10 @@ export interface RemoteBackend {
   playAd(id: string): void;
   skipAd(id: string): void;
   setAdAutoPlay(on: boolean): void;
+
+  // 실시간 후원 수신 (투네이션 알림창 웹소켓)
+  setLiveStatus(status: LiveStatus): void;
+  ingestLive(donation: Donation): void;
 
   toast(message: string, tone?: 'info' | 'error', durationMs?: number): void;
   dismissToast(id: number): void;

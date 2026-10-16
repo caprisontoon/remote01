@@ -1,5 +1,6 @@
 // 설치형(Electron) 리모컨에서만 있는 기능의 브리지. 웹 리모컨에서는 window.toona가 없다.
-import type { Shortcut, WidgetId } from './types';
+import type { Donation, Shortcut, WidgetId } from './types';
+import type { LiveStatus } from './api/toonation';
 
 export interface DetachOptions {
   screenX: number;
@@ -46,6 +47,14 @@ export interface DesktopBridge {
   sync: {
     post(msg: unknown): void;
     on(cb: (msg: unknown) => void): () => void;
+  };
+  /** 투네이션 실시간 후원 수신 (알림창 웹소켓) */
+  toonation: {
+    connect(alertboxUrlOrKey: string): Promise<{ ok: true } | { ok: false; error: string }>;
+    disconnect(): Promise<void>;
+    rawMessages(): Promise<unknown[]>;
+    onStatus(cb: (s: LiveStatus) => void): () => void;
+    onDonation(cb: (d: Donation) => void): () => void;
   };
   setShortcuts(list: Shortcut[]): Promise<{ id: string; ok: boolean }[]>;
   onShortcut(cb: (action: string) => void): () => void;

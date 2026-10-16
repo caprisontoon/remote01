@@ -107,7 +107,7 @@ export function Login() {
 
 /** 로그인 계정 선택 (p32) — 차세대 통합계정 적용 시 삭제 예정 */
 export function Accounts() {
-  const accounts = useData((d) => d.session.accounts ?? []);
+  const accounts = useData((d) => d.session.accounts) ?? [];
   return (
     <Screen>
       <div className="w-full max-w-sm">

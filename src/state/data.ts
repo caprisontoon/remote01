@@ -15,6 +15,7 @@ import type {
   VoteState,
 } from '../types';
 import { FILTER_KINDS } from '../lib/donation';
+import type { LiveStatus } from '../api/toonation';
 
 export type SessionPhase = 'splash' | 'maintenance' | 'update' | 'login' | 'accounts' | 'expired' | 'ready';
 
@@ -53,6 +54,8 @@ export interface RemoteData {
   wallpaper: string[];
   toasts: Toast[];
   version: string;
+  /** 투네이션 실시간 후원 수신 상태 */
+  live: LiveStatus;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -66,6 +69,7 @@ export const DEFAULT_SETTINGS: Settings = {
   filters: FILTER_KINDS,
   sort: 'recent',
   columnWidths: {},
+  liveAlertbox: '',
 };
 
 export const APP_VERSION = '2.0.0';

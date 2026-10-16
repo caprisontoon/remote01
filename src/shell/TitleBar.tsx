@@ -43,6 +43,7 @@ export function TitleBar() {
         <Volume2 size={14} className="shrink-0" />
         <span className="truncate">{notice.text}</span>
       </button>
+      <LiveBadge />
       <div className="app-no-drag flex items-center gap-1 h-11 px-1 rounded-full glass">
         <AlarmButton />
         <Tooltip label={t('설정')} side="bottom">
@@ -109,5 +110,18 @@ export function AlarmButton({ align = 'right' }: { align?: 'right' | 'left' }) {
         </div>
       )}
     </div>
+  );
+}
+
+/** 투네이션 실시간 후원 수신 상태 (연결됐을 때만 표시) */
+function LiveBadge() {
+  const live = useData((d) => d.live);
+  if (live.state === 'off') return null;
+  const on = live.state === 'connected';
+  return (
+    <button onClick={() => uiStore.set({ settingsOpen: true })} title="설정 > 투네이션 연동" className={`app-no-drag h-9 px-3 rounded-full flex items-center gap-1.5 text-[12px] font-semibold ${on ? 'bg-red-500 text-white' : 'glass text-black/70 dark:text-white/70'}`}>
+      <span className={`w-2 h-2 rounded-full ${on ? 'bg-white blink' : live.state === 'error' ? 'bg-red-500' : 'bg-amber-500'}`} />
+      {on ? '실시간' : live.state === 'error' ? '연결 오류' : '연결 중'}
+    </button>
   );
 }
