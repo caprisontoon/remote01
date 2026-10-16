@@ -1,23 +1,11 @@
-import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
-    return {
-      server: {
-        port: 3000,
-        host: '0.0.0.0',
-      },
-      plugins: [react()],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
-      resolve: {
-        alias: {
-          '@': path.resolve(__dirname, '.'),
-        }
-      }
-    };
+// base: './' — Electron(file://)과 웹 서버 하위 경로(toon.at/widget/controller/...) 모두에서 동작하도록 상대 경로로 빌드한다.
+export default defineConfig({
+  base: './',
+  plugins: [react()],
+  server: { port: 3000, host: '0.0.0.0' },
+  build: { outDir: 'dist', emptyOutDir: true },
+  test: { environment: 'node', include: ['src/**/*.test.ts', 'electron/**/*.test.ts'] },
 });

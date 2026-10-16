@@ -1,22 +1,68 @@
 {
-  "name": "리모컨_20251229",
+  "name": "toona-remocon",
+  "productName": "TOONA",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
+  "description": "투네이션 크리에이터 리모컨 (설치형 클라이언트 + 웹 리모컨)",
+  "author": "Toonation",
   "type": "module",
+  "main": "dist-electron/main.cjs",
   "scripts": {
     "dev": "vite",
+    "dev:desktop": "node scripts/dev-desktop.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:electron": "node scripts/build-electron.mjs",
+    "build:desktop": "npm run build && npm run build:electron",
+    "dist:win": "npm run build:desktop && electron-builder --win nsis --publish never",
+    "dist:mac": "npm run build:desktop && electron-builder --mac dmg --publish never",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p electron/tsconfig.json",
+    "test": "vitest run"
   },
   "dependencies": {
-    "react-dom": "^19.2.3",
+    "lucide-react": "^0.562.0",
     "react": "^19.2.3",
-    "lucide-react": "^0.562.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.20",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.0",
+    "esbuild": "^0.25.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "^3.2.0"
+  },
+  "build": {
+    "appId": "at.toon.remocon",
+    "productName": "TOONA",
+    "artifactName": "${productName} Setup ${version}.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "TOONA 리모컨"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    }
   }
 }
