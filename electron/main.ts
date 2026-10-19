@@ -8,13 +8,14 @@ import { attachedGroup, snap, type Box } from './magnet';
 import { ToonationFeed } from './toonation';
 
 const DEV_URL = process.env.VITE_DEV_SERVER_URL;
-const MAIN_MIN = { width: 900, height: 600 }; // ※ 기획서: 디자인팀 확인 필요 — 임시 값
+// Ground Control의 최소 창 크기는 750×750. 높이는 기존 600이 더 작아 그대로 둔다.
+const MAIN_MIN = { width: 750, height: 600 };
+/** 위젯 독립창 최소 크기 (Ground Control 플로팅 위젯과 같은 150×150) */
+const WIDGET_MIN = { width: 150, height: 150 };
 
 interface DetachedInfo {
   bounds: Rectangle;
   pinned: boolean;
-  minWidth: number;
-  minHeight: number;
   title: string;
 }
 interface SavedState {
@@ -143,8 +144,8 @@ function createDetached(id: string, info: DetachedInfo) {
   }
   const win = new BrowserWindow({
     ...info.bounds,
-    minWidth: info.minWidth,
-    minHeight: info.minHeight,
+    minWidth: WIDGET_MIN.width,
+    minHeight: WIDGET_MIN.height,
     frame: false,
     title: info.title,
     backgroundColor: '#ffffff',
@@ -189,12 +190,10 @@ ipcMain.on('window:setPinned', (e, on: boolean) => {
   if (on) w?.moveTop();
 });
 
-ipcMain.on('widgets:detach', (_e, id: string, o: { screenX: number; screenY: number; width: number; height: number; minWidth: number; minHeight: number; title: string }) => {
+ipcMain.on('widgets:detach', (_e, id: string, o: { screenX: number; screenY: number; width: number; height: number; title: string }) => {
   createDetached(id, {
-    bounds: { x: o.screenX, y: o.screenY, width: Math.max(o.width, o.minWidth), height: Math.max(o.height, o.minHeight) },
+    bounds: { x: o.screenX, y: o.screenY, width: Math.max(o.width, WIDGET_MIN.width), height: Math.max(o.height, WIDGET_MIN.height) },
     pinned: false,
-    minWidth: o.minWidth,
-    minHeight: o.minHeight,
     title: o.title,
   });
 });

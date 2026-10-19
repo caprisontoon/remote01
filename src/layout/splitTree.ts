@@ -5,10 +5,11 @@
 //   2) 늘어나는 쪽: 경계에 맞닿은 패널 하나만 늘어난다
 //   3) 계산은 항상 드래그 시작 시점 배치를 기준으로 한다 → 되돌리면 밀렸던 패널도 원래대로 (탄성)
 //   4) 크기가 바뀐 그룹 안의 위젯들은 비율을 유지한 채 함께 커지고 작아진다
+//   5) 각 패널은 자기 그룹 크기의 10%까지 줄어든다 (react-resizable-panels minSize 10)
 // 우리 캔버스는 항상 길로틴 분할이라, 타일 사각형에서 같은 그룹 트리를 다시 만들 수 있다.
 
-import type { CanvasEdge, Rect, Tiles, WidgetId } from '../types';
-import type { MinSize } from './grid';
+import type { CanvasEdge, DockDirection, Rect, Tiles, WidgetId } from '../types';
+import { splitInto, type MinSize } from './grid';
 
 const E = 1e-6;
 type Axis = 'x' | 'y';
@@ -175,8 +176,9 @@ function replace(node: SplitNode, target: SplitNode, next: SplitNode): SplitNode
 /**
  * 위젯 가장자리를 delta(캔버스 비율)만큼 끌었을 때의 새 배치.
  * base는 드래그 시작 시점 배치 — 매 이동마다 base에서 다시 계산해야 탄성 있게 되돌아온다.
+ * minRatio: 그룹 안 패널이 줄어들 수 있는 한계(그룹 크기 대비). min(위젯 하한)과 둘 중 큰 값을 쓴다.
  */
-export function organicResize(base: Tiles, id: WidgetId, edge: CanvasEdge, delta: number, min: MinSize): Tiles {
+export function organicResize(base: Tiles, id: WidgetId, edge: CanvasEdge, delta: number, min: MinSize, minRatio = 0): Tiles {
   const t = base[id];
   const tree = buildTree(base);
   if (!t || !tree || Math.abs(delta) < E) return base;
@@ -187,8 +189,35 @@ export function organicResize(base: Tiles, id: WidgetId, edge: CanvasEdge, delta
   if (!hit) return base;
   const { group, pivot } = hit;
   const sizes = group.children.map((c) => size(c.rect, axis));
-  const mins = group.children.map((c) => minOf(c, axis, min));
+  const floor = size(group.rect, axis) * minRatio;
+  const mins = group.children.map((c) => Math.max(minOf(c, axis, min), floor));
   const nextSizes = adjustSizes(sizes, mins, pivot, delta);
   const resized = enforceChildren(group, nextSizes, min);
   return leaves(replace(tree, group, resized));
+}
+
+const minAlong = (m: { w: number; h: number }, a: Axis) => (a === 'x' ? m.w : m.h);
+
+/**
+ * 대상 위젯을 나눠 새 위젯을 놓는다. 대상이 작아 나눌 수 없으면 이웃을 밀어(organicResize) 대상을 먼저 키운다.
+ * 캔버스 전체에 자리가 없을 때만 null — 대상 하나가 작다고 "공간 부족"이 되지 않게 한다.
+ */
+export function dockInto(tiles: Tiles, target: WidgetId, id: WidgetId, dir: Exclude<DockDirection, 'center'>, min: MinSize, minRatio = 0): Tiles | null {
+  const direct = splitInto(tiles, target, id, dir, min);
+  if (direct) return direct;
+  if (!tiles[target]) return null;
+  const splitAxis: Axis = dir === 'left' || dir === 'right' ? 'x' : 'y';
+  let next = tiles;
+  for (const axis of ['x', 'y'] as Axis[]) {
+    const each = Math.max(minAlong(min(target), axis), minAlong(min(id), axis));
+    const need = axis === splitAxis ? 2 * each : each;
+    // 새 위젯이 들어갈 쪽 경계부터 밀고, 모자라면 반대쪽 경계도 민다
+    const edges: CanvasEdge[] = axis === 'x' ? (dir === 'left' ? ['left', 'right'] : ['right', 'left']) : dir === 'top' ? ['top', 'bottom'] : ['bottom', 'top'];
+    for (const edge of edges) {
+      const short = need - size(next[target]!, axis);
+      if (short <= E) break;
+      next = organicResize(next, target, edge, edge === 'right' || edge === 'bottom' ? short : -short, min, minRatio);
+    }
+  }
+  return splitInto(next, target, id, dir, min);
 }

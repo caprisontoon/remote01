@@ -40,7 +40,8 @@ export function splitInto(tiles: Tiles, target: WidgetId, id: WidgetId, dir: Exc
     if (dir === 'top') tr.y = t.y + half;
   }
   next[id] = placed;
-  return fitsMin(next, min) ? next : null;
+  // 바뀌는 건 대상과 새 위젯뿐 — 다른 위젯이 이미 최소 크기보다 작아도(창을 줄인 경우) 막지 않는다
+  return fitsMin({ [target]: tr, [id]: placed }, min) ? next : null;
 }
 
 /** 두 위젯의 위치·크기를 그대로 맞바꾼다 (p23). */

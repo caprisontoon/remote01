@@ -3,11 +3,11 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { api, layoutStore } from '../state/app';
 import { uiStore } from '../state/ui';
 import { useStore } from '../state/store';
-import { insertAtEdge, moveTile, moveToEdge, previewRect, removeTile, resizableEdges, splitInto, type MinSize } from '../layout/grid';
-import { organicResize } from '../layout/splitTree';
+import { insertAtEdge, moveToEdge, previewRect, removeTile, resizableEdges, swapTiles, type MinSize } from '../layout/grid';
+import { dockInto, organicResize } from '../layout/splitTree';
 import { desktop } from '../platform';
 import type { CanvasEdge, DockDirection, DropTarget, Rect, Tiles, WidgetId } from '../types';
-import { WIDGETS, isFixedWidget } from '../widgets/meta';
+import { PANEL_MIN_RATIO, WIDGETS, WIDGET_MIN, isFixedWidget } from '../widgets/meta';
 import { WIDGET_COMPONENTS } from '../widgets/registry';
 import { WidgetFrame } from './WidgetFrame';
 
@@ -55,7 +55,7 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
     return () => ro.disconnect();
   }, []);
 
-  const min: MinSize = useCallback((id) => ({ w: WIDGETS[id].minWidth / size.w, h: WIDGETS[id].minHeight / size.h }), [size]);
+  const min: MinSize = useCallback(() => ({ w: WIDGET_MIN.width / size.w, h: WIDGET_MIN.height / size.h }), [size]);
 
   const setTiles = (next: Tiles) => layoutStore.set({ tiles: next });
 
@@ -65,8 +65,9 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
       const current = layoutStore.get().tiles;
       let next: Tiles | null = null;
       if (d.kind === 'edge') next = source === 'tile' ? moveToEdge(current, id, d.edge, min) : insertAtEdge(current, id, d.edge, min);
-      else if (source === 'tile') next = moveTile(current, id, d.target, d.dir, min);
-      else if (d.dir !== 'center') next = splitInto(current, d.target, id, d.dir, min);
+      else if (d.dir === 'center') next = source === 'tile' ? swapTiles(current, id, d.target) : null;
+      else if (source === 'tile') next = d.target === id ? null : dockInto(removeTile(current, id), d.target, id, d.dir, min, PANEL_MIN_RATIO);
+      else next = dockInto(current, d.target, id, d.dir, min, PANEL_MIN_RATIO);
       if (!next) {
         api.toast('공간이 부족하여 이 위치에 배치할 수 없습니다.', 'error');
         return false;
@@ -150,8 +151,6 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
           screenY: Math.round(ev.screenY - (start.y - frame.top)),
           width: Math.round(frame.width),
           height: Math.round(frame.height),
-          minWidth: meta.minWidth,
-          minHeight: meta.minHeight,
           title: meta.title,
         });
         return;
@@ -181,7 +180,7 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
     setResizing(edge === 'left' || edge === 'right' ? 'col' : 'row');
     const move = (ev: PointerEvent) => {
       const delta = edge === 'left' || edge === 'right' ? (ev.clientX - sx) / size.w : (ev.clientY - sy) / size.h;
-      setTiles(organicResize(base, id, edge, delta, min));
+      setTiles(organicResize(base, id, edge, delta, min, PANEL_MIN_RATIO));
     };
     const up = () => {
       setResizing(null);

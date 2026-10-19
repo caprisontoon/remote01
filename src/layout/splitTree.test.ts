@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { adjustSizes, buildTree, minOf, organicResize } from './splitTree';
+import { adjustSizes, buildTree, dockInto, minOf, organicResize } from './splitTree';
 import { isValidLayout } from './grid';
 import type { Tiles } from '../types';
 
@@ -92,6 +92,24 @@ describe('organicResize', () => {
     expect(r.pending!.y).toBeCloseTo(0.7);
   });
 
+  it('하한이 작아도 그룹 크기의 10%보다 작아지지 않는다 (Ground Control minSize 10)', () => {
+    const tiny = () => ({ w: 0.01, h: 0.01 });
+    const r = organicResize(threeCols, 'donations', 'right', 0.9, tiny, 0.1);
+    expect(r.quick!.w).toBeCloseTo(0.1);
+    expect(r.pending!.w).toBeCloseTo(0.1);
+    expect(r.donations!.w).toBeCloseTo(0.8);
+  });
+
+  it('안쪽 그룹의 10%는 그 그룹 크기 기준이다', () => {
+    const nested: Tiles = {
+      donations: { x: 0, y: 0, w: 0.5, h: 1 },
+      quick: { x: 0.5, y: 0, w: 0.5, h: 0.5 },
+      pending: { x: 0.5, y: 0.5, w: 0.5, h: 0.5 },
+    };
+    const r = organicResize(nested, 'quick', 'bottom', 0.9, () => ({ w: 0.01, h: 0.01 }), 0.1);
+    expect(r.pending!.h).toBeCloseTo(0.1); // 오른쪽 열 높이 1의 10%
+  });
+
   it('캔버스 바깥 경계는 움직이지 않는다', () => {
     expect(organicResize(threeCols, 'donations', 'left', 0.1, min)).toBe(threeCols);
   });
@@ -109,5 +127,39 @@ describe('organicResize', () => {
       expect(isValidLayout(r)).toBe(true);
       for (const rect of Object.values(r)) expect(rect!.w).toBeGreaterThanOrEqual(0.1 - 1e-6);
     }
+  });
+});
+
+describe('dockInto (공간 만들기)', () => {
+  const m = () => ({ w: 0.2, h: 0.1 });
+  // 왼쪽 위젯이 좁아 반으로 나눌 수 없지만 오른쪽에 여유가 있다
+  const narrow: Tiles = {
+    donations: { x: 0, y: 0, w: 0.3, h: 1 },
+    quick: { x: 0.3, y: 0, w: 0.7, h: 1 },
+  };
+
+  it('대상이 작으면 이웃을 밀어 자리를 만든 뒤 나눈다', () => {
+    const r = dockInto(narrow, 'donations', 'pending', 'right', m)!;
+    expect(r).not.toBeNull();
+    expect(isValidLayout(r)).toBe(true);
+    for (const rect of Object.values(r)) expect(rect!.w).toBeGreaterThanOrEqual(0.2 - 1e-6);
+    expect(r.pending!.x).toBeCloseTo(r.donations!.x + r.donations!.w);
+  });
+
+  it('캔버스 전체에 자리가 없으면 null', () => {
+    // 0.2 × 5칸이 꽉 찼다 — 여섯 번째는 어디에도 못 들어간다
+    const full: Tiles = {
+      donations: { x: 0, y: 0, w: 0.2, h: 1 },
+      quick: { x: 0.2, y: 0, w: 0.2, h: 1 },
+      pending: { x: 0.4, y: 0, w: 0.2, h: 1 },
+      volume: { x: 0.6, y: 0, w: 0.2, h: 1 },
+      alerts: { x: 0.8, y: 0, w: 0.2, h: 1 },
+    };
+    expect(dockInto(full, 'quick', 'usage', 'right', m)).toBeNull();
+  });
+
+  it('다른 위젯이 이미 최소 크기보다 작아도(창을 줄인 경우) 나눌 수 있는 곳에는 놓인다', () => {
+    const t: Tiles = { donations: { x: 0, y: 0, w: 0.9, h: 1 }, quick: { x: 0.9, y: 0, w: 0.1, h: 1 } };
+    expect(dockInto(t, 'donations', 'pending', 'left', m)).not.toBeNull();
   });
 });

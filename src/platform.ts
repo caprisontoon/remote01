@@ -7,8 +7,6 @@ export interface DetachOptions {
   screenY: number;
   width: number;
   height: number;
-  minWidth: number;
-  minHeight: number;
   title: string;
 }
 
