@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시안 2 · 투네이션 브랜드 리모컨</title>
+<!-- 디자인 시안 참고용 정적 목업. 실제 구현은 docs/design/toona-design-tokens.md 토큰을 따른다. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#7CC8FF}a:hover{color:#A9DBFF}
+</style>
+</head>
+<body>
+<div style="width: 100%; min-height: 900px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; padding: 8px 10px 12px; background: #0E0F12; font-family: 'Pretendard', 'IBM Plex Sans KR', sans-serif; color: #F2F4F7; font-size: 13px">
+
+  <header style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 6px; flex-wrap: wrap">
+    <a href="https://toon.at" aria-label="투네이션 홈페이지" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #FFFFFF; font-weight: 800; font-size: 16px; letter-spacing: -0.3px">
+      <span style="color: #2F6BFF; font-size: 20px; line-height: 1">+</span>
+      <span style="width: 10px; height: 10px; border-radius: 50%; border: 2.5px solid #2F6BFF; box-sizing: border-box"></span>
+      <span style="width: 10px; height: 10px; border-radius: 50%; border: 2.5px solid #4CC3FF; box-sizing: border-box; margin-right: 4px"></span>
+      toonation
+    </a>
+    <div style="flex: 1 1 320px; display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 12px; border-radius: 8px; background: #1A2440; border: 1px solid #263559">
+      <span style="padding: 2px 6px; border-radius: 4px; background: #2F6BFF; color: #FFFFFF; font-size: 11px; font-weight: 700">공지</span>
+      <span style="font-weight: 500">[이벤트 수상] 2025 투네이션 어워드 수상자 발표</span>
+    </div>
+    <button aria-label="알림 2개" style="position: relative; width: 36px; height: 36px; border: 1px solid #2A2E36; border-radius: 8px; background: #17191E; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E4E7EC" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+      <span style="position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 8px; background: #F04438; color: #FFFFFF; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center">2</span>
+    </button>
+    <button aria-label="설정" style="width: 36px; height: 36px; border: 1px solid #2A2E36; border-radius: 8px; background: #17191E; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E4E7EC" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+    </button>
+  </header>
+
+  <main style="flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
+    <div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+
+      <section aria-label="후원 리스트" style="flex: 1 1 auto; display: flex; flex-direction: column; background: #17191E; border: 1px solid #262A31; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: center; gap: 4px; height: 44px; padding: 0 8px 0 14px; border-bottom: 1px solid #262A31; flex-wrap: wrap">
+          <h2 style="margin: 0 12px 0 0; font-size: 14px; font-weight: 700">후원 리스트</h2>
+          <div role="tablist" aria-label="후원 종류" style="display: flex; height: 100%">
+            <button role="tab" aria-selected="true" style="height: 100%; padding: 0 14px; border: 0; border-bottom: 2px solid #4CC3FF; background: transparent; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">통합 알림</button>
+            <button role="tab" aria-selected="false" style="height: 100%; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A3A9B4; font: inherit; cursor: pointer">게임</button>
+            <button role="tab" aria-selected="false" style="height: 100%; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A3A9B4; font: inherit; cursor: pointer">뽑기 <span style="margin-left: 2px; padding: 1px 6px; border-radius: 9px; background: #F04438; color: #FFFFFF; font-size: 10px; font-weight: 700">4</span></button>
+          </div>
+          <span style="flex: 1 1 auto"></span>
+          <button style="height: 30px; padding: 0 10px; border: 1px solid #2E333B; border-radius: 6px; background: #1F2228; color: #E4E7EC; font: inherit; display: flex; align-items: center; gap: 6px; cursor: pointer">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M6 12h12M10 18h4"></path></svg>필터
+          </button>
+          <button style="height: 30px; padding: 0 10px; border: 1px solid #2E333B; border-radius: 6px; background: #1F2228; color: #E4E7EC; font: inherit; display: flex; align-items: center; gap: 6px; cursor: pointer">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m3 16 4 4 4-4M7 20V4M21 8l-4-4-4 4M17 4v16"></path></svg>최근 순
+          </button>
+        </div>
+        <div style="flex: 1 1 auto; overflow-x: auto">
+          <div style="min-width: 760px">
+            <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; height: 32px; padding: 0 14px; background: #1B1E23; font-size: 12px; color: #A3A9B4; font-weight: 500; border-bottom: 1px solid #262A31">
+              <span>후원</span><span>닉네임(ID)</span><span style="text-align: right">후원 캐시</span><span>내용</span><span style="text-align: right">일시</span>
+            </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #4CC3FF; flex: 0 0 auto"></span>텍스트
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">피곤한고양이</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">692lo***@gmail.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">1,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">구독 1주년 기념 후원입니다</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">방금</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #3DD68C; flex: 0 0 auto"></span>음성
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">감자칩러버</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">530lo***@kakao.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">3,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">음성 녹음 후원</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">방금</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: #1A2440; box-shadow: inset 3px 0 0 #4CC3FF">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #C77DFF; flex: 0 0 auto"></span>영상
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">뚱땅이</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">339lo***@kakao.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">500</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">[YouTube] 전설의 역전승 장면</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">방금</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #22C55E; flex: 0 0 auto"></span>치지직 구독
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">고독한미식가</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">667lo***@naver.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">5,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">치지직 구독 알림 - 13개월</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">방금</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #FFB547; flex: 0 0 auto"></span>미니
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">라면한그릇</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">531lo***@naver.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">10,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">다음 게임은 뭐 할 거예요? 공포게임 해주세요 제발</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">3분</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #9B8AFB; flex: 0 0 auto"></span>트위치 레이드
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">새벽두시</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">494lo***@naver.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">10,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">트위치 레이드 알림</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">3분</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #FF6B6B; flex: 0 0 auto"></span>룰렛
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">피곤한고양이</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">671lo***@naver.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #FFB547">50,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">운명의 룰렛 – 스쿼트 10회</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">10분</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #F04438; flex: 0 0 auto"></span>유튜브 슈퍼챗
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">도전자A</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">462lo***@naver.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">2,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">유튜브 슈퍼챗 알림 - $5.00</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">10분</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #D6A77A; flex: 0 0 auto"></span>위시리스트
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">열혈팬01</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">556lo***@kakao.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">10,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">커피 기프티콘</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">3시간</span>
+              </div>
+            
+              <div style="display: grid; grid-template-columns: 120px 190px 100px minmax(0, 1fr) 64px; gap: 12px; align-items: center; min-height: 46px; padding: 0 14px; border-bottom: 1px solid #22252B; background: transparent; box-shadow: none">
+                <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12px; color: #E4E7EC">
+                  <span style="width: 8px; height: 8px; border-radius: 2px; background: #4CC3FF; flex: 0 0 auto"></span>텍스트
+                </span>
+                <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0">
+                  <span style="font-weight: 600; white-space: nowrap">밤샘러</span>
+                  <span style="font-size: 11px; color: #8D94A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">210lo***@gmail.com</span>
+                </span>
+                <span style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #F2F4F7">1,000</span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #D0D5DD">오늘 방송 너무 재밌어요</span>
+                <span style="text-align: right; font-size: 12px; color: #8D94A0">3시간</span>
+              </div>
+            
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="퀵 제어" style="background: #17191E; border: 1px solid #262A31; border-radius: 12px">
+        <div style="display: flex; align-items: center; height: 40px; padding: 0 14px; border-bottom: 1px solid #262A31">
+          <h2 style="margin: 0; font-size: 14px; font-weight: 700">퀵 제어</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 10px">
+          
+            <div style="display: flex; border: 1px solid #2E333B; border-radius: 8px; overflow: hidden">
+              <button style="flex: 1 1 auto; height: 44px; border: 0; background: #1F2228; color: #F2F4F7; font: inherit; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5v14M15 5v14"></path></svg>알림 일시정지
+              </button>
+              <button aria-label="알림 스킵" style="width: 48px; height: 44px; border: 0; border-left: 1px solid #2E333B; background: #1F2228; color: #E4E7EC; display: flex; align-items: center; justify-content: center; cursor: pointer">
+                <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l10 7-10 7V5ZM19 5v14"></path></svg>
+              </button>
+            </div>
+          
+            <div style="display: flex; border: 1px solid #2E333B; border-radius: 8px; overflow: hidden">
+              <button style="flex: 1 1 auto; height: 44px; border: 0; background: #1F2228; color: #F2F4F7; font: inherit; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5v14M15 5v14"></path></svg>그림 일시정지
+              </button>
+              <button aria-label="그림 스킵" style="width: 48px; height: 44px; border: 0; border-left: 1px solid #2E333B; background: #1F2228; color: #E4E7EC; display: flex; align-items: center; justify-content: center; cursor: pointer">
+                <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l10 7-10 7V5ZM19 5v14"></path></svg>
+              </button>
+            </div>
+          
+            <div style="display: flex; border: 1px solid #FFB547; border-radius: 8px; overflow: hidden">
+              <button style="flex: 1 1 auto; height: 44px; border: 0; background: #FFB547; color: #1A1205; font: inherit; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5v14M15 5v14"></path></svg>뽑기 일시정지 중
+              </button>
+              <button aria-label="뽑기 스킵" style="width: 48px; height: 44px; border: 0; border-left: 1px solid #FFB547; background: #1F2228; color: #E4E7EC; display: flex; align-items: center; justify-content: center; cursor: pointer">
+                <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l10 7-10 7V5ZM19 5v14"></path></svg>
+              </button>
+            </div>
+          
+        </div>
+      </section>
+    </div>
+
+    <section aria-label="대기 중인 후원" style="flex: 1 1 300px; min-width: 0; background: #17191E; border: 1px solid #262A31; border-radius: 12px; display: flex; flex-direction: column">
+      <div style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-bottom: 1px solid #262A31">
+        <h2 style="margin: 0; font-size: 14px; font-weight: 700">대기 중인 후원</h2>
+        <span style="padding: 1px 7px; border-radius: 9px; background: #F04438; color: #FFFFFF; font-size: 11px; font-weight: 700">3</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px">
+        
+          <div style="padding: 12px; border-radius: 10px; background: #1F2228; border: 1px solid #2A2E36; display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span style="padding: 2px 6px; border-radius: 4px; border: 1px solid #C77DFF; color: #C77DFF; font-size: 11px; font-weight: 700">영상</span>
+              <span style="font-weight: 600">뚱땅이</span>
+              <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-weight: 600">500</span>
+            </div>
+            <div style="color: #B4BAC4; font-size: 12px">[YouTube] 전설의 역전승 장면 · 3:12</div>
+            <div style="display: flex; gap: 6px">
+              <button style="flex: 1 1 0; height: 34px; border: 0; border-radius: 6px; background: #2F6BFF; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">재생 허용</button>
+              <button style="flex: 1 1 0; height: 34px; border: 1px solid #353A43; border-radius: 6px; background: transparent; color: #E4E7EC; font: inherit; font-weight: 600; cursor: pointer">거절</button>
+            </div>
+          </div>
+        
+          <div style="padding: 12px; border-radius: 10px; background: #1F2228; border: 1px solid #2A2E36; display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span style="padding: 2px 6px; border-radius: 4px; border: 1px solid #FFB547; color: #FFB547; font-size: 11px; font-weight: 700">퀘스트</span>
+              <span style="font-weight: 600">라면한그릇</span>
+              <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-weight: 600">20,000</span>
+            </div>
+            <div style="color: #B4BAC4; font-size: 12px">공포게임 1시간 하기</div>
+            <div style="display: flex; gap: 6px">
+              <button style="flex: 1 1 0; height: 34px; border: 0; border-radius: 6px; background: #2F6BFF; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">수락</button>
+              <button style="flex: 1 1 0; height: 34px; border: 1px solid #353A43; border-radius: 6px; background: transparent; color: #E4E7EC; font: inherit; font-weight: 600; cursor: pointer">거절</button>
+            </div>
+          </div>
+        
+          <div style="padding: 12px; border-radius: 10px; background: #1F2228; border: 1px solid #2A2E36; display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span style="padding: 2px 6px; border-radius: 4px; border: 1px solid #4CC3FF; color: #4CC3FF; font-size: 11px; font-weight: 700">럭키박스</span>
+              <span style="font-weight: 600">열혈팬01</span>
+              <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-weight: 600">5,000</span>
+            </div>
+            <div style="color: #B4BAC4; font-size: 12px">럭키박스 결과 확인 대기</div>
+            <div style="display: flex; gap: 6px">
+              <button style="flex: 1 1 0; height: 34px; border: 0; border-radius: 6px; background: #2F6BFF; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">확인</button>
+              <button style="flex: 1 1 0; height: 34px; border: 1px solid #353A43; border-radius: 6px; background: transparent; color: #E4E7EC; font: inherit; font-weight: 600; cursor: pointer">보류</button>
+            </div>
+          </div>
+        
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="위젯 Dock" style="align-self: center; display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: 12px; background: #17191E; border: 1px solid #2A2E36; box-shadow: 0 12px 32px rgba(0,0,0,0.5)">
+    <button aria-label="Dock 고정" aria-pressed="true" style="width: 44px; height: 44px; border: 0; border-radius: 8px; background: #22324F; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7CC8FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 10.76V6h6v4.76l2 2.24v2H7v-2Z"></path></svg>
+    </button>
+    <button aria-label="벽지" style="width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A3A9B4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-5-5L5 21"></path></svg>
+    </button>
+    <span aria-hidden="true" style="width: 1px; height: 24px; background: #2E333B; margin: 0 4px"></span>
+    
+      <button aria-label="퀵 제어" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: #1F2228; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4M3.34 19a10 10 0 1 1 17.32 0"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: #4CC3FF"></span>
+        
+      </button>
+    
+      <button aria-label="대기 중인 후원" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: #1F2228; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4l2 2M10 2h4M20 13a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: #4CC3FF"></span>
+        
+          <span style="position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 8px; background: #F04438; color: #FFFFFF; font-size: 10px; font-weight: 700; line-height: 16px">3</span>
+        
+      </button>
+    
+      <button aria-label="볼륨 제어" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5ZM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="후원 사용" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="후원 알림" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="영상 후원 제어" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3zM3 7l3-4M9 7l3-4M15 7l3-4"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="뽑기 잔여 수량" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8ZM3 8l9 5 9-5M12 13v8"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="투표" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M5 4h14v16H5z"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="크루 후원" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+      <button aria-label="투네애드" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8D94A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8v18L3 13v-2ZM7 13v5a2 2 0 0 0 4 0v-3"></path></svg>
+        <span style="width: 4px; height: 4px; border-radius: 2px; background: transparent"></span>
+        
+      </button>
+    
+  </nav>
+</div>
+</body>
+</html>
