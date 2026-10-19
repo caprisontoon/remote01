@@ -174,7 +174,7 @@ export function InfoSettings() {
     <div className="text-xs space-y-4">
       <h3 className="text-sm font-black">투네이션 크리에이터 리모컨</h3>
       <dl className="grid grid-cols-[96px_1fr] gap-y-2">
-        <dt className="text-slate-500">리모컨 버전</dt><dd>{version}</dd>
+        <dt className="text-slate-500">리모컨 버전</dt><dd>{version} <span className="text-slate-400">({import.meta.env.VITE_BUILD})</span></dd>
         <dt className="text-slate-500">로그인 방법</dt><dd>{method}</dd>
         <dt className="text-slate-500">공식 홈페이지</dt>
         <dd><button className="text-blue-600 font-bold inline-flex items-center gap-1" onClick={() => openUrl('https://toon.at')}>https://toon.at <ExternalLink size={11} /></button></dd>
