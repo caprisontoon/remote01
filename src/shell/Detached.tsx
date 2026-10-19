@@ -39,7 +39,7 @@ export function DetachedWidget({ id }: { id: WidgetId }) {
   };
 
   return (
-    <div className="h-full p-0 bg-transparent">
+    <div className="h-full p-0 bg-canvas">
       <WidgetFrame
         id={id}
         onHeaderPointerDown={startDrag}
@@ -47,7 +47,7 @@ export function DetachedWidget({ id }: { id: WidgetId }) {
         onTogglePin={() => desktop?.widgets.setPinned(id, !pinned)}
         onClose={() => desktop?.widgets.close(id)}
       >
-        {ready ? <Body /> : <div className="h-full flex items-center justify-center text-xs text-slate-400">연결 중…</div>}
+        {ready ? <Body /> : <div className="h-full flex items-center justify-center text-caption text-text-tertiary">연결 중…</div>}
       </WidgetFrame>
       <Toasts />
     </div>

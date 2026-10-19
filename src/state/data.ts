@@ -59,7 +59,7 @@ export interface RemoteData {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'light',
+  theme: 'dark', // 시안 2: 다크가 기본
   textScale: 100,
   language: 'ko',
   showBlockButton: true,

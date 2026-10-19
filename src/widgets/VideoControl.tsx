@@ -10,14 +10,14 @@ export default function VideoControl() {
     { key: 'audioOnly' as const, label: '음성만 재생', desc: '영상은 노출하지 않고 소리만 재생합니다.' },
   ];
   return (
-    <div className="p-3 grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-2">
+    <div className="p-3 grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
       {rows.map((r) => (
-        <div key={r.key} className="rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] p-3">
+        <div key={r.key} className="rounded-card bg-surface-raised border border-line p-3">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold">{r.label}</span>
+            <span className="text-body font-semibold text-text">{r.label}</span>
             <Toggle on={video[r.key]} onChange={(v) => api.setVideo({ [r.key]: v })} label={r.label} />
           </div>
-          <p className="mt-1.5 text-[10px] leading-relaxed text-slate-500">{r.desc}</p>
+          <p className="mt-1.5 text-micro leading-relaxed text-text-secondary">{r.desc}</p>
         </div>
       ))}
     </div>

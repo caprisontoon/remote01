@@ -36,12 +36,19 @@ Windows 설치 파일(NSIS)은 Wine이 필요해 리눅스에서는 만들 수 �
 | 아이디에 `multi` 포함 | 로그인 계정 선택 화면 (p32) |
 | 비밀번호 `fail` | 로그인 실패 모달 |
 
+## 디자인
+
+시안 2(투네이션 브랜드, 다크 기본). 기준은 `docs/design/toona-design-tokens.md`이고, 참고 화면은 `docs/design/mockups/main-dark.html`이다.
+색은 토큰 클래스만 쓴다(`bg-surface`, `text-text-secondary` …). Tailwind 기본 팔레트는 꺼 두었다.
+마지막 적용 결과와 남은 판단 사항은 `docs/design/HANDOFF-01-결과.md`에 있다.
+
 ## 구조
 
 ```
 src/
   types.ts              도메인 타입
   lib/donation.ts       알림 노출 정책(p39), 시간 표기(p40), 정렬
+  lib/kindColors.ts     후원 종류 색 (hex는 이 파일에만)
   lib/vote.ts           투표 필수 입력 검증(p78)
   layout/grid.ts        위젯 그리드 엔진(p18~25): 분할·교환·엣지 삽입·최소 크기
   layout/splitTree.ts   유기적 리사이즈 (Ground Control 방식: 연쇄 밀어내기·탄성·중첩 비율 유지)

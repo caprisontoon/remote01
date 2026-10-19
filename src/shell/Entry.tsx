@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { api } from '../state/app';
 import { useData } from '../lib/hooks';
 import { openUrl } from '../platform';
-import { Alert, Button } from '../components/ui';
+import { Alert, Button, fieldClass } from '../components/ui';
 import { thumb } from '../api/mockData';
 import { Logo } from './TitleBar';
 
@@ -11,7 +11,7 @@ const LOGIN_HELP = 'https://toon.at/streamer/login';
 const ID_MAX = 25;
 
 function Screen({ children }: { children: React.ReactNode }) {
-  return <div className="fixed inset-0 z-[25000] flex items-center justify-center bg-[#f2f2f7] dark:bg-black p-4 overflow-auto">{children}</div>;
+  return <div className="fixed inset-0 z-entry flex items-center justify-center bg-canvas text-text p-4 overflow-auto">{children}</div>;
 }
 
 /** 스플래시 (p30) — 로고/네이밍 확정 전 임시 */
@@ -19,9 +19,9 @@ export function Splash() {
   return (
     <Screen>
       <div className="text-center">
-        <Logo className="text-4xl text-slate-900 dark:text-white justify-center" />
-        <p className="mt-3 text-sm font-bold text-slate-500">Toonation Remote Control</p>
-        <div className="mt-8 mx-auto w-6 h-6 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" aria-label="불러오는 중" />
+        <Logo className="text-4xl justify-center" />
+        <p className="mt-3 text-body font-semibold text-text-secondary">Toonation Remote Control</p>
+        <div className="mt-8 mx-auto w-6 h-6 rounded-pill border-2 border-live border-t-transparent animate-spin" aria-label="불러오는 중" />
       </div>
     </Screen>
   );
@@ -61,43 +61,39 @@ export function Login() {
     const res = await api.loginWithSns(provider);
     if (!res.ok) setError('로그인에 실패했습니다.');
   };
-  const field = 'w-full h-11 px-4 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 text-sm';
+  const field = `${fieldClass} w-full !h-11 px-3`;
 
   return (
     <Screen>
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm rounded-card bg-surface border border-line p-6">
         <div className="text-center mb-6">
-          <Logo className="text-3xl text-slate-900 dark:text-white justify-center" />
-          <h1 className="mt-2 text-sm font-bold text-slate-500">크리에이터 리모컨 로그인</h1>
+          <Logo className="text-3xl justify-center" />
+          <h1 className="mt-2 text-body font-semibold text-text-secondary">크리에이터 리모컨 로그인</h1>
         </div>
         <form onSubmit={submit} className="space-y-2.5">
-          <div className="text-[11px] font-bold text-slate-500">투네이션 통합 계정</div>
+          <div className="text-caption font-semibold text-text-secondary">투네이션 통합 계정</div>
           <input aria-label="아이디" className={field} placeholder="아이디" maxLength={ID_MAX} value={id} onChange={(e) => setId(e.target.value.slice(0, ID_MAX))} autoComplete="username" />
           <input aria-label="비밀번호" className={field} placeholder="비밀번호" type="password" maxLength={ID_MAX} value={pw} onChange={(e) => setPw(e.target.value.slice(0, ID_MAX))} autoComplete="current-password" />
-          <div className="flex items-center gap-4 text-xs text-slate-600 dark:text-gray-300">
-            <label className="flex items-center gap-1.5"><input type="checkbox" className="accent-blue-600" checked={keep} onChange={(e) => setKeep(e.target.checked)} /> 로그인 상태 유지</label>
-            <label className="flex items-center gap-1.5"><input type="checkbox" className="accent-blue-600" checked={remember} onChange={(e) => setRemember(e.target.checked)} /> 아이디 저장</label>
+          <div className="flex items-center gap-4 text-caption text-text-secondary">
+            <label className="flex items-center gap-1.5"><input type="checkbox" className="accent-brand" checked={keep} onChange={(e) => setKeep(e.target.checked)} /> 로그인 상태 유지</label>
+            <label className="flex items-center gap-1.5"><input type="checkbox" className="accent-brand" checked={remember} onChange={(e) => setRemember(e.target.checked)} /> 아이디 저장</label>
           </div>
-          <Button type="submit" className="w-full h-11 text-sm" disabled={busy}>{busy ? '로그인 중…' : '로그인'}</Button>
+          <Button type="submit" size="lg" className="w-full" disabled={busy}>{busy ? '로그인 중…' : '로그인'}</Button>
         </form>
-        <div className="mt-3 flex justify-center gap-3 text-[11px] text-slate-500">
+        <div className="mt-3 flex justify-center gap-3 text-caption text-text-secondary">
           {['아이디 찾기', '비밀번호 찾기', '회원가입'].map((l) => (
             <button key={l} onClick={() => openUrl(LOGIN_HELP)} className="hover:underline">{l}</button>
           ))}
         </div>
         <div className="mt-6">
-          <div className="text-center text-[11px] font-bold text-slate-500 mb-2">SNS 계정으로 로그인</div>
+          <div className="text-center text-caption font-semibold text-text-secondary mb-2">SNS 계정으로 로그인</div>
           <div className="grid grid-cols-4 gap-2">
-            {[
-              ['유튜브', 'bg-red-600'],
-              ['치지직', 'bg-emerald-500'],
-              ['트위치', 'bg-violet-600'],
-              ['카카오', 'bg-yellow-400 text-black'],
-            ].map(([name, cls]) => (
-              <button key={name} onClick={() => sns(name)} className={`h-10 rounded-xl text-[11px] font-bold text-white ${cls}`}>{name}</button>
+            {/* 플랫폼 고유색·로고는 토큰에 없어 보조 버튼으로 둔다 (HANDOFF-01 결과 문서 참고) */}
+            {['유튜브', '치지직', '트위치', '카카오'].map((name) => (
+              <Button key={name} variant="secondary" size="sm" className="!px-0" onClick={() => sns(name)}>{name}</Button>
             ))}
           </div>
-          <p className="mt-3 text-[10px] text-slate-400 text-center">※ 일부 플랫폼 로그인 기능의 "이 컴퓨터를 기억합니다" 기능은 작동되지 않습니다.</p>
+          <p className="mt-3 text-micro text-text-tertiary text-center">※ 일부 플랫폼 로그인 기능의 "이 컴퓨터를 기억합니다" 기능은 작동되지 않습니다.</p>
         </div>
       </div>
       {error && <Alert title="로그인 실패" message={error} onClose={() => setError(null)} />}
@@ -111,13 +107,13 @@ export function Accounts() {
   return (
     <Screen>
       <div className="w-full max-w-sm">
-        <h1 className="text-center text-sm font-black mb-4">로그인 계정 선택</h1>
+        <h1 className="text-center text-title-widget mb-4">로그인 계정 선택</h1>
         <ul className="space-y-2">
           {accounts.map((a) => (
             <li key={a.id}>
-              <button onClick={() => api.selectAccount(a.id)} className="w-full h-14 px-4 rounded-xl bg-[rgba(120,120,128,0.12)] dark:bg-[rgba(120,120,128,0.24)] outline-none focus:ring-2 focus:ring-blue-600/40 flex items-center gap-3 hover:border-blue-400">
-                <span className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 font-black flex items-center justify-center">{a.nickname[0]}</span>
-                <span className="text-sm font-bold">{a.nickname}</span>
+              <button onClick={() => api.selectAccount(a.id)} className="w-full h-14 px-4 rounded-card bg-surface border border-line flex items-center gap-3 hover:border-live hover:bg-surface-raised">
+                <span className="w-9 h-9 rounded-pill bg-brand-tint text-link font-bold flex items-center justify-center">{a.nickname[0]}</span>
+                <span className="text-body font-semibold">{a.nickname}</span>
               </button>
             </li>
           ))}
@@ -134,21 +130,21 @@ export function AdPopup() {
   const [hideToday, setHideToday] = useState(false);
   const b = banners[i];
   return (
-    <div className="fixed inset-0 z-[24000] flex items-center justify-center bg-black/50 p-4">
-      <div className="pop w-full max-w-sm rounded-2xl overflow-hidden bg-white dark:bg-[#1c1c1e] shadow-2xl">
+    <div className="fixed inset-0 z-modal flex items-center justify-center bg-black/50 p-4">
+      <div className="pop w-full max-w-sm rounded-card overflow-hidden bg-surface border border-line shadow-float text-text">
         <div className="relative">
           <button className="block w-full" onClick={() => openUrl(b.url)} aria-label={`${b.title} 새 창`}>
             <img src={b.image} alt={b.title} className="w-full aspect-video object-cover" />
           </button>
-          <button aria-label="이전" onClick={() => setI((i + banners.length - 1) % banners.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center"><ChevronLeft size={18} /></button>
-          <button aria-label="다음" onClick={() => setI((i + 1) % banners.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center"><ChevronRight size={18} /></button>
+          <button aria-label="이전" onClick={() => setI((i + banners.length - 1) % banners.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-pill bg-black/40 text-white flex items-center justify-center"><ChevronLeft size={18} /></button>
+          <button aria-label="다음" onClick={() => setI((i + 1) % banners.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-pill bg-black/40 text-white flex items-center justify-center"><ChevronRight size={18} /></button>
           <div className="absolute bottom-2 inset-x-0 flex justify-center gap-1.5">
-            {banners.map((_, n) => <span key={n} className={`w-1.5 h-1.5 rounded-full ${n === i ? 'bg-white' : 'bg-white/40'}`} />)}
+            {banners.map((_, n) => <span key={n} className={`w-1.5 h-1.5 rounded-pill ${n === i ? 'bg-white' : 'bg-white/40'}`} />)}
           </div>
         </div>
-        <div className="flex items-center justify-between px-4 h-11 text-xs">
-          <label className="flex items-center gap-1.5 text-slate-600 dark:text-gray-300"><input type="checkbox" className="accent-blue-600" checked={hideToday} onChange={(e) => setHideToday(e.target.checked)} /> 오늘 하루 열지 않음</label>
-          <button className="font-bold" onClick={() => api.dismissAd(hideToday)}>닫기</button>
+        <div className="flex items-center justify-between px-4 h-11 text-caption border-t border-line">
+          <label className="flex items-center gap-1.5 text-text-secondary"><input type="checkbox" className="accent-brand" checked={hideToday} onChange={(e) => setHideToday(e.target.checked)} /> 오늘 하루 열지 않음</label>
+          <button className="font-semibold text-text hover:text-link" onClick={() => api.dismissAd(hideToday)}>닫기</button>
         </div>
       </div>
     </div>
@@ -160,8 +156,8 @@ export function Maintenance() {
   return (
     <Screen>
       <div className="text-center">
-        <Wrench size={40} className="mx-auto text-slate-400" />
-        <p className="mt-4 text-sm font-bold">현재 점검 중입니다.<br />잠시 기다려 주세요.</p>
+        <Wrench size={40} className="mx-auto text-text-tertiary" />
+        <p className="mt-4 text-[0.875rem] font-semibold">현재 점검 중입니다.<br />잠시 기다려 주세요.</p>
         <Button className="mt-6" onClick={api.retryMaintenance}><span className="inline-flex items-center gap-1"><RefreshCw size={13} /> 새로 고침</span></Button>
       </div>
     </Screen>
@@ -175,15 +171,15 @@ export function Update() {
   return (
     <Screen>
       <div className="w-full max-w-xs text-center">
-        <Download size={36} className="mx-auto text-blue-600" />
-        <p className="mt-4 text-sm font-bold">버전이 업데이트 되었습니다.</p>
-        <p className="text-xs text-slate-500 mt-1">Toonation Remote V{version}</p>
+        <Download size={36} className="mx-auto text-link" />
+        <p className="mt-4 text-[0.875rem] font-semibold">버전이 업데이트 되었습니다.</p>
+        <p className="text-caption text-text-secondary mt-1">Toonation Remote V{version}</p>
         {progress === undefined ? (
           <Button className="mt-6 w-full" onClick={api.installUpdate}>지금 설치</Button>
         ) : (
           <div className="mt-6">
-            <div className="h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden"><div className="h-full bg-blue-600 transition-all" style={{ width: `${progress}%` }} /></div>
-            <p className="mt-2 text-xs text-slate-500">업데이트 파일을 다운 받는 중입니다.</p>
+            <div className="h-2 rounded-pill bg-surface-raised border border-line overflow-hidden"><div className="h-full bg-brand transition-all" style={{ width: `${progress}%` }} /></div>
+            <p className="mt-2 text-caption text-text-secondary">업데이트 파일을 다운 받는 중입니다.</p>
           </div>
         )}
       </div>
@@ -196,8 +192,8 @@ export function Expired() {
   return (
     <Screen>
       <div className="w-full max-w-xs text-center">
-        <p className="text-sm font-bold">다시 로그인 해주세요.</p>
-        <p className="mt-2 text-xs text-slate-500">로그인 유지 시간이 만료되어 자동으로 로그아웃 되었습니다.</p>
+        <p className="text-[0.875rem] font-semibold">다시 로그인 해주세요.</p>
+        <p className="mt-2 text-caption text-text-secondary">로그인 유지 시간이 만료되어 자동으로 로그아웃 되었습니다.</p>
         <Button className="mt-6 w-full" onClick={api.logout}>로그인</Button>
       </div>
     </Screen>

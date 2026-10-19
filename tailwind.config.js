@@ -1,43 +1,69 @@
 /** @type {import('tailwindcss').Config} */
-// 색·모서리 값은 docs/design/ios26-tokens.md (Apple iOS/iPadOS 26 UI Kit 실측값) 기준.
-// 기존 클래스(blue-600, slate-500 …)를 그대로 쓰면서 iOS 시스템 컬러가 나오도록 팔레트를 덮어쓴다.
+// 디자인 토큰: docs/design/toona-design-tokens.md (시안 2 · 투네이션 브랜드).
+// 색은 src/index.css의 CSS 변수(:root = 라이트, .dark = 다크)로 정의하고 여기서는 토큰 이름만 연결한다.
+// 기본 팔레트(slate, blue …)는 쓰지 않는다 — 화면에서 색이 필요하면 반드시 아래 토큰을 쓴다.
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
-    extend: {
-      colors: {
-        // Accents/Blue #0088FF
-        blue: { 50: '#e8f4ff', 100: '#d1e9ff', 200: '#a3d3ff', 300: '#6bb9ff', 400: '#3aa2ff', 500: '#1a94ff', 600: '#0088ff', 700: '#0077e0', 800: '#005fb3', 900: '#004785' },
-        // Accents/Red #FF383C
-        red: { 50: '#fff0f0', 100: '#ffe0e0', 200: '#ffc2c3', 300: '#ff9496', 400: '#ff5c5f', 500: '#ff383c', 600: '#e62a2e', 700: '#c21f23' },
-        // Accents/Green #34C759
-        green: { 50: '#ebf9ef', 100: '#d6f4de', 500: '#34c759', 600: '#2fb350' },
-        emerald: { 500: '#34c759', 600: '#2fb350' },
-        // Accents/Orange #FF8D28
-        amber: { 50: '#fff4e9', 100: '#ffe8d3', 200: '#ffd1a8', 400: '#ffa452', 500: '#ff8d28', 800: '#8a4300' },
-        orange: { 500: '#ff8d28' },
-        // Accents/Purple #CB30E0, Indigo #6155F5
-        violet: { 100: '#f7e3fb', 400: '#d964ea', 500: '#cb30e0', 600: '#cb30e0' },
-        purple: { 500: '#cb30e0', 600: '#cb30e0' },
-        indigo: { 500: '#6155f5', 600: '#6155f5' },
-        // Grays (Gray ~ Gray 6)
-        slate: { 50: '#f7f7fa', 100: '#f2f2f7', 200: '#e5e5ea', 300: '#d1d1d6', 400: '#aeaeb2', 500: '#8e8e93', 600: '#636366', 700: '#48484a', 800: '#2c2c2e', 900: '#1c1c1e' },
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      white: '#ffffff',
+      black: '#000000',
+      canvas: v('canvas'),
+      surface: { DEFAULT: v('surface'), raised: v('surface-raised'), sunken: v('surface-sunken') },
+      line: { DEFAULT: v('line'), subtle: v('line-subtle'), strong: v('line-strong'), control: v('line-control') },
+      text: {
+        DEFAULT: v('text'),
+        body: v('text-body'),
+        secondary: v('text-secondary'),
+        tertiary: v('text-tertiary'),
+        'on-brand': v('text-on-brand'),
+        'on-warning': v('text-on-warning'),
       },
+      link: v('link'),
+      brand: { DEFAULT: v('brand'), hover: v('brand-hover'), tint: v('brand-tint'), 'tint-line': v('brand-tint-line') },
+      live: v('live'),
+      warning: v('warning'),
+      danger: v('danger'),
+    },
+    extend: {
       borderRadius: {
-        card: '22px',
-        field: '26px',
-        alert: '34px',
-        sheet: '38px',
+        widget: '12px',
+        card: '10px',
+        control: '6px',
+        'dock-item': '8px',
+        tag: '4px',
+        pill: '9999px',
+      },
+      // 겹침 순서: 캔버스 < Dock < 상단 바 < 팝오버 < 옆 패널·시트 < 모달 < 알림창 < 진입 화면 < 토스트
+      zIndex: {
+        dock: '9999',
+        titlebar: '10000',
+        popover: '12000',
+        sheet: '15000',
+        modal: '20000',
+        alert: '21000',
+        entry: '25000',
+        toast: '30000',
       },
       boxShadow: {
-        glass: '0 8px 40px rgba(0,0,0,0.12)',
-        sheet: '0 15px 75px rgba(0,0,0,0.18)',
-        card: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04)',
+        float: 'var(--shadow-float)',
       },
       fontFamily: {
-        // Apple 기기에서는 시스템 글꼴(SF)이, Windows에서는 Pretendard/맑은 고딕이 쓰인다. SF 폰트 파일은 포함하지 않는다.
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', 'sans-serif'],
+        sans: ['"Pretendard Variable"', 'Pretendard', '"Malgun Gothic"', '"Apple SD Gothic Neo"', 'sans-serif'],
+        num: ['"IBM Plex Mono"', '"Pretendard Variable"', 'Pretendard', 'monospace'],
+      },
+      // 글자 크기는 rem — 설정의 텍스트 크기(100/125/150%)를 html 글자 크기 하나로 적용한다 (16px 기준).
+      fontSize: {
+        'title-widget': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '700' }],
+        body: ['0.8125rem', { lineHeight: '1.25rem' }],
+        caption: ['0.75rem', { lineHeight: '1rem', fontWeight: '500' }],
+        micro: ['0.6875rem', { lineHeight: '1rem' }],
+        badge: ['0.625rem', { lineHeight: '1rem', fontWeight: '700' }],
       },
     },
   },

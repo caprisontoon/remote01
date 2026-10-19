@@ -27,11 +27,11 @@ export default function Alerts() {
     <div className="p-3 space-y-3">
       {GROUPS.map((g) => (
         <section key={g.title}>
-          <h3 className="text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">{g.title}</h3>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,1fr))] gap-2">
+          <h3 className="text-caption font-semibold text-text-secondary mb-1.5">{g.title}</h3>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-2">
             {g.items.map((i) => (
-              <div key={i.key} className="rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] px-2.5 py-2 flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold">{i.label}</span>
+              <div key={i.key} className="rounded-card bg-surface-raised border border-line px-2.5 py-2 flex items-center justify-between gap-2">
+                <span className="text-caption font-semibold text-text truncate">{i.label}</span>
                 <Toggle size="sm" on={alerts[i.key]} onChange={(v) => api.setAlert(i.key, v)} label={i.label} />
               </div>
             ))}

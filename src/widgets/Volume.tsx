@@ -18,10 +18,10 @@ export default function Volume() {
   return (
     <div className="p-3 space-y-2.5">
       {ITEMS.map((i) => (
-        <label key={i.key} className="grid grid-cols-[56px_1fr_40px] items-center gap-2 text-xs">
-          <span className="font-semibold">{i.label}</span>
-          <input type="range" min={0} max={100} value={volume[i.key]} onChange={(e) => api.setVolume(i.key, Number(e.target.value))} className="accent-blue-600 w-full" aria-label={`${i.label} 볼륨`} />
-          <span className="text-right tabular-nums text-slate-500">{volume[i.key]}%</span>
+        <label key={i.key} className="grid grid-cols-[minmax(3.5rem,auto)_1fr_2.75rem] items-center gap-2 text-body">
+          <span className="font-semibold text-text truncate">{i.label}</span>
+          <input type="range" min={0} max={100} value={volume[i.key]} onChange={(e) => api.setVolume(i.key, Number(e.target.value))} className="accent-brand w-full" aria-label={`${i.label} 볼륨`} />
+          <span className="text-right font-num text-caption text-text-secondary">{volume[i.key]}%</span>
         </label>
       ))}
     </div>

@@ -1,12 +1,12 @@
-import { ArrowUp, ChevronDown, ChevronUp, ExternalLink, Gamepad2, Gift, Mic, MessageSquareText, PieChart, PlayCircle, ShieldCheck, Sparkles, Star, Box, Brush, Vote, Radio } from 'lucide-react';
+import { ArrowUp, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { KIND_LABEL, contentText, formatCash, relativeTime, sortDonations, tabOf } from '../../lib/donation';
+import { contentText, relativeTime, sortDonations, tabOf } from '../../lib/donation';
 import { useData, useNow, useSettings } from '../../lib/hooks';
 import { useT } from '../../lib/i18n';
 import { openUrl } from '../../platform';
-import type { Donation, DonationKind } from '../../types';
-import { Empty } from '../../components/ui';
-import { ResizableTh, RowButtons, ThumbPreview } from './parts';
+import type { Donation } from '../../types';
+import { Cash, Empty } from '../../components/ui';
+import { KindDot, ResizableTh, RowButtons, ThumbPreview } from './parts';
 
 type Hover = { d: Donation; x: number; y: number; mode: 'text' | 'thumb' } | null;
 
@@ -60,20 +60,21 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
     <div className="relative h-full" onMouseLeave={() => setHover(null)}>
       <div ref={scroller} onScroll={measure} className="h-full overflow-auto">
         {compact ? (
-          <ul className="divide-y divide-black/[0.08] dark:divide-white/10">
+          <ul>
             {list.map((d) => (
               <Card key={d.id} d={d} now={now} blocked={blocked.includes(d.donorId)} playing={playingIds.includes(d.id)} open={expanded === d.id} onToggle={() => setExpanded((v) => (v === d.id ? null : d.id))} />
             ))}
           </ul>
         ) : (
-          <table className="w-full table-fixed border-collapse text-[11px]">
-            <thead className="sticky top-0 z-10 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur text-black/50 dark:text-white/55 border-b border-black/10 dark:border-white/15">
+          <table className="w-full table-fixed border-collapse text-body">
+            <thead className="sticky top-0 z-10 bg-surface-sunken">
               <tr>
-                {tab === 'all' && <ResizableTh col="all.kind" width={76}>{t('후원')}</ResizableTh>}
-                <ResizableTh col={`${tab}.nick`} width={170}>{t('닉네임(ID)')}</ResizableTh>
-                <ResizableTh col={`${tab}.cash`} width={86} className="text-center">{tab === 'game' ? t('후원 금액(원)') : t('후원 캐시')}</ResizableTh>
+                {/* 종류 칸은 최소 120px — "치지직 구독", "유튜브 슈퍼챗", "트위치 레이드"가 잘리지 않게 */}
+                {tab === 'all' && <ResizableTh col="all.kind" width={128} min={120}>{t('후원')}</ResizableTh>}
+                <ResizableTh col={`${tab}.nick`} width={200}>{t('닉네임(ID)')}</ResizableTh>
+                <ResizableTh col={`${tab}.cash`} width={96} className="text-right">{tab === 'game' ? t('후원 금액(원)') : t('후원 캐시')}</ResizableTh>
                 <ResizableTh col={`${tab}.content`}>{t('내용')}</ResizableTh>
-                <th className="w-[112px] py-2 px-2.5 font-bold text-center">{t('일시')}</th>
+                <th className="w-[7.5rem] h-8 px-[14px] text-caption text-text-secondary text-right whitespace-nowrap">{t('일시')}</th>
               </tr>
             </thead>
             <tbody>
@@ -84,30 +85,37 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
                   <tr
                     key={d.id}
                     data-id={d.id}
-                    className={`group border-b border-black/[0.08] dark:border-white/10 transition-all hover:relative hover:z-[1] hover:shadow-[0_4px_14px_rgba(15,23,42,0.12)] hover:-translate-y-px ${
-                      isBlocked ? 'bg-slate-100 text-slate-400 dark:bg-white/[0.03] dark:text-gray-500' : playing ? 'playing-row bg-red-50 dark:bg-red-500/10' : 'bg-white dark:bg-transparent hover:bg-slate-50 dark:hover:bg-white/5'
+                    className={`group h-[46px] border-b border-line-subtle ${
+                      isBlocked ? 'text-text-tertiary' : playing ? 'playing-row' : 'hover:bg-surface-sunken'
                     }`}
                   >
-                    {tab === 'all' && <td className="py-2.5 px-2.5 font-bold truncate">{KIND_LABEL[d.kind]}</td>}
-                    <td className="py-2 px-2.5">
-                      <div className="font-bold truncate text-black dark:text-white">{d.nickname}</div>
-                      <div className="text-[10px] text-slate-400 truncate">({d.account})</div>
+                    {tab === 'all' && (
+                      <td className="pl-[14px] pr-2.5">
+                        <KindDot kind={d.kind} className={`font-semibold ${isBlocked ? '' : 'text-text'}`} />
+                      </td>
+                    )}
+                    <td className={`px-2.5 ${tab === 'all' ? '' : 'pl-[14px]'}`}>
+                      {/* 닉네임과 아이디는 한 줄에 — 좁아지면 아이디부터 말줄임 */}
+                      <div className="flex items-baseline gap-1.5 min-w-0">
+                        <span className={`max-w-full truncate shrink-0 font-semibold ${isBlocked ? '' : 'text-text'}`}>{d.nickname}</span>
+                        <span className="min-w-0 truncate text-micro text-text-tertiary">{d.account}</span>
+                      </div>
                     </td>
-                    <td className="py-2.5 px-2.5 text-center font-black tabular-nums">{formatCash(d.cash)}</td>
-                    <td className="py-2.5 px-2.5">
-                      <div className="flex items-center gap-1.5 min-w-0">
+                    <td className={`px-2.5 text-right ${isBlocked ? '' : 'text-text'}`}><Cash value={d.cash} /></td>
+                    <td className={`px-2.5 ${isBlocked ? '' : 'text-text-body'}`}>
+                      <div className="flex items-center gap-2 min-w-0">
                         {d.thumbnail && (
-                          <img src={d.thumbnail} alt="썸네일" onMouseEnter={(e) => onEnterContent(e, d, 'thumb')} className="w-10 h-6 rounded object-cover shrink-0 cursor-pointer" />
+                          <img src={d.thumbnail} alt="썸네일" onMouseEnter={(e) => onEnterContent(e, d, 'thumb')} className="w-10 h-6 rounded-tag object-cover shrink-0 cursor-pointer" />
                         )}
                         <span className="truncate" onMouseEnter={(e) => !d.thumbnail && onEnterContent(e, d, 'text')}>
-                          {d.kind === 'video' && <span className="text-red-500 font-bold mr-1">[{d.platform}]</span>}
+                          {d.kind === 'video' && <span className="mr-1">[{d.platform}]</span>}
                           {d.kind === 'video' ? d.title : contentText(d)}
                         </span>
                       </div>
                     </td>
-                    <td className="py-1 px-1.5 text-center">
-                      <div className={`${isBlocked ? 'hidden' : 'group-hover:hidden'} text-slate-400`}>{relativeTime(d.createdAt, now)}</div>
-                      <div className={`${isBlocked ? 'flex' : 'hidden group-hover:flex'} justify-center`}>
+                    <td className="pl-1.5 pr-[14px] text-right">
+                      <div className={`${isBlocked ? 'hidden' : 'group-hover:hidden'} text-caption text-text-tertiary`}>{relativeTime(d.createdAt, now)}</div>
+                      <div className={`${isBlocked ? 'flex' : 'hidden group-hover:flex'} justify-end`}>
                         <RowButtons d={d} blocked={isBlocked} />
                       </div>
                     </td>
@@ -124,19 +132,19 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
           {hover.mode === 'thumb' ? (
             <ThumbPreview d={hover.d} />
           ) : (
-            <div className="max-w-[320px] rounded-lg bg-slate-900 text-white text-[11px] leading-relaxed px-3 py-2 shadow-xl whitespace-pre-wrap select-text">{contentText(hover.d)}</div>
+            <div className="max-w-[320px] rounded-control bg-surface-raised border border-line-strong text-text text-caption leading-relaxed px-3 py-2 shadow-float whitespace-pre-wrap select-text">{contentText(hover.d)}</div>
           )}
         </div>
       )}
 
       <div className="absolute right-3 bottom-3 flex flex-col items-end gap-2 z-20">
         {showTop && (
-          <button onClick={() => scroller.current?.scrollTo({ top: 0, behavior: 'smooth' })} className="h-8 px-3 rounded-full glass text-[11px] font-bold flex items-center gap-1">
+          <button onClick={() => scroller.current?.scrollTo({ top: 0, behavior: 'smooth' })} className="h-[30px] px-3 rounded-control bg-surface-raised border border-line-strong text-text shadow-float text-caption font-semibold flex items-center gap-1">
             <ArrowUp size={13} /> Top
           </button>
         )}
         {playingBelow && (
-          <button onClick={scrollToPlaying} className="h-8 px-3 rounded-full bg-red-500 text-white shadow-lg text-[11px] font-bold flex items-center gap-1">
+          <button onClick={scrollToPlaying} className="h-[30px] px-3 rounded-control bg-brand text-text-on-brand shadow-float text-caption font-semibold flex items-center gap-1">
             재생 중인 후원 <ChevronDown size={13} />
           </button>
         )}
@@ -145,69 +153,41 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
   );
 }
 
-const ICONS: Partial<Record<DonationKind, [typeof MessageSquareText, string]>> = {
-  text: [MessageSquareText, 'bg-blue-500'],
-  mini: [MessageSquareText, 'bg-sky-500'],
-  signature: [Sparkles, 'bg-pink-500'],
-  voice: [Mic, 'bg-emerald-500'],
-  video: [PlayCircle, 'bg-indigo-600'],
-  roulette: [PieChart, 'bg-amber-500'],
-  wishlist: [Star, 'bg-violet-400'],
-  vote: [Vote, 'bg-teal-500'],
-  quest: [ShieldCheck, 'bg-purple-500'],
-  drawing: [Brush, 'bg-rose-400'],
-  gift: [Gift, 'bg-fuchsia-500'],
-  luckybox: [Box, 'bg-blue-600'],
-  play: [Gamepad2, 'bg-lime-600'],
-  game: [Gamepad2, 'bg-orange-500'],
-};
-
-export function KindIcon({ kind }: { kind: DonationKind }) {
-  const [Icon, bg] = ICONS[kind] ?? [Radio, 'bg-slate-500'];
-  return (
-    <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center shrink-0`} title={KIND_LABEL[kind]}>
-      <Icon size={18} className="text-white" />
-    </div>
-  );
-}
-
 /** 카드형 행 (반응형 UI). 클릭하면 자세히 보기가 열리고, 다른 행을 열면 기존 행은 닫힌다 (p50 ①). */
 function Card({ d, now, blocked, playing, open, onToggle }: { d: Donation; now: number; blocked: boolean; playing: boolean; open: boolean; onToggle: () => void }) {
   const t = useT();
   return (
-    <li data-id={d.id} className={`${blocked ? 'bg-slate-100 dark:bg-white/[0.03] opacity-70' : playing ? 'playing-row bg-red-50 dark:bg-red-500/10' : ''}`}>
-      <button onClick={onToggle} className="w-full flex gap-3 p-3 text-left">
-        <KindIcon kind={d.kind} />
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between gap-2">
-            <div className="min-w-0">
-              <div className="font-black text-[13px] text-slate-900 dark:text-white truncate">{d.nickname}</div>
-              <div className="text-[10px] text-slate-400 truncate">({d.account})</div>
-            </div>
-            <div className="text-right shrink-0">
-              <div className="text-blue-600 dark:text-blue-400 font-black text-[13px]">{formatCash(d.cash)}</div>
-              <div className="text-[10px] text-slate-400 flex items-center justify-end gap-0.5">{relativeTime(d.createdAt, now)} {open ? <ChevronUp size={11} /> : null}</div>
-            </div>
+    <li data-id={d.id} className={`border-b border-line-subtle ${blocked ? 'text-text-tertiary opacity-70' : playing ? 'playing-row' : ''}`}>
+      <button onClick={onToggle} className="w-full px-[14px] py-2.5 text-left hover:bg-surface-sunken">
+        <div className="flex items-center justify-between gap-2">
+          <KindDot kind={d.kind} className="text-caption text-text-secondary" />
+          <span className="shrink-0 text-caption text-text-tertiary flex items-center gap-0.5">{relativeTime(d.createdAt, now)} {open ? <ChevronUp size={12} /> : null}</span>
+        </div>
+        <div className="mt-1 flex items-baseline justify-between gap-2">
+          <div className="flex items-baseline gap-1.5 min-w-0">
+            <span className="max-w-full truncate shrink-0 font-semibold text-text">{d.nickname}</span>
+            <span className="min-w-0 truncate text-micro text-text-tertiary">{d.account}</span>
           </div>
-          <div className={`mt-1 text-[12px] text-slate-600 dark:text-gray-300 ${open ? 'whitespace-pre-wrap break-words' : 'line-clamp-2'}`}>
-            {d.kind === 'video' && <span className="text-red-500 font-bold mr-1">[{d.platform}]</span>}
-            {d.kind === 'video' ? d.title : contentText(d)}
-          </div>
+          <Cash value={d.cash} className="shrink-0 text-text" />
+        </div>
+        <div className={`mt-1 text-text-body ${open ? 'whitespace-pre-wrap break-words' : 'line-clamp-2'}`}>
+          {d.kind === 'video' && <span className="mr-1">[{d.platform}]</span>}
+          {d.kind === 'video' ? d.title : contentText(d)}
         </div>
       </button>
       {open && (
-        <div className="px-3 pb-3 pl-[60px] space-y-2">
+        <div className="px-[14px] pb-3 space-y-2">
           {d.kind === 'video' && d.thumbnail && (
-            <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-white/10">
+            <div className="rounded-card overflow-hidden border border-line">
               <img src={d.thumbnail} alt="영상의 썸네일 이미지" className="w-full aspect-video object-cover" />
-              <div className="p-2 text-[11px] font-bold">{d.title}</div>
-              <button className="w-full h-8 bg-slate-800 text-white text-[11px] font-bold flex items-center justify-center gap-1" onClick={() => d.url && openUrl(d.url)}>
+              <div className="p-2 text-caption font-semibold text-text">{d.title}</div>
+              <button className="w-full h-8 border-t border-line text-caption font-semibold text-link flex items-center justify-center gap-1 hover:bg-surface-raised" onClick={() => d.url && openUrl(d.url)}>
                 <ExternalLink size={12} /> 영상 보러 가기
               </button>
             </div>
           )}
           <Actions>{<RowButtons d={d} blocked={blocked} compact />}</Actions>
-          {blocked && <p className="text-[10px] text-slate-400">{t('차단')}된 후원자입니다.</p>}
+          {blocked && <p className="text-micro text-text-tertiary">{t('차단')}된 후원자입니다.</p>}
         </div>
       )}
     </li>

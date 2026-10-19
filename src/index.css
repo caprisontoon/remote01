@@ -2,6 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * 디자인 토큰 (docs/design/toona-design-tokens.md §1·§4).
+ * 값은 "R G B" 형식 — tailwind.config.js가 rgb(var(--x) / 투명도)로 감싼다.
+ * :root = 라이트, .dark = 다크(기본). 테마 전환은 변수 값만 바뀐다.
+ */
+:root {
+  --canvas: 242 244 247; /* #F2F4F7 */
+  --surface: 255 255 255; /* #FFFFFF */
+  --surface-raised: 247 248 250; /* #F7F8FA */
+  --surface-sunken: 247 248 250; /* #F7F8FA */
+  --brand-tint: 234 241 255; /* #EAF1FF */
+  --brand-tint-line: 201 218 255; /* #C9DAFF */
+
+  --line: 228 231 236; /* #E4E7EC */
+  --line-subtle: 238 240 243; /* #EEF0F3 */
+  --line-strong: 208 213 221; /* #D0D5DD */
+  --line-control: 208 213 221; /* #D0D5DD */
+
+  --text: 16 24 40; /* #101828 */
+  --text-body: 52 64 84; /* #344054 */
+  --text-secondary: 71 84 103; /* #475467 */
+  --text-tertiary: 102 112 133; /* #667085 */
+  --text-on-brand: 255 255 255; /* #FFFFFF */
+  --link: 30 91 230; /* #1E5BE6 */
+
+  --brand: 47 107 255; /* #2F6BFF */
+  --brand-hover: 30 91 230; /* #1E5BE6 */
+  --live: 11 165 236; /* #0BA5EC */
+  --warning: 247 144 9; /* #F79009 */
+  --text-on-warning: 26 18 5; /* #1A1205 */
+  --danger: 217 45 32; /* #D92D20 */
+
+  --shadow-float: 0 12px 32px rgba(16, 24, 40, 0.14);
+  color-scheme: light;
+}
+
+.dark {
+  --canvas: 14 15 18; /* #0E0F12 */
+  --surface: 23 25 30; /* #17191E */
+  --surface-raised: 31 34 40; /* #1F2228 */
+  --surface-sunken: 27 30 35; /* #1B1E23 */
+  --brand-tint: 26 36 64; /* #1A2440 */
+  --brand-tint-line: 38 53 89; /* #263559 */
+
+  --line: 38 42 49; /* #262A31 */
+  --line-subtle: 34 37 43; /* #22252B */
+  --line-strong: 46 51 59; /* #2E333B */
+  --line-control: 53 58 67; /* #353A43 */
+
+  --text: 242 244 247; /* #F2F4F7 */
+  --text-body: 208 213 221; /* #D0D5DD */
+  --text-secondary: 163 169 180; /* #A3A9B4 */
+  --text-tertiary: 141 148 160; /* #8D94A0 */
+  --text-on-brand: 255 255 255; /* #FFFFFF */
+  --link: 124 200 255; /* #7CC8FF */
+
+  --brand: 47 107 255; /* #2F6BFF */
+  --brand-hover: 74 128 255; /* #4A80FF */
+  --live: 76 195 255; /* #4CC3FF */
+  --warning: 255 181 71; /* #FFB547 */
+  --text-on-warning: 26 18 5; /* #1A1205 */
+  --danger: 240 68 56; /* #F04438 */
+
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
 html,
 body,
 #root {
@@ -13,70 +80,13 @@ body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   user-select: none;
-  letter-spacing: -0.01em;
+  @apply bg-canvas font-sans text-body text-text;
 }
 
-/*
- * Liquid Glass (docs/design/ios26-tokens.md §2)
- * 키트: 흰 65% 채우기 + 0 8 40 그림자 + Glass(frost 7, light 0.8). 웹에서는 블러 + 안쪽 하이라이트로 근사한다.
- */
-.glass {
-  background: rgba(255, 255, 255, 0.65);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  backdrop-filter: blur(14px) saturate(180%);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
-}
-.dark .glass {
-  background: rgba(44, 44, 48, 0.62);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
-}
-/* 알림창: frost 12, 조금 더 불투명 */
-.glass-strong {
-  background: rgba(245, 245, 245, 0.82);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-.dark .glass-strong {
-  background: rgba(38, 38, 40, 0.86);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* 세그먼트 컨트롤 (높이 32, Fills/Tertiary 바탕, 선택 칸 흰색) */
-.segmented {
-  display: flex;
-  padding: 2px;
-  border-radius: 9999px;
-  background: rgba(118, 118, 128, 0.12);
-}
-.dark .segmented {
-  background: rgba(118, 118, 128, 0.24);
-}
-.segmented > button {
-  flex: 1;
-  border-radius: 9999px;
-  font-weight: 500;
-  transition: background-color 0.15s, box-shadow 0.15s;
-}
-.segmented > button[aria-selected='true'],
-.segmented > button[aria-pressed='true'] {
-  background: #fff;
-  font-weight: 600;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.04);
-}
-.dark .segmented > button[aria-selected='true'],
-.dark .segmented > button[aria-pressed='true'] {
-  background: #636366;
+/* 키보드 포커스: 2px live 바깥선 (§5 포커스) */
+:focus-visible {
+  outline: 2px solid rgb(var(--live));
+  outline-offset: 2px;
 }
 
 input,
@@ -99,7 +109,7 @@ textarea,
   height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.35);
+  background: rgb(var(--line-control));
   border-radius: 10px;
 }
 ::-webkit-scrollbar-track {
@@ -129,16 +139,8 @@ textarea,
   animation: toona-pop 0.15s ease-out;
 }
 
-/* 재생 중인 후원 강조 (p43) */
-@keyframes toona-playing {
-  0%,
-  100% {
-    box-shadow: inset 4px 0 0 #ef4444;
-  }
-  50% {
-    box-shadow: inset 4px 0 0 #fca5a5;
-  }
-}
+/* 재생 중인 후원 행 (p43): brand-tint 바탕 + 왼쪽 3px live 막대 */
 .playing-row {
-  animation: toona-playing 1.2s ease-in-out infinite;
+  background: rgb(var(--brand-tint));
+  box-shadow: inset 3px 0 0 rgb(var(--live));
 }

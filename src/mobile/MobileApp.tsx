@@ -1,11 +1,11 @@
-import { ArrowLeft, ChevronRight, Command, Image, Pause, Settings, SkipForward, Volume2, X } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Command, Image, Pause, Settings, SkipForward, X } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { api } from '../state/app';
 import { useData } from '../lib/hooks';
 import { useT } from '../lib/i18n';
 import { openUrl } from '../platform';
 import type { WidgetId } from '../types';
-import { Badge, Confirm } from '../components/ui';
+import { Badge, Confirm, IconButton } from '../components/ui';
 import { WidgetErrorBoundary } from '../components/ErrorBoundary';
 import { AlarmButton, Logo } from '../shell/TitleBar';
 import { BasicSettings, InfoSettings, ShortcutSettings } from '../shell/Settings';
@@ -30,17 +30,17 @@ export function MobileApp() {
   const [page, setPage] = useState<Page>(null);
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-[#000000] text-black dark:text-white">
-      <header className="h-12 shrink-0 flex items-center gap-2 px-3 border-b border-slate-100 dark:border-white/10">
-        <button onClick={() => openUrl('https://toon.at')} aria-label="투네이션 홈페이지 새 창"><Logo className="text-sm" /></button>
-        <div className="ml-auto flex items-center">
+    <div className="h-full flex flex-col bg-surface text-text">
+      <header className="h-12 shrink-0 flex items-center gap-2 px-3 bg-canvas border-b border-line">
+        <button onClick={() => openUrl('https://toon.at')} aria-label="투네이션 홈페이지 새 창"><Logo className="text-[0.9375rem]" /></button>
+        <div className="ml-auto flex items-center gap-1.5">
           <AlarmButton />
-          <button aria-label={t('설정')} onClick={() => setPage({ kind: 'settings' })} className="p-2 rounded-lg text-slate-500"><Settings size={18} /></button>
+          <button aria-label={t('설정')} onClick={() => setPage({ kind: 'settings' })} className="w-9 h-9 rounded-control border border-line flex items-center justify-center text-text-secondary hover:text-text"><Settings size={17} /></button>
         </div>
       </header>
       {/* 공지: 누르면 고객센터 공지로 새 창 (p93 ②) */}
-      <button onClick={() => notice.url && openUrl(notice.url)} className="h-8 shrink-0 flex items-center gap-2 px-3 text-[11px] font-semibold text-left" style={{ background: notice.background, color: notice.color }}>
-        <Volume2 size={13} className="shrink-0" /> <span className="truncate">{notice.text}</span>
+      <button onClick={() => notice.url && openUrl(notice.url)} className="h-9 shrink-0 flex items-center gap-2 px-3 text-caption font-medium text-left bg-brand-tint border-b border-brand-tint-line text-text">
+        <span className="shrink-0 px-1.5 py-0.5 rounded-tag bg-brand text-text-on-brand text-micro font-bold">공지</span> <span className="truncate">{notice.text}</span>
       </button>
 
       <main className="flex-1 min-h-0">
@@ -48,13 +48,13 @@ export function MobileApp() {
       </main>
 
       {/* 기능 버튼 (p107) */}
-      <nav className="shrink-0 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <div className="grid grid-cols-2 gap-1.5 p-1.5 rounded-full glass">
-        <button onClick={() => setSheet('widgets')} className="relative h-12 rounded-full text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center gap-2 font-medium text-[15px]">
+      <nav className="shrink-0 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-canvas border-t border-line">
+        <div className="grid grid-cols-2 gap-1.5">
+        <button onClick={() => setSheet('widgets')} className="relative h-11 rounded-control bg-surface-raised border border-line-strong text-text hover:bg-surface-sunken flex items-center justify-center gap-2 font-semibold text-body">
           <Command size={18} /> 리모컨 위젯
           <Badge count={pendingCount} className="absolute top-1.5 right-3" />
         </button>
-        <button onClick={() => setSheet('quick')} className={`h-12 rounded-full flex items-center justify-center gap-2 font-medium text-[15px] ${paused ? 'bg-red-500 text-white' : 'text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10'}`}>
+        <button onClick={() => setSheet('quick')} className={`h-11 rounded-control border flex items-center justify-center gap-2 font-semibold text-body ${paused ? 'bg-warning border-warning text-text-on-warning' : 'bg-surface-raised border-line-strong text-text hover:bg-surface-sunken'}`}>
           <Pause size={16} /><SkipForward size={16} /> {t('퀵 제어')}
         </button>
         </div>
@@ -62,20 +62,20 @@ export function MobileApp() {
 
       {sheet === 'widgets' && (
         <Sheet title="리모컨 위젯" onClose={() => setSheet(null)}>
-          <ul className="divide-y divide-black/[0.08] dark:divide-white/10">
+          <ul>
             {MOBILE_ORDER.map((id) => {
               const m = WIDGETS[id];
               const Icon = m.icon;
               return (
                 <li key={id}>
-                  <button onClick={() => { setSheet(null); setPage({ kind: 'widget', id }); }} className="w-full flex items-center gap-3 px-4 py-3 text-left">
-                    <span className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-500/15 text-blue-600 flex items-center justify-center"><Icon size={18} /></span>
+                  <button onClick={() => { setSheet(null); setPage({ kind: 'widget', id }); }} className="w-full flex items-center gap-3 px-4 py-3 text-left border-b border-line-subtle hover:bg-surface-sunken">
+                    <span className="w-9 h-9 rounded-dock-item bg-surface-raised border border-line text-text-secondary flex items-center justify-center"><Icon size={18} /></span>
                     <span className="flex-1 min-w-0">
-                      <span className="block text-sm font-bold">{t(m.title)}</span>
-                      <span className="block text-[11px] text-slate-500">{m.description}</span>
+                      <span className="block text-body font-semibold text-text">{t(m.title)}</span>
+                      <span className="block text-caption text-text-secondary">{m.description}</span>
                     </span>
                     {id === 'pending' && <Badge count={pendingCount} />}
-                    <ChevronRight size={16} className="text-slate-300" />
+                    <ChevronRight size={16} className="text-text-tertiary" />
                   </button>
                 </li>
               );
@@ -102,11 +102,11 @@ export function MobileApp() {
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-[15000] bg-black/40 flex items-end" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="pop w-full max-h-[80vh] overflow-auto rounded-t-sheet bg-white dark:bg-[#1c1c1e] shadow-sheet pb-[env(safe-area-inset-bottom)]">
-        <div className="sticky top-0 flex items-center justify-between h-14 px-5 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur">
-          <h2 className="text-sm font-black">{title}</h2>
-          <button aria-label="닫기" onClick={onClose} className="p-1.5 text-slate-400"><X size={18} /></button>
+    <div className="fixed inset-0 z-sheet bg-black/50 flex items-end" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="pop w-full max-h-[80vh] overflow-auto rounded-t-widget bg-surface border-t border-line shadow-float text-text pb-[env(safe-area-inset-bottom)]">
+        <div className="sticky top-0 z-10 flex items-center justify-between h-12 pl-4 pr-2 bg-surface border-b border-line">
+          <h2 className="text-title-widget">{title}</h2>
+          <IconButton label="닫기" onClick={onClose}><X size={18} /></IconButton>
         </div>
         {children}
       </div>
@@ -116,10 +116,10 @@ function Sheet({ title, onClose, children }: { title: string; onClose: () => voi
 
 function FullPage({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-[14000] flex flex-col bg-white dark:bg-[#000000]">
-      <header className="h-12 shrink-0 flex items-center gap-2 px-2 border-b border-slate-100 dark:border-white/10">
-        <button aria-label="뒤로 가기" onClick={onBack} className="p-2"><ArrowLeft size={18} /></button>
-        <h2 className="text-sm font-black">{title}</h2>
+    <div className="fixed inset-0 z-[14000] flex flex-col bg-surface text-text">
+      <header className="h-12 shrink-0 flex items-center gap-2 px-2 bg-canvas border-b border-line">
+        <button aria-label="뒤로 가기" onClick={onBack} className="p-2 text-text-secondary hover:text-text"><ArrowLeft size={18} /></button>
+        <h2 className="text-title-widget">{title}</h2>
       </header>
       <div className="flex-1 min-h-0 overflow-auto">{children}</div>
     </div>
@@ -141,14 +141,14 @@ function SettingsPage({ onBack, onOpen }: { onBack: () => void; onOpen: (tab: 'b
   const t = useT();
   const [wallpaper, setWallpaper] = useState(false);
   const [logout, setLogout] = useState(false);
-  const item = 'w-full flex items-center justify-between px-4 h-12 text-sm font-semibold border-b border-black/[0.08] dark:border-white/10';
+  const item = 'w-full flex items-center justify-between px-4 h-12 text-body font-semibold border-b border-line-subtle hover:bg-surface-sunken';
   return (
     <FullPage title={t('설정')} onBack={onBack}>
-      <button className={item} onClick={() => onOpen('basic')}>{t('기본')} <ChevronRight size={16} className="text-slate-300" /></button>
-      <button className={item} onClick={() => onOpen('shortcut')}>{t('단축키')} <ChevronRight size={16} className="text-slate-300" /></button>
-      <button className={item} onClick={() => onOpen('info')}>{t('정보')} <ChevronRight size={16} className="text-slate-300" /></button>
-      <button className={item} onClick={() => setWallpaper(true)}><span className="flex items-center gap-2"><Image size={16} /> {t('벽지')}</span> <ChevronRight size={16} className="text-slate-300" /></button>
-      <button className={`${item} text-red-500`} onClick={() => setLogout(true)}>{t('로그아웃')}</button>
+      <button className={item} onClick={() => onOpen('basic')}>{t('기본')} <ChevronRight size={16} className="text-text-tertiary" /></button>
+      <button className={item} onClick={() => onOpen('shortcut')}>{t('단축키')} <ChevronRight size={16} className="text-text-tertiary" /></button>
+      <button className={item} onClick={() => onOpen('info')}>{t('정보')} <ChevronRight size={16} className="text-text-tertiary" /></button>
+      <button className={item} onClick={() => setWallpaper(true)}><span className="flex items-center gap-2"><Image size={16} /> {t('벽지')}</span> <ChevronRight size={16} className="text-text-tertiary" /></button>
+      <button className={`${item} text-danger`} onClick={() => setLogout(true)}>{t('로그아웃')}</button>
       {wallpaper && <WallpaperModal onClose={() => setWallpaper(false)} />}
       {logout && <Confirm message={t('로그아웃 하시겠습니까?')} onConfirm={() => { setLogout(false); api.logout(); }} onCancel={() => setLogout(false)} />}
     </FullPage>

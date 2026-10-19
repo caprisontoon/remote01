@@ -1,11 +1,10 @@
 import { ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../state/app';
-import { formatCash } from '../lib/donation';
 import { useData, useNow, mmss } from '../lib/hooks';
 import { openUrl } from '../platform';
 import type { CrewMember } from '../types';
-import { Button, Confirm, Empty } from '../components/ui';
+import { Button, Cash, Confirm, Empty } from '../components/ui';
 
 const SETTINGS_URL = 'https://toon.at/streamer/crew';
 const fmt = (ms: number) => new Date(ms).toLocaleString('ko-KR', { hour12: false });
@@ -19,17 +18,17 @@ export default function Crew() {
   if (crew.result) {
     const r = crew.result;
     return (
-      <div className="h-full flex flex-col text-xs">
+      <div className="h-full flex flex-col text-body">
         <div className="flex-1 overflow-auto p-3 space-y-3">
-          <p className="text-center font-bold">방송이 종료 되었습니다.<br /><span className="text-slate-500 font-normal">방송 결과를 확인해 보세요.</span></p>
-          <dl className="grid grid-cols-[64px_1fr] gap-y-1">
-            <dt className="text-slate-500">방송명</dt><dd className="font-bold">{r.title}</dd>
-            <dt className="text-slate-500">방송 시간</dt><dd className="tabular-nums">{fmt(r.startedAt)} ~ {fmt(r.endedAt)} (총 {Math.round((r.endedAt - r.startedAt) / 60000)}분)</dd>
+          <p className="text-center font-semibold text-text">방송이 종료 되었습니다.<br /><span className="text-text-secondary font-normal">방송 결과를 확인해 보세요.</span></p>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+            <dt className="text-text-secondary whitespace-nowrap">방송명</dt><dd className="font-semibold text-text">{r.title}</dd>
+            <dt className="text-text-secondary whitespace-nowrap">방송 시간</dt><dd className="tabular-nums text-text-body">{fmt(r.startedAt)} ~ {fmt(r.endedAt)} (총 {Math.round((r.endedAt - r.startedAt) / 60000)}분)</dd>
           </dl>
           <MemberTable members={r.ranking} ranked />
-          <div className="rounded-lg bg-slate-50 dark:bg-white/5 px-3 py-2 flex justify-between font-bold"><span>총 후원 캐시</span><span>{formatCash(r.totalCash)} 캐시</span></div>
+          <div className="rounded-card bg-surface-raised border border-line px-3 py-2 flex justify-between gap-2 font-semibold text-text"><span className="whitespace-nowrap">총 후원 캐시</span><span className="whitespace-nowrap"><Cash value={r.totalCash} /> 캐시</span></div>
         </div>
-        <div className="p-2 border-t border-black/[0.08] dark:border-white/10"><Button className="w-full" onClick={api.closeCrewResult}>확인</Button></div>
+        <div className="p-2.5 border-t border-line"><Button className="w-full" onClick={api.closeCrewResult}>확인</Button></div>
       </div>
     );
   }
@@ -39,7 +38,7 @@ export default function Crew() {
       <Empty>
         <div className="space-y-2">
           <p>방송 설정이 필요합니다.</p>
-          <button className="text-blue-600 font-bold inline-flex items-center gap-1" onClick={() => openUrl(SETTINGS_URL)}>방송 설정 페이지 <ExternalLink size={12} /></button>
+          <button className="text-link font-semibold inline-flex items-center gap-1" onClick={() => openUrl(SETTINGS_URL)}>방송 설정 페이지 <ExternalLink size={12} /></button>
         </div>
       </Empty>
     );
@@ -47,25 +46,25 @@ export default function Crew() {
 
   const live = !!crew.liveSince;
   return (
-    <div className="h-full flex flex-col text-xs">
+    <div className="h-full flex flex-col text-body">
       <div className="flex-1 overflow-auto p-3 space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <div className="text-[11px] text-slate-500">시즌 명 · {crew.season}</div>
-            <div className="text-sm font-black">{crew.title}</div>
+            <div className="text-caption text-text-secondary">시즌 명 · {crew.season}</div>
+            <div className="text-title-widget text-text">{crew.title}</div>
           </div>
           {live ? (
-            <span className="px-2 py-0.5 rounded bg-red-500 text-white text-[10px] font-black">LIVE {mmss(now - crew.liveSince!)}</span>
+            <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-tag bg-danger text-white text-micro font-bold">LIVE {mmss(now - crew.liveSince!)}</span>
           ) : (
-            <button className="text-[11px] text-blue-600 font-bold inline-flex items-center gap-1 shrink-0" onClick={() => openUrl(SETTINGS_URL)}>방송 설정 페이지 <ExternalLink size={11} /></button>
+            <button className="text-caption text-link font-semibold inline-flex items-center gap-1 shrink-0 whitespace-nowrap" onClick={() => openUrl(SETTINGS_URL)}>방송 설정 페이지 <ExternalLink size={11} /></button>
           )}
         </div>
         <div>
-          <div className="font-bold mb-1">방송 참여 크루</div>
+          <div className="font-semibold text-text mb-1">방송 참여 크루</div>
           {crew.members.length ? <MemberTable members={crew.members} /> : <Empty>{'등록된 크루원이 없습니다.\n크루원 설정을 통해 크루원을 추가해 주세요.'}</Empty>}
         </div>
       </div>
-      <div className="p-2 border-t border-black/[0.08] dark:border-white/10">
+      <div className="p-2.5 border-t border-line">
         {live ? <Button variant="danger" className="w-full" onClick={() => setConfirm('end')}>방송 종료</Button> : <Button className="w-full" disabled={!crew.members.length} onClick={() => setConfirm('start')}>방송 시작</Button>}
       </div>
       {confirm === 'start' && <Confirm message={'방송 시작\n\n크루 방송을 시작 하시겠습니까?'} onConfirm={() => { api.startCrew(); setConfirm(null); }} onCancel={() => setConfirm(null)} />}
@@ -78,24 +77,24 @@ export default function Crew() {
 function MemberTable({ members, ranked }: { members: CrewMember[]; ranked?: boolean }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[300px] border-collapse text-[11px]">
+      <table className="w-full min-w-[300px] border-collapse text-caption whitespace-nowrap">
         <thead>
-          <tr className="bg-slate-50 dark:bg-white/5 text-slate-500">
-            {ranked && <th className="py-1.5 px-2 text-left">순위</th>}
-            <th className="py-1.5 px-2 text-left">직급</th>
-            <th className="py-1.5 px-2 text-left">크루 명</th>
-            <th className="py-1.5 px-2 text-right">후원점수</th>
-            <th className="py-1.5 px-2 text-right">기여도</th>
+          <tr className="bg-surface-sunken text-text-secondary">
+            {ranked && <th className="h-8 px-2 font-medium text-left">순위</th>}
+            <th className="h-8 px-2 font-medium text-left">직급</th>
+            <th className="h-8 px-2 font-medium text-left">크루 명</th>
+            <th className="h-8 px-2 font-medium text-right">후원점수</th>
+            <th className="h-8 px-2 font-medium text-right">기여도</th>
           </tr>
         </thead>
         <tbody>
           {members.map((m, i) => (
-            <tr key={m.name} className="border-b border-black/[0.08] dark:border-white/10">
-              {ranked && <td className="py-1.5 px-2 font-black">{i + 1}</td>}
+            <tr key={m.name} className="border-b border-line-subtle text-text-body">
+              {ranked && <td className="py-1.5 px-2 font-semibold text-text">{i + 1}</td>}
               <td className="py-1.5 px-2">{m.rank}</td>
-              <td className="py-1.5 px-2 font-semibold">{m.name}</td>
-              <td className="py-1.5 px-2 text-right tabular-nums">{formatCash(m.score)}</td>
-              <td className="py-1.5 px-2 text-right tabular-nums">{m.contribution}%</td>
+              <td className="py-1.5 px-2 font-semibold text-text">{m.name}</td>
+              <td className="py-1.5 px-2 text-right"><Cash value={m.score} /></td>
+              <td className="py-1.5 px-2 text-right font-num">{m.contribution}%</td>
             </tr>
           ))}
         </tbody>

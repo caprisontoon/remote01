@@ -19,12 +19,16 @@ import { WIDGETS } from './widgets/meta';
 
 const MOBILE_MAX = 768;
 
+/** 테마(다크/라이트)와 텍스트 크기(100/125/150%, p14)를 html에 적용한다. 색은 CSS 변수, 글자는 rem이라 여기 하나로 바뀐다. */
 function useTheme() {
   const theme = useStore(settingsStore, (s) => s.theme);
+  const scale = useStore(settingsStore, (s) => s.textScale);
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    document.body.style.background = theme === 'dark' ? '#000000' : '#f2f2f7';
   }, [theme]);
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${scale}%`;
+  }, [scale]);
 }
 
 function useIsMobile() {
@@ -111,9 +115,9 @@ function PcRemote() {
   const pinned = useStore(settingsStore, (s) => s.dockPinned);
   const { settingsOpen, presetsOpen, wallpaperOpen } = useStore(uiStore, (s) => s);
   return (
-    // 리모컨 전체 최소 크기: 그 이하로 줄이면 스크롤 (p9) ※ 디자인팀 확인 필요 — 임시 값
+    // 리모컨 전체 최소 크기: 그 이하로 줄이면 스크롤 (p9). 설치형 창 최소 크기(750×600)와 맞춘다.
     <div className="h-full w-full overflow-auto">
-      <div className="h-full min-w-[900px] min-h-[560px] flex flex-col bg-[#f2f2f7] dark:bg-[#000000] text-black dark:text-white">
+      <div className="h-full min-w-[750px] min-h-[560px] flex flex-col pt-2 px-1.5 bg-canvas text-text">
         <TitleBar />
         <main className="relative flex-1 min-h-0">
           <Canvas bottomInset={pinned ? DOCK_HEIGHT + 8 : 0} />

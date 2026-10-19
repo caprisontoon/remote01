@@ -16,9 +16,9 @@ export class WidgetErrorBoundary extends Component<{ name: string; children: Rea
     if (!this.state.error) return this.props.children;
     return (
       <div className="h-full flex flex-col items-center justify-center gap-3 p-4 text-center">
-        <p className="text-[13px] font-semibold">위젯을 표시하지 못했습니다.</p>
-        <p className="text-[11px] text-black/50 dark:text-white/50 break-all">{this.state.error.message}</p>
-        <button className="h-8 px-4 rounded-full bg-[rgba(120,120,128,0.16)] text-[13px] font-medium" onClick={() => this.setState({ error: null })}>
+        <p className="text-body font-semibold text-text">위젯을 표시하지 못했습니다.</p>
+        <p className="text-micro text-text-tertiary break-all">{this.state.error.message}</p>
+        <button className="h-[30px] px-3 rounded-control bg-surface-raised border border-line-strong text-body font-semibold text-text hover:bg-surface-sunken" onClick={() => this.setState({ error: null })}>
           다시 시도
         </button>
       </div>

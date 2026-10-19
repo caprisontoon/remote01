@@ -26,17 +26,17 @@ export default function Usage() {
   const count = master ? ITEMS.filter((i) => usage[i.key]).length : 0;
   return (
     <div className="p-3">
-      <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 mb-3 ${master ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-slate-100 dark:bg-white/5'}`}>
+      <div className={`flex items-center justify-between rounded-card border px-3 py-2.5 mb-3 ${master ? 'bg-brand-tint border-brand-tint-line' : 'bg-surface-raised border-line'}`}>
         <div>
-          <div className="text-xs font-bold">{master ? '후원 기능 사용 중' : '후원 기능 사용 중지'}</div>
-          <div className="text-[11px] text-slate-500">사용 중인 후원 : {count}개</div>
+          <div className="text-body font-semibold text-text">{master ? '후원 기능 사용 중' : '후원 기능 사용 중지'}</div>
+          <div className="text-caption text-text-secondary">사용 중인 후원 : {count}개</div>
         </div>
         <Toggle on={master} onChange={api.setUsageMaster} label="후원 기능 사용" />
       </div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-2">
         {ITEMS.map((i) => (
-          <div key={i.key} className={`rounded-2xl bg-[rgba(116,116,128,0.08)] dark:bg-[rgba(118,118,128,0.18)] p-2 flex flex-col items-center gap-1.5 ${master ? '' : 'opacity-50'}`}>
-            <span className="text-xs font-bold">{i.label}</span>
+          <div key={i.key} className={`rounded-card bg-surface-raised border border-line p-2 flex flex-col items-center gap-1.5 ${master ? '' : 'opacity-50'}`}>
+            <span className="text-caption font-semibold text-text truncate max-w-full">{i.label}</span>
             <Toggle size="sm" on={usage[i.key]} disabled={!master} onChange={(v) => api.setUsage(i.key, v)} label={i.label} />
           </div>
         ))}

@@ -11,7 +11,7 @@ import { PANEL_MIN_RATIO, WIDGETS, WIDGET_MIN, isFixedWidget } from '../widgets/
 import { WIDGET_COMPONENTS } from '../widgets/registry';
 import { WidgetFrame } from './WidgetFrame';
 
-const GAP = 6;
+const GAP = 8; // gap-canvas
 const FLOAT_W = 360;
 const FLOAT_H = 300;
 
@@ -203,7 +203,7 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
 
   return (
     <div className={`absolute inset-x-0 top-0 ${resizing === 'col' ? 'cursor-ew-resize select-none' : resizing === 'row' ? 'cursor-ns-resize select-none' : ''}`} style={{ bottom: bottomInset }}>
-      <div ref={ref} className="absolute inset-1.5">
+      <div ref={ref} className="absolute inset-x-0 top-1 bottom-0">
         {(Object.entries(tiles) as [WidgetId, Rect][]).map(([id, r]) => {
           const Body = WIDGET_COMPONENTS[id];
           const edges = resizableEdges(r);
@@ -233,7 +233,7 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
           );
         })}
 
-        {preview && <div className="absolute pointer-events-none rounded-xl bg-blue-500/25 border-2 border-blue-500/70 z-30 transition-all duration-150" style={px(preview)} />}
+        {preview && <div className="absolute pointer-events-none rounded-widget bg-live/20 border-2 border-live z-30 transition-all duration-150" style={px(preview)} />}
 
         {showIndicators && <EdgeIndicators active={drop?.kind === 'edge' ? drop.edge : null} />}
 
@@ -255,13 +255,13 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
         {drag && drag.source !== 'external' && (
           <div className="absolute z-50 pointer-events-none opacity-60" style={{ left: drag.x - drag.ox, top: drag.y - drag.oy, width: drag.w, height: drag.h }}>
             <WidgetFrame id={drag.id} floating>
-              <div className="h-full flex items-center justify-center text-xs text-slate-400">{drag.outside && desktop ? '놓으면 독립창으로 분리됩니다' : '원하는 위치의 인디케이터에 놓아 주세요'}</div>
+              <div className="h-full flex items-center justify-center text-caption text-text-tertiary">{drag.outside && desktop ? '놓으면 독립창으로 분리됩니다' : '원하는 위치의 인디케이터에 놓아 주세요'}</div>
             </WidgetFrame>
           </div>
         )}
       </div>
       {placing && !drag && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-blue-600 text-white text-xs font-bold shadow-xl pointer-events-none whitespace-nowrap">
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-control bg-brand text-text-on-brand text-caption font-semibold shadow-float pointer-events-none whitespace-nowrap">
           위젯 헤더를 끌어 도킹 인디케이터 위에 놓아 주세요 (ESC: 취소)
         </div>
       )}
@@ -288,7 +288,7 @@ const DIRS: { dir: Exclude<DockDirection, 'center'>; Icon: typeof ChevronUp; cls
 
 /** 도킹 인디케이터: 위젯 중앙의 5방향 버튼 (p11). 위젯 추가·드레그 인 때는 중앙(위치 교환) 비활성. */
 function DockIndicator({ target, active, centerDisabled }: { target: WidgetId; active: DockDirection | null; centerDisabled: boolean }) {
-  const btn = (on: boolean) => `absolute w-10 h-10 rounded-xl border-2 flex items-center justify-center shadow-lg transition-all ${on ? 'bg-blue-600 border-blue-400 text-white scale-110' : 'bg-white/95 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-600 dark:text-slate-200'}`;
+  const btn = (on: boolean) => `absolute w-10 h-10 rounded-dock-item border flex items-center justify-center shadow-float transition-all ${on ? 'bg-brand border-brand text-text-on-brand scale-110' : 'bg-surface-raised border-line-strong text-text-secondary'}`;
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
       <div className="relative w-[136px] h-[136px] pointer-events-auto">
@@ -324,7 +324,7 @@ function EdgeIndicators({ active }: { active: CanvasEdge | null }) {
           key={edge}
           data-drop={JSON.stringify({ kind: 'edge', edge })}
           aria-label={`캔버스 ${edge} 가장자리에 삽입`}
-          className={`absolute z-40 w-11 h-11 rounded-xl border-2 flex items-center justify-center shadow-xl ${cls} ${active === edge ? 'bg-blue-600 border-blue-400 text-white' : 'bg-white dark:bg-slate-700 border-blue-400 text-blue-600 dark:text-blue-300'}`}
+          className={`absolute z-40 w-11 h-11 rounded-dock-item border-2 flex items-center justify-center shadow-float ${cls} ${active === edge ? 'bg-brand border-brand text-text-on-brand' : 'bg-surface-raised border-live text-link'}`}
         >
           <Icon size={20} className="pointer-events-none" />
         </div>

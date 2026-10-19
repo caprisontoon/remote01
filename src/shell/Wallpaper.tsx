@@ -1,8 +1,8 @@
 import { Trash2 } from 'lucide-react';
 import { api } from '../state/app';
-import { contentText, formatCash } from '../lib/donation';
+import { contentText } from '../lib/donation';
 import { useData } from '../lib/hooks';
-import { Empty, Modal } from '../components/ui';
+import { Cash, Empty, IconButton, Modal } from '../components/ui';
 
 /**
  * 벽지 창.
@@ -18,14 +18,14 @@ export function WallpaperModal({ onClose }: { onClose: () => void }) {
       {items.length === 0 ? (
         <Empty>{'벽지에 등록한 후원이 없습니다.\n후원 리스트에서 [벽지 등록] 버튼으로 추가할 수 있습니다.'}</Empty>
       ) : (
-        <ul className="divide-y divide-black/[0.08] dark:divide-white/10">
+        <ul>
           {items.map((d) => (
-            <li key={d.id} className="flex items-center gap-3 px-5 py-3 text-xs">
+            <li key={d.id} className="flex items-center gap-3 px-4 py-2.5 text-body border-b border-line-subtle last:border-b-0">
               <div className="flex-1 min-w-0">
-                <div className="font-bold">{d.nickname} · {formatCash(d.cash)}</div>
-                <div className="text-slate-500 truncate">{contentText(d)}</div>
+                <div className="font-semibold text-text">{d.nickname} · <Cash value={d.cash} /></div>
+                <div className="text-text-secondary truncate">{contentText(d)}</div>
               </div>
-              <button aria-label="벽지에서 삭제" onClick={() => api.removeWallpaper(d.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>
+              <IconButton label="벽지에서 삭제" onClick={() => api.removeWallpaper(d.id)} className="hover:!text-danger"><Trash2 size={14} /></IconButton>
             </li>
           ))}
         </ul>

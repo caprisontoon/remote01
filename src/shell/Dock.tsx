@@ -11,7 +11,7 @@ import type { WidgetId } from '../types';
 import { DOCK_ORDER, WIDGETS } from '../widgets/meta';
 import { Badge, Tooltip } from '../components/ui';
 
-export const DOCK_HEIGHT = 70;
+export const DOCK_HEIGHT = 60;
 
 /**
  * 리모컨 Dock (p10).
@@ -51,25 +51,25 @@ export function Dock() {
   return (
     <>
       {/* 압정 off일 때 하단 가장자리에 마우스를 올리면 나타난다 */}
-      {!pinned && !forcedHidden && <div className="fixed inset-x-0 bottom-0 h-3 z-[9998]" onMouseEnter={() => { clearTimeout(hideTimer.current); setHovered(true); }} />}
+      {!pinned && !forcedHidden && <div className="fixed inset-x-0 bottom-0 h-3 z-dock" onMouseEnter={() => { clearTimeout(hideTimer.current); setHovered(true); }} />}
       <nav
         aria-label="리모컨 Dock"
         onMouseEnter={() => { clearTimeout(hideTimer.current); setHovered(true); }}
         onMouseLeave={() => { hideTimer.current = setTimeout(() => setHovered(false), 2500); }}
-        className={`fixed left-1/2 -translate-x-1/2 bottom-2 z-[9999] transition-all duration-300 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-[120%] opacity-0 pointer-events-none'}`}
+        className={`fixed left-1/2 -translate-x-1/2 bottom-2 z-dock transition-all duration-300 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-[120%] opacity-0 pointer-events-none'}`}
       >
-        <div className="flex items-center gap-1 p-1.5 rounded-full glass">
+        <div className="flex items-center gap-1 p-[6px] rounded-widget bg-surface border border-line shadow-float">
           <Tooltip label={pinned ? 'Dock 고정 해제' : 'Dock 고정'}>
-            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`w-11 h-11 rounded-full flex items-center justify-center ${pinned ? 'bg-blue-600 text-white' : 'text-black/70 dark:text-white/75 hover:bg-black/5 dark:hover:bg-white/10'}`}>
+            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? 'bg-brand-tint text-link' : 'text-text-tertiary hover:text-text hover:bg-surface-raised'}`}>
               <Pin size={18} className={pinned ? 'fill-current' : ''} />
             </button>
           </Tooltip>
           <Tooltip label={t('벽지')}>
-            <button aria-label={t('벽지')} onClick={() => uiStore.set({ wallpaperOpen: true })} className="w-11 h-11 rounded-full flex items-center justify-center text-black/70 dark:text-white/75 hover:bg-black/5 dark:hover:bg-white/10">
+            <button aria-label={t('벽지')} onClick={() => uiStore.set({ wallpaperOpen: true })} className="w-[44px] h-[44px] rounded-dock-item flex items-center justify-center text-text-tertiary hover:text-text hover:bg-surface-raised">
               <Image size={18} />
             </button>
           </Tooltip>
-          <span className="w-px h-6 bg-black/10 dark:bg-white/15 mx-1" />
+          <span className="w-px h-[24px] bg-line mx-1" />
           {DOCK_ORDER.map((id) => {
             const meta = WIDGETS[id];
             const Icon = meta.icon;
@@ -83,18 +83,20 @@ export function Dock() {
                   aria-pressed={on}
                   disabled={!!placing && placing !== id}
                   onClick={() => toggle(id)}
-                  className={`relative w-11 h-11 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 ${
+                  className={`relative w-[44px] h-[44px] rounded-dock-item flex items-center justify-center transition-colors disabled:opacity-30 ${
                     pausedQuick
-                      ? 'bg-red-500 text-white blink'
+                      ? 'bg-warning text-text-on-warning blink'
                       : on
-                        ? 'bg-[rgba(120,120,128,0.16)] dark:bg-[rgba(120,120,128,0.36)] text-blue-600'
-                        : 'text-black/55 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10'
+                        ? 'bg-surface-raised text-text'
+                        : 'text-text-tertiary hover:text-text hover:bg-surface-raised'
                   }`}
                 >
-                  <Icon size={19} strokeWidth={on ? 2.3 : 2} />
+                  <Icon size={18} />
+                  {/* 켜진 위젯 = 아래 4px live 점 */}
+                  {on && !pausedQuick && <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-pill bg-live" />}
                   {badge > 0 && <Badge count={badge} className="absolute -top-1.5 -right-1.5" />}
                   {id === 'vote' && vote.status !== 'idle' && (
-                    <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 px-1 rounded text-[8px] font-black text-white ${vote.status === 'running' ? 'bg-blue-600' : vote.status === 'paused' ? 'bg-amber-500' : 'bg-slate-500'}`}>
+                    <span className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1 rounded-tag text-[0.5rem] leading-3 font-bold ${vote.status === 'running' ? 'bg-brand text-text-on-brand' : vote.status === 'paused' ? 'bg-warning text-text-on-warning' : 'bg-line-strong text-text'}`}>
                       {vote.status === 'running' ? '진행' : vote.status === 'paused' ? '정지' : '예약'}
                     </span>
                   )}
