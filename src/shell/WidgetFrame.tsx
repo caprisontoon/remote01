@@ -21,6 +21,11 @@ export function WidgetHeader({ children }: { children: ReactNode }) {
   return <div className="h-[44px] shrink-0 flex items-stretch gap-2 px-2 border-b border-line">{children}</div>;
 }
 
+/** 제목줄 안의 조작 요소(탭·버튼·입력)를 누른 경우에만 위젯 드래그가 시작되지 않게 한다 */
+const stopOnControl = (e: React.PointerEvent) => {
+  if ((e.target as HTMLElement).closest('button, a, input, select, textarea, label, [role="tab"]')) e.stopPropagation();
+};
+
 /**
  * 위젯 공통 틀 (토큰 문서 §5): surface 바탕, 1px line 테두리, radius-widget.
  * 제목줄 44px + 아래 1px line, 제목 왼쪽, 조작 버튼(압정·닫기)은 오른쪽 text-tertiary 아이콘.
@@ -63,7 +68,8 @@ export function WidgetFrame({
       >
         {/* 제목이 먼저 자리를 갖고(한 줄 말줄임), 제목줄 조작은 남는 폭 안에서 줄어든다 */}
         <h2 className="self-center shrink-0 max-w-[60%] text-title-widget truncate">{t(meta.title)}</h2>
-        <div ref={setSlot} className="flex-1 min-w-0 overflow-hidden flex items-stretch gap-2 app-no-drag" onPointerDown={(e) => e.stopPropagation()} />
+        {/* 빈 곳은 제목줄과 같이 끌어서 이동, 탭·버튼을 누를 때만 드래그를 막는다 */}
+        <div ref={setSlot} className="flex-1 min-w-0 overflow-hidden flex items-stretch gap-2" onPointerDown={stopOnControl} />
         <div className="self-center flex items-center gap-0.5 app-no-drag" onPointerDown={(e) => e.stopPropagation()}>
           {onTogglePin && !isFixedWidget(id) && (
             <Tooltip label={t('압정')} side="bottom">
