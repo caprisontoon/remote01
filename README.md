@@ -43,7 +43,8 @@ src/
   types.ts              도메인 타입
   lib/donation.ts       알림 노출 정책(p39), 시간 표기(p40), 정렬
   lib/vote.ts           투표 필수 입력 검증(p78)
-  layout/grid.ts        위젯 그리드 엔진(p18~25): 분할·교환·엣지 삽입·조인트 리사이즈·최소 크기
+  layout/grid.ts        위젯 그리드 엔진(p18~25): 분할·교환·엣지 삽입·최소 크기
+  layout/splitTree.ts   유기적 리사이즈 (Ground Control 방식: 연쇄 밀어내기·탄성·중첩 비율 유지)
   api/backend.ts        서버 연동 인터페이스 (RemoteBackend)
   api/mock.ts           목업 백엔드 + 시뮬레이터 (후원 유입, 통합 알림창 재생 싱크, 타이머)
   state/app.ts          상태 연결 + 창 간 동기화 (메인 창 = leader, 독립창 = follower)
