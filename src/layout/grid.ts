@@ -143,68 +143,6 @@ export function resizableEdges(r: Rect) {
   };
 }
 
-/**
- * 경계(seam) 리사이즈. 드래그한 면에 맞닿아 연결된 위젯 무리를 함께 움직이고(조인트 리사이징),
- * 어느 쪽도 최소 크기 아래로 줄어들지 않게 이동량을 제한한다.
- */
-export function resizeEdge(tiles: Tiles, id: WidgetId, edge: CanvasEdge, delta: number, min: MinSize): Tiles {
-  const t = tiles[id];
-  if (!t || delta === 0) return tiles;
-  const axis: 'x' | 'y' = edge === 'left' || edge === 'right' ? 'x' : 'y';
-  const seam = edge === 'left' ? t.x : edge === 'right' ? t.x + t.w : edge === 'top' ? t.y : t.y + t.h;
-  if (seam < 1e-4 || seam > 1 - 1e-4) return tiles;
-
-  const all = entries(tiles);
-  const endsAt = (r: Rect) => (axis === 'x' ? r.x + r.w : r.y + r.h);
-  const startsAt = (r: Rect) => (axis === 'x' ? r.x : r.y);
-  const cross = (a: Rect, b: Rect) => (axis === 'x' ? overlaps(a.y, a.h, b.y, b.h) : overlaps(a.x, a.w, b.x, b.w));
-  const firstCandidates = all.filter(([, r]) => near(endsAt(r), seam));
-  const secondCandidates = all.filter(([, r]) => near(startsAt(r), seam));
-
-  const first = new Set<WidgetId>();
-  const second = new Set<WidgetId>();
-  (edge === 'right' || edge === 'bottom' ? first : second).add(id);
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (const [fid, fr] of firstCandidates) {
-      if (!first.has(fid)) continue;
-      for (const [sid, sr] of secondCandidates) {
-        if (!second.has(sid) && cross(fr, sr)) { second.add(sid); changed = true; }
-      }
-    }
-    for (const [sid, sr] of secondCandidates) {
-      if (!second.has(sid)) continue;
-      for (const [fid, fr] of firstCandidates) {
-        if (!first.has(fid) && cross(fr, sr)) { first.add(fid); changed = true; }
-      }
-    }
-  }
-  if (first.size === 0 || second.size === 0) return tiles;
-
-  const size = (r: Rect) => (axis === 'x' ? r.w : r.h);
-  const minOf = (k: WidgetId) => (axis === 'x' ? min(k).w : min(k).h);
-  let maxGrow = Infinity; // seam이 +방향으로 갈 수 있는 양 (second가 줄어듦)
-  let maxShrink = Infinity; // seam이 -방향으로 갈 수 있는 양 (first가 줄어듦)
-  for (const [k, r] of all) {
-    if (second.has(k)) maxGrow = Math.min(maxGrow, size(r) - minOf(k));
-    if (first.has(k)) maxShrink = Math.min(maxShrink, size(r) - minOf(k));
-  }
-  const shift = Math.max(-Math.max(0, maxShrink), Math.min(Math.max(0, maxGrow), delta));
-  if (Math.abs(shift) < EPS) return tiles;
-
-  const next = clone(tiles);
-  for (const k of first) {
-    const r = next[k]!;
-    if (axis === 'x') r.w += shift; else r.h += shift;
-  }
-  for (const k of second) {
-    const r = next[k]!;
-    if (axis === 'x') { r.x += shift; r.w -= shift; } else { r.y += shift; r.h -= shift; }
-  }
-  return next;
-}
-
 /** 위젯 집합이 캔버스를 다 덮지 않을 때(예: 저장된 레이아웃 손상) 세로 균등 분할로 복구한다. */
 export function normalize(tiles: Tiles): Tiles {
   const ids = (Object.keys(tiles) as WidgetId[]);

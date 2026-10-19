@@ -3,7 +3,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { api, layoutStore } from '../state/app';
 import { uiStore } from '../state/ui';
 import { useStore } from '../state/store';
-import { insertAtEdge, moveTile, moveToEdge, previewRect, removeTile, resizableEdges, resizeEdge, splitInto, type MinSize } from '../layout/grid';
+import { insertAtEdge, moveTile, moveToEdge, previewRect, removeTile, resizableEdges, splitInto, type MinSize } from '../layout/grid';
+import { organicResize } from '../layout/splitTree';
 import { desktop } from '../platform';
 import type { CanvasEdge, DockDirection, DropTarget, Rect, Tiles, WidgetId } from '../types';
 import { WIDGETS, isFixedWidget } from '../widgets/meta';
@@ -44,6 +45,8 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
   const [size, setSize] = useState({ w: 1, h: 1 });
   const [drag, setDrag] = useState<Drag | null>(null);
   const [drop, setDrop] = useState<DropTarget | null>(null);
+  /** 리사이즈 중에는 애니메이션 없이 포인터를 바로 따라가게 하고, 커서를 화면 전체에 유지한다 */
+  const [resizing, setResizing] = useState<'col' | 'row' | null>(null);
 
   useLayoutEffect(() => {
     const el = ref.current!;
@@ -163,7 +166,10 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
     target.addEventListener('pointercancel', up);
   };
 
-  /** 경계 리사이즈. 시작 시점 배치를 기준으로 누적 이동량을 적용해 오차가 쌓이지 않게 한다. */
+  /**
+   * 경계 리사이즈 — Ground Control 방식의 유기적 리사이즈 (layout/splitTree.ts).
+   * 항상 드래그 시작 배치를 기준으로 계산하므로, 되돌리면 밀렸던 위젯도 원래 크기로 돌아온다.
+   */
   const startResize = (e: React.PointerEvent, id: WidgetId, edge: CanvasEdge) => {
     e.preventDefault();
     e.stopPropagation();
@@ -172,11 +178,13 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
     const sy = e.clientY;
     const target = e.currentTarget as HTMLElement;
     target.setPointerCapture(e.pointerId);
+    setResizing(edge === 'left' || edge === 'right' ? 'col' : 'row');
     const move = (ev: PointerEvent) => {
       const delta = edge === 'left' || edge === 'right' ? (ev.clientX - sx) / size.w : (ev.clientY - sy) / size.h;
-      setTiles(resizeEdge(base, id, edge, delta, min));
+      setTiles(organicResize(base, id, edge, delta, min));
     };
     const up = () => {
+      setResizing(null);
       target.removeEventListener('pointermove', move);
       target.removeEventListener('pointerup', up);
     };
@@ -195,14 +203,14 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
   });
 
   return (
-    <div className="absolute inset-x-0 top-0" style={{ bottom: bottomInset }}>
+    <div className={`absolute inset-x-0 top-0 ${resizing === 'col' ? 'cursor-ew-resize select-none' : resizing === 'row' ? 'cursor-ns-resize select-none' : ''}`} style={{ bottom: bottomInset }}>
       <div ref={ref} className="absolute inset-1.5">
         {(Object.entries(tiles) as [WidgetId, Rect][]).map(([id, r]) => {
           const Body = WIDGET_COMPONENTS[id];
           const edges = resizableEdges(r);
           const isDragged = drag?.id === id && drag.source === 'tile';
           return (
-            <div key={id} data-frame className="absolute transition-[left,top,width,height] duration-200 ease-out" style={{ ...px(r), transitionDuration: drag || !size.w ? '0ms' : undefined }}>
+            <div key={id} data-frame className="absolute transition-[left,top,width,height] duration-200 ease-out" style={{ ...px(r), transitionDuration: drag || resizing || !size.w ? '0ms' : undefined }}>
               <WidgetFrame
                 id={id}
                 dimmed={isDragged}

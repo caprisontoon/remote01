@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { insertAtEdge, isValidLayout, moveTile, moveToEdge, removeTile, resizableEdges, resizeEdge, splitInto, swapTiles } from './grid';
+import { insertAtEdge, isValidLayout, moveTile, moveToEdge, removeTile, resizableEdges, splitInto, swapTiles } from './grid';
 import type { Tiles } from '../types';
 
 const noMin = () => ({ w: 0.05, h: 0.05 });
@@ -90,34 +90,5 @@ describe('edge insert', () => {
 describe('resize', () => {
   it('canvas border edges are locked', () => {
     expect(resizableEdges({ x: 0, y: 0, w: 0.5, h: 1 })).toEqual({ top: false, left: false, bottom: false, right: true });
-  });
-
-  it('moves the shared seam of both neighbours', () => {
-    const t = splitInto(full, 'donations', 'quick', 'right', noMin)!;
-    const r = resizeEdge(t, 'donations', 'right', 0.1, noMin);
-    expect(r.donations!.w).toBeCloseTo(0.6);
-    expect(r.quick!.x).toBeCloseTo(0.6);
-    expect(r.quick!.w).toBeCloseTo(0.4);
-  });
-
-  it('drags every widget joined along the seam', () => {
-    let t = splitInto(full, 'donations', 'quick', 'right', noMin)!;
-    t = splitInto(t, 'quick', 'pending', 'bottom', noMin)!;
-    const r = resizeEdge(t, 'quick', 'left', -0.2, noMin);
-    expect(r.donations!.w).toBeCloseTo(0.3);
-    expect(r.quick!.x).toBeCloseTo(0.3);
-    expect(r.pending!.x).toBeCloseTo(0.3);
-    expect(isValidLayout(r)).toBe(true);
-  });
-
-  it('never shrinks below the minimum size', () => {
-    const t = splitInto(full, 'donations', 'quick', 'right', noMin)!;
-    const r = resizeEdge(t, 'donations', 'right', 0.9, () => ({ w: 0.2, h: 0.1 }));
-    expect(r.quick!.w).toBeCloseTo(0.2);
-    expect(r.donations!.w).toBeCloseTo(0.8);
-  });
-
-  it('ignores the canvas border', () => {
-    expect(resizeEdge(full, 'donations', 'left', 0.1, noMin)).toBe(full);
   });
 });
