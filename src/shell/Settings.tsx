@@ -87,7 +87,7 @@ export function BasicSettings() {
       <div className="pt-4">
         <Button variant="secondary" onClick={() => setLogout(true)}>{t('로그아웃')}</Button>
       </div>
-      {logout && <Confirm message={t('로그아웃 하시겠습니까?')} onConfirm={() => { setLogout(false); uiStore.set({ settingsOpen: false }); api.logout(); }} onCancel={() => setLogout(false)} />}
+      {logout && <Confirm danger confirmLabel={t('로그아웃')} message={t('로그아웃 하시겠습니까?')} onConfirm={() => { setLogout(false); uiStore.set({ settingsOpen: false }); api.logout(); }} onCancel={() => setLogout(false)} />}
     </div>
   );
 }

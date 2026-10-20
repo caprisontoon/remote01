@@ -7,7 +7,8 @@ import { openUrl } from '../platform';
 import type { WidgetId } from '../types';
 import { Badge, Confirm, IconButton } from '../components/ui';
 import { WidgetErrorBoundary } from '../components/ErrorBoundary';
-import { AlarmButton, Logo } from '../shell/TitleBar';
+import { AlarmButton } from '../shell/TitleBar';
+import { Logo } from '../components/Brand';
 import { BasicSettings, InfoSettings, ShortcutSettings } from '../shell/Settings';
 import { WallpaperModal } from '../shell/Wallpaper';
 import DonationList from '../widgets/donations/DonationList';
@@ -32,7 +33,7 @@ export function MobileApp() {
   return (
     <div className="h-full flex flex-col bg-surface text-text">
       <header className="h-12 shrink-0 flex items-center gap-2 px-3 bg-canvas border-b border-line">
-        <button onClick={() => openUrl('https://toon.at')} aria-label="투네이션 홈페이지 새 창"><Logo className="text-[0.9375rem]" /></button>
+        <button onClick={() => openUrl('https://toon.at')} aria-label="투네이션 홈페이지 새 창"><Logo height={20} /></button>
         <div className="ml-auto flex items-center gap-1.5">
           <AlarmButton />
           <button aria-label={t('설정')} onClick={() => setPage({ kind: 'settings' })} className="w-9 h-9 rounded-control border border-line flex items-center justify-center text-text-secondary hover:text-text"><Settings size={17} /></button>
@@ -150,7 +151,7 @@ function SettingsPage({ onBack, onOpen }: { onBack: () => void; onOpen: (tab: 'b
       <button className={item} onClick={() => setWallpaper(true)}><span className="flex items-center gap-2"><Image size={16} /> {t('벽지')}</span> <ChevronRight size={16} className="text-text-tertiary" /></button>
       <button className={`${item} text-danger`} onClick={() => setLogout(true)}>{t('로그아웃')}</button>
       {wallpaper && <WallpaperModal onClose={() => setWallpaper(false)} />}
-      {logout && <Confirm message={t('로그아웃 하시겠습니까?')} onConfirm={() => { setLogout(false); api.logout(); }} onCancel={() => setLogout(false)} />}
+      {logout && <Confirm danger confirmLabel={t('로그아웃')} message={t('로그아웃 하시겠습니까?')} onConfirm={() => { setLogout(false); api.logout(); }} onCancel={() => setLogout(false)} />}
     </FullPage>
   );
 }

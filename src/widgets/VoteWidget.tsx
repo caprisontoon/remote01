@@ -189,7 +189,7 @@ function VoteRunning() {
         {status === 'reserved' && <Button variant="secondary" disabled>예약 대기 중</Button>}
         <Button variant="danger" onClick={() => setConfirmEnd(true)}>{t('투표 종료')}</Button>
       </div>
-      {confirmEnd && <Confirm message="투표를 종료하시겠습니까?" onConfirm={() => { api.endVote(); setConfirmEnd(false); }} onCancel={() => setConfirmEnd(false)} />}
+      {confirmEnd && <Confirm danger confirmLabel={t('투표 종료')} message="투표를 종료하시겠습니까?" onConfirm={() => { api.endVote(); setConfirmEnd(false); }} onCancel={() => setConfirmEnd(false)} />}
     </div>
   );
 }

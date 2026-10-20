@@ -82,7 +82,7 @@ function DrawRows({ list, compact, selectable }: { list: Donation[]; compact: bo
   if (list.length === 0) return <Empty>아직 받은 뽑기 후원이 없습니다.</Empty>;
 
   const confirmDialog = confirm && (
-    <Confirm message={'선택한 항목을 모두 완료 처리하시겠습니까?'} note="※ 완료 처리한 항목은 취소할 수 없습니다." onConfirm={complete} onCancel={() => setConfirm(false)} />
+    <Confirm danger confirmLabel={t('완료 처리')} message={'선택한 항목을 모두 완료 처리하시겠습니까?'} note="※ 완료 처리한 항목은 취소할 수 없습니다." onConfirm={complete} onCancel={() => setConfirm(false)} />
   );
 
   if (compact) {

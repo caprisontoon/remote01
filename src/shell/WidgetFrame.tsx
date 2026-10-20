@@ -6,6 +6,7 @@ import type { WidgetId } from '../types';
 import { WIDGETS, isFixedWidget } from '../widgets/meta';
 import { IconButton, Tooltip } from '../components/ui';
 import { WidgetErrorBoundary } from '../components/ErrorBoundary';
+import { Symbol } from '../components/Brand';
 
 /** 위젯 제목줄 안에 위젯이 자기 조작(탭·필터 등)을 놓을 자리. null = 위젯 틀 밖(모바일 전체 화면 등), 'pending' = 틀이 자리를 만드는 중 */
 const HeaderSlot = createContext<HTMLElement | 'pending' | null>(null);
@@ -41,6 +42,7 @@ export function WidgetFrame({
   floating,
   dimmed,
   headerClassName = '',
+  symbol,
 }: {
   id: WidgetId;
   children: ReactNode;
@@ -51,6 +53,8 @@ export function WidgetFrame({
   floating?: boolean;
   dimmed?: boolean;
   headerClassName?: string;
+  /** 독립창처럼 작은 자리에서 제목 앞에 투네이션 심볼을 보인다 (토큰 문서 §6) */
+  symbol?: boolean;
 }) {
   const t = useT();
   const meta = WIDGETS[id];
@@ -67,6 +71,7 @@ export function WidgetFrame({
         className={`h-[44px] shrink-0 flex items-stretch gap-3 pl-[14px] pr-2 border-b border-line select-none ${onHeaderPointerDown ? 'cursor-grab active:cursor-grabbing' : ''} ${headerClassName}`}
       >
         {/* 제목이 먼저 자리를 갖고(한 줄 말줄임), 제목줄 조작은 남는 폭 안에서 줄어든다 */}
+        {symbol && <Symbol height={12} className="self-center shrink-0 -mr-1" />}
         <h2 className="self-center shrink-0 max-w-[60%] text-title-widget truncate">{t(meta.title)}</h2>
         {/* 빈 곳은 제목줄과 같이 끌어서 이동, 탭·버튼을 누를 때만 드래그를 막는다 */}
         <div ref={setSlot} className="flex-1 min-w-0 overflow-hidden flex items-stretch gap-2" onPointerDown={stopOnControl} />

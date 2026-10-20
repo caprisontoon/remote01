@@ -13,8 +13,8 @@
   --surface-raised: 247 248 250; /* #F7F8FA */
   /* 라이트 조정(HANDOFF-01 후속): 표 헤더·hover가 흰 바탕과 구분되도록 #F7F8FA → #F2F4F7 */
   --surface-sunken: 242 244 247; /* #F2F4F7 */
-  --brand-tint: 234 241 255; /* #EAF1FF */
-  --brand-tint-line: 201 218 255; /* #C9DAFF */
+  --brand-tint: 234 243 255; /* #EAF3FF */
+  --brand-tint-line: 201 225 255; /* #C9E1FF */
 
   --line: 228 231 236; /* #E4E7EC */
   --line-subtle: 238 240 243; /* #EEF0F3 */
@@ -22,17 +22,21 @@
   --line-strong: 134 143 160; /* #868FA0 */
   --line-control: 134 143 160; /* #868FA0 */
 
-  --text: 16 24 40; /* #101828 */
+  /* [v1.2] BI 잉크 */
+  --text: 20 22 25; /* #141619 */
   --text-body: 52 64 84; /* #344054 */
   --text-secondary: 71 84 103; /* #475467 */
   --text-tertiary: 102 112 133; /* #667085 */
   --text-on-brand: 255 255 255; /* #FFFFFF */
-  --link: 30 91 230; /* #1E5BE6 */
+  --link: 0 106 245; /* #006AF5 */
 
-  --brand: 47 107 255; /* #2F6BFF */
-  --brand-hover: 30 91 230; /* #1E5BE6 */
-  /* 라이트 조정: 선택 탭 밑줄·Dock 점이 흰 바탕에서 보이도록 #0BA5EC → #0079B8 */
-  --live: 0 121 184; /* #0079B8 */
+  /* [v1.2] BI 블루 #519CFF는 흰 글자 2.78:1이라 채움용은 같은 색상을 진하게 한 값 (흰 글자 4.79:1) */
+  --brand: 0 106 245; /* #006AF5 */
+  --brand-hover: 0 99 230; /* #0063E6 */
+  /* [v1.2] BI 블루 원색: 글자가 올라가지 않는 그래픽에만 */
+  --brand-bi: 81 156 255; /* #519CFF */
+  /* [v1.2] 라이트는 흰 바탕 대비 때문에 brand와 같은 값 */
+  --live: 0 106 245; /* #006AF5 */
   --warning: 247 144 9; /* #F79009 */
   /* warning 색 글자(5만 이상 금액). 라이트 #F79009는 흰 바탕 대비 2.35:1이라 글자용 진한 단계를 따로 둔다 */
   --warning-text: 181 71 8; /* #B54708 */
@@ -42,6 +46,9 @@
   --shadow-float: 0 12px 32px rgba(16, 24, 40, 0.14);
   /* 모달 뒤 가림막: 라이트는 옅게 */
   --scrim: rgba(16, 24, 40, 0.3);
+  /* 슬라이더 손잡이 그림자 = shadow-float의 1/3 세기 */
+  --shadow-knob: 0 4px 11px rgba(16, 24, 40, 0.05);
+  --slider-track: var(--line-strong);
   color-scheme: light;
 }
 
@@ -50,8 +57,8 @@
   --surface: 23 25 30; /* #17191E */
   --surface-raised: 31 34 40; /* #1F2228 */
   --surface-sunken: 27 30 35; /* #1B1E23 */
-  --brand-tint: 26 36 64; /* #1A2440 */
-  --brand-tint-line: 38 53 89; /* #263559 */
+  --brand-tint: 31 43 62; /* #1F2B3E */
+  --brand-tint-line: 39 62 93; /* #273E5D */
 
   --line: 38 42 49; /* #262A31 */
   --line-subtle: 34 37 43; /* #22252B */
@@ -63,11 +70,16 @@
   --text-secondary: 163 169 180; /* #A3A9B4 */
   --text-tertiary: 141 148 160; /* #8D94A0 */
   --text-on-brand: 255 255 255; /* #FFFFFF */
-  --link: 124 200 255; /* #7CC8FF */
+  /* [v1.2] BI 라이트 블루 */
+  --link: 168 205 255; /* #A8CDFF */
 
-  --brand: 47 107 255; /* #2F6BFF */
-  --brand-hover: 74 128 255; /* #4A80FF */
-  --live: 76 195 255; /* #4CC3FF */
+  /* [v1.2] BI 블루 #519CFF는 흰 글자 2.78:1이라 채움용은 같은 색상을 진하게 한 값 (흰 글자 4.79:1) */
+  --brand: 0 106 245; /* #006AF5 */
+  --brand-hover: 0 99 230; /* #0063E6 */
+  /* [v1.2] BI 블루 원색: 글자가 올라가지 않는 그래픽에만 */
+  --brand-bi: 81 156 255; /* #519CFF */
+  /* [v1.2] BI 블루 */
+  --live: 81 156 255; /* #519CFF */
   --warning: 255 181 71; /* #FFB547 */
   --warning-text: 255 181 71; /* #FFB547 */
   --text-on-warning: 26 18 5; /* #1A1205 */
@@ -75,6 +87,8 @@
 
   --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.5);
   --scrim: rgba(0, 0, 0, 0.5);
+  --shadow-knob: 0 4px 11px rgba(0, 0, 0, 0.17);
+  --slider-track: var(--line-control);
   color-scheme: dark;
 }
 
@@ -152,4 +166,55 @@ textarea,
 .playing-row {
   background: rgb(var(--brand-tint));
   box-shadow: inset 3px 0 0 rgb(var(--live));
+}
+
+/*
+ * 슬라이더 (토큰 문서 §5 [v1.1]): 브라우저 기본 모양 대신 직접 그린다.
+ * 트랙 4px(라이트 line-strong, 다크 line-control), 채운 부분 brand, 손잡이 16px 흰 원 + 1px line-strong + 약한 그림자.
+ * 채운 길이는 요소의 --fill(0~100%)로 받는다. 키보드 조작(←→, Home/End)은 input[type=range] 기본 동작 그대로.
+ */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  background: transparent;
+  cursor: pointer;
+}
+.slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, rgb(var(--brand)) var(--fill, 0%), rgb(var(--slider-track)) var(--fill, 0%));
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 9999px;
+  background: white;
+  border: 1px solid rgb(var(--line-strong));
+  box-shadow: var(--shadow-knob);
+}
+.slider::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: rgb(var(--slider-track));
+}
+.slider::-moz-range-progress {
+  height: 4px;
+  border-radius: 9999px;
+  background: rgb(var(--brand));
+}
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: white;
+  border: 1px solid rgb(var(--line-strong));
+  box-shadow: var(--shadow-knob);
+}
+.slider:focus-visible {
+  outline-offset: 4px;
+  border-radius: 4px;
 }

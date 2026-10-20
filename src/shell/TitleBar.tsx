@@ -7,21 +7,9 @@ import { useData, useNow, useOutsideClick } from '../lib/hooks';
 import { useT } from '../lib/i18n';
 import { desktop, openUrl } from '../platform';
 import { Badge, Tooltip } from '../components/ui';
+import { Logo } from '../components/Brand';
 
 export const TITLEBAR_HEIGHT = 44;
-
-export function Logo({ className = '' }: { className?: string }) {
-  return (
-    <span className={`flex items-center gap-1 font-extrabold tracking-tight text-text ${className}`}>
-      <span className="flex items-center gap-[3px]" aria-hidden>
-        <span className="text-brand text-xl leading-none">+</span>
-        <span className="w-2.5 h-2.5 rounded-pill border-[2.5px] border-brand" />
-        <span className="w-2.5 h-2.5 rounded-pill border-[2.5px] border-live mr-1" />
-      </span>
-      toonation
-    </span>
-  );
-}
 
 /** 상단 바 아이콘 버튼: 36×36 사각(radius-control) + 1px line */
 const barButton = 'w-9 h-9 rounded-control border border-line flex items-center justify-center text-text-secondary hover:text-text hover:bg-surface-raised transition-colors';
@@ -39,7 +27,7 @@ export function TitleBar() {
   return (
     <header className={`relative z-titlebar h-[44px] shrink-0 flex items-center gap-2.5 px-1.5 ${desktop ? 'app-drag' : ''}`}>
       <button className="app-no-drag" aria-label="투네이션 홈페이지 새 창" onClick={() => openUrl('https://toon.at')}>
-        <Logo className="text-base" />
+        <Logo height={20} />
       </button>
       <button
         onClick={() => notice.url && openUrl(notice.url)}

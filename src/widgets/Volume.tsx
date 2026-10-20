@@ -20,7 +20,7 @@ export default function Volume() {
       {ITEMS.map((i) => (
         <label key={i.key} className="grid grid-cols-[minmax(3.5rem,auto)_1fr_2.75rem] items-center gap-2 text-body">
           <span className="font-semibold text-text truncate">{i.label}</span>
-          <input type="range" min={0} max={100} value={volume[i.key]} onChange={(e) => api.setVolume(i.key, Number(e.target.value))} className="accent-brand w-full" aria-label={`${i.label} 볼륨`} />
+          <input type="range" min={0} max={100} value={volume[i.key]} onChange={(e) => api.setVolume(i.key, Number(e.target.value))} className="slider w-full" style={{ '--fill': `${volume[i.key]}%` } as React.CSSProperties} aria-label={`${i.label} 볼륨`} />
           <span className="text-right font-num text-caption text-text-secondary">{volume[i.key]}%</span>
         </label>
       ))}

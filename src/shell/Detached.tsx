@@ -42,6 +42,7 @@ export function DetachedWidget({ id }: { id: WidgetId }) {
     <div className="h-full p-0 bg-canvas">
       <WidgetFrame
         id={id}
+        symbol
         onHeaderPointerDown={startDrag}
         pinned={pinned}
         onTogglePin={() => desktop?.widgets.setPinned(id, !pinned)}

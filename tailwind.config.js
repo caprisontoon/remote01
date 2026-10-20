@@ -25,7 +25,7 @@ export default {
         'on-warning': v('text-on-warning'),
       },
       link: v('link'),
-      brand: { DEFAULT: v('brand'), hover: v('brand-hover'), tint: v('brand-tint'), 'tint-line': v('brand-tint-line') },
+      brand: { DEFAULT: v('brand'), hover: v('brand-hover'), tint: v('brand-tint'), 'tint-line': v('brand-tint-line'), bi: v('brand-bi') },
       live: v('live'),
       warning: { DEFAULT: v('warning'), text: v('warning-text') },
       scrim: 'var(--scrim)',

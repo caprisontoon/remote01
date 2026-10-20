@@ -68,7 +68,7 @@ export default function Crew() {
         {live ? <Button variant="danger" className="w-full" onClick={() => setConfirm('end')}>방송 종료</Button> : <Button className="w-full" disabled={!crew.members.length} onClick={() => setConfirm('start')}>방송 시작</Button>}
       </div>
       {confirm === 'start' && <Confirm message={'방송 시작\n\n크루 방송을 시작 하시겠습니까?'} onConfirm={() => { api.startCrew(); setConfirm(null); }} onCancel={() => setConfirm(null)} />}
-      {confirm === 'end' && <Confirm message={'방송 종료\n\n현재 방송을 종료 하시겠습니까?'} onConfirm={() => { api.endCrew(); setConfirm(null); }} onCancel={() => setConfirm(null)} />}
+      {confirm === 'end' && <Confirm danger confirmLabel="방송 종료" message={'방송 종료\n\n현재 방송을 종료 하시겠습니까?'} onConfirm={() => { api.endCrew(); setConfirm(null); }} onCancel={() => setConfirm(null)} />}
     </div>
   );
 }

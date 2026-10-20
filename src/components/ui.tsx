@@ -59,7 +59,11 @@ function AlertShell({ children, onBackdrop }: { children: ReactNode; onBackdrop?
   );
 }
 
-export function Confirm({ message, note, confirmLabel, onConfirm, onCancel }: { message: ReactNode; note?: ReactNode; confirmLabel?: string; onConfirm: () => void; onCancel: () => void }) {
+/**
+ * 확인 창. 되돌릴 수 없는 동작(삭제·차단·종료·로그아웃 등)은 danger로 [확인] 자리를 위험 버튼으로 바꾸고,
+ * confirmLabel에 동작 이름을 쓴다 (토큰 문서 §5, HANDOFF-01b).
+ */
+export function Confirm({ message, note, confirmLabel, danger, onConfirm, onCancel }: { message: ReactNode; note?: ReactNode; confirmLabel?: string; danger?: boolean; onConfirm: () => void; onCancel: () => void }) {
   const t = useT();
   return (
     <AlertShell onBackdrop={onCancel}>
@@ -67,7 +71,7 @@ export function Confirm({ message, note, confirmLabel, onConfirm, onCancel }: { 
       {note && <p className="mt-1.5 text-body text-text-secondary whitespace-pre-line">{note}</p>}
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="secondary" onClick={onCancel}>{t('취소')}</Button>
-        <Button onClick={onConfirm}>{confirmLabel ?? t('확인')}</Button>
+        <Button variant={danger ? 'danger' : 'primary'} onClick={onConfirm}>{confirmLabel ?? t('확인')}</Button>
       </div>
     </AlertShell>
   );

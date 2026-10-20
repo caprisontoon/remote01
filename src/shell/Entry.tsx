@@ -5,7 +5,7 @@ import { useData } from '../lib/hooks';
 import { openUrl } from '../platform';
 import { Alert, Button, fieldClass } from '../components/ui';
 import { thumb } from '../api/mockData';
-import { Logo } from './TitleBar';
+import { Logo } from '../components/Brand';
 
 const LOGIN_HELP = 'https://toon.at/streamer/login';
 const ID_MAX = 25;
@@ -19,7 +19,7 @@ export function Splash() {
   return (
     <Screen>
       <div className="text-center">
-        <Logo className="text-4xl justify-center" />
+        <Logo height={32} className="mx-auto" />
         <p className="mt-3 text-body font-semibold text-text-secondary">Toonation Remote Control</p>
         <div className="mt-8 mx-auto w-6 h-6 rounded-pill border-2 border-live border-t-transparent animate-spin" aria-label="불러오는 중" />
       </div>
@@ -67,7 +67,7 @@ export function Login() {
     <Screen>
       <div className="w-full max-w-sm rounded-card bg-surface border border-line p-6">
         <div className="text-center mb-6">
-          <Logo className="text-3xl justify-center" />
+          <Logo height={32} lang="kr" className="mx-auto" />
           <h1 className="mt-2 text-body font-semibold text-text-secondary">크리에이터 리모컨 로그인</h1>
         </div>
         <form onSubmit={submit} className="space-y-2.5">

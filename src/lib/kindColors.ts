@@ -6,17 +6,17 @@ import type { DonationKind } from '../types';
 type KindGroup = 'text' | 'voice' | 'video' | 'chzzk' | 'mini' | 'twitch' | 'roulette' | 'youtube' | 'wish' | 'luckybox' | 'etc';
 
 const KIND_COLORS: Record<KindGroup, { dark: string; light: string }> = {
-  // 라이트 값 일부는 HANDOFF-01 후속으로 진하게 조정 (11px 태그 글자가 바탕 대비 4.5:1 이상이 되도록)
-  text: { dark: '#4CC3FF', light: '#0079B8' }, // 토큰 #0086C9
-  voice: { dark: '#3DD68C', light: '#027A48' }, // 토큰 #039855
+  // 값은 토큰 문서 v1.1 §1-5와 같다 (라이트 일부는 11px 태그 글자가 바탕 대비 4.5:1 이상이 되도록 진하게 조정된 값)
+  text: { dark: '#4CC3FF', light: '#0079B8' },
+  voice: { dark: '#3DD68C', light: '#027A48' },
   video: { dark: '#C77DFF', light: '#9E3BEA' },
-  chzzk: { dark: '#22C55E', light: '#15803D' }, // 토큰 #16A34A
-  mini: { dark: '#FFB547', light: '#B54708' }, // 미니 / 퀘스트, 토큰 #DC6803
+  chzzk: { dark: '#22C55E', light: '#15803D' },
+  mini: { dark: '#FFB547', light: '#B54708' }, // 미니 / 퀘스트
   twitch: { dark: '#9B8AFB', light: '#6E56CF' },
-  roulette: { dark: '#FF6B6B', light: '#D92D20' },
+  roulette: { dark: '#FF5FA2', light: '#C11574' }, // [v1.1] 유튜브 빨강과 구분되도록 분홍 계열
   youtube: { dark: '#F04438', light: '#B42318' },
   wish: { dark: '#D6A77A', light: '#93622F' }, // 위시리스트·기프트
-  luckybox: { dark: '#4CC3FF', light: '#0079B8' }, // 토큰 #0086C9
+  luckybox: { dark: '#4CC3FF', light: '#0079B8' },
   etc: { dark: '#A3A9B4', light: '#667085' }, // 이미지·그림·기타
 };
 
