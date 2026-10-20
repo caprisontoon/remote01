@@ -6,16 +6,17 @@ import type { DonationKind } from '../types';
 type KindGroup = 'text' | 'voice' | 'video' | 'chzzk' | 'mini' | 'twitch' | 'roulette' | 'youtube' | 'wish' | 'luckybox' | 'etc';
 
 const KIND_COLORS: Record<KindGroup, { dark: string; light: string }> = {
-  text: { dark: '#4CC3FF', light: '#0086C9' },
-  voice: { dark: '#3DD68C', light: '#039855' },
+  // 라이트 값 일부는 HANDOFF-01 후속으로 진하게 조정 (11px 태그 글자가 바탕 대비 4.5:1 이상이 되도록)
+  text: { dark: '#4CC3FF', light: '#0079B8' }, // 토큰 #0086C9
+  voice: { dark: '#3DD68C', light: '#027A48' }, // 토큰 #039855
   video: { dark: '#C77DFF', light: '#9E3BEA' },
-  chzzk: { dark: '#22C55E', light: '#16A34A' },
-  mini: { dark: '#FFB547', light: '#DC6803' }, // 미니 / 퀘스트
+  chzzk: { dark: '#22C55E', light: '#15803D' }, // 토큰 #16A34A
+  mini: { dark: '#FFB547', light: '#B54708' }, // 미니 / 퀘스트, 토큰 #DC6803
   twitch: { dark: '#9B8AFB', light: '#6E56CF' },
   roulette: { dark: '#FF6B6B', light: '#D92D20' },
   youtube: { dark: '#F04438', light: '#B42318' },
   wish: { dark: '#D6A77A', light: '#93622F' }, // 위시리스트·기프트
-  luckybox: { dark: '#4CC3FF', light: '#0086C9' },
+  luckybox: { dark: '#4CC3FF', light: '#0079B8' }, // 토큰 #0086C9
   etc: { dark: '#A3A9B4', light: '#667085' }, // 이미지·그림·기타
 };
 

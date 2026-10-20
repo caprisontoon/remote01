@@ -21,14 +21,15 @@ export default function QuickControl({ only }: { only?: QuickKind[] }) {
   const [ref, width] = useWidth<HTMLDivElement>();
   const wide = width > 520;
   const groups = only ? GROUPS.filter((g) => only.includes(g.kind)) : GROUPS;
+  // 버튼 묶음이 위젯 높이를 채운다 (최소 44px, 너무 커지지 않게 최대 96px)
   return (
-    <div ref={ref} className={`h-full grid gap-2 p-2.5 content-start ${wide ? 'grid-cols-3' : 'grid-cols-1'}`}>
+    <div ref={ref} className={`h-full grid auto-rows-fr gap-2 p-2.5 ${wide ? 'grid-cols-3' : 'grid-cols-1'}`}>
       {groups.map((g) => {
         const on = paused[g.kind];
         return (
           <div
             key={g.kind}
-            className={`flex h-11 min-w-0 rounded-control border overflow-hidden transition-colors ${
+            className={`flex h-full min-h-[44px] max-h-[96px] self-center min-w-0 rounded-control border overflow-hidden transition-colors ${
               on ? 'bg-warning border-warning text-text-on-warning' : 'bg-surface-raised border-line-strong text-text'
             }`}
           >

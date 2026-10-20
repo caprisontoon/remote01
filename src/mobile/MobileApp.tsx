@@ -102,7 +102,7 @@ export function MobileApp() {
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-sheet bg-black/50 flex items-end" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-sheet bg-scrim flex items-end" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="pop w-full max-h-[80vh] overflow-auto rounded-t-widget bg-surface border-t border-line shadow-float text-text pb-[env(safe-area-inset-bottom)]">
         <div className="sticky top-0 z-10 flex items-center justify-between h-12 pl-4 pr-2 bg-surface border-b border-line">
           <h2 className="text-title-widget">{title}</h2>

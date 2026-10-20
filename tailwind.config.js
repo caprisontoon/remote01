@@ -27,7 +27,8 @@ export default {
       link: v('link'),
       brand: { DEFAULT: v('brand'), hover: v('brand-hover'), tint: v('brand-tint'), 'tint-line': v('brand-tint-line') },
       live: v('live'),
-      warning: v('warning'),
+      warning: { DEFAULT: v('warning'), text: v('warning-text') },
+      scrim: 'var(--scrim)',
       danger: v('danger'),
     },
     extend: {

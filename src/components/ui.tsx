@@ -33,7 +33,7 @@ export function Modal({ title, onClose, children, width = 'max-w-md', footer }: 
   const close = useCallback(() => onClose(), [onClose]);
   const ref = useOutsideClick<HTMLDivElement>(close);
   return (
-    <div className="fixed inset-0 z-modal flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-modal flex items-center justify-center bg-scrim p-4">
       <div ref={ref} role="dialog" aria-modal className={`pop w-full ${width} max-h-[90vh] flex flex-col rounded-card bg-surface border border-line text-text shadow-float overflow-hidden`}>
         {title !== undefined && (
           <div className="flex items-center gap-2 pl-4 pr-2 h-11 shrink-0 border-b border-line">
@@ -53,7 +53,7 @@ export function Modal({ title, onClose, children, width = 'max-w-md', footer }: 
 /** 확인·알림창: 모달과 같은 표면, 버튼은 오른쪽 아래 가로 배치 */
 function AlertShell({ children, onBackdrop }: { children: ReactNode; onBackdrop?: () => void }) {
   return (
-    <div className="fixed inset-0 z-alert flex items-center justify-center bg-black/50 p-4" onPointerDown={(e) => onBackdrop && e.target === e.currentTarget && onBackdrop()}>
+    <div className="fixed inset-0 z-alert flex items-center justify-center bg-scrim p-4" onPointerDown={(e) => onBackdrop && e.target === e.currentTarget && onBackdrop()}>
       <div role="alertdialog" className="pop w-[340px] max-w-full rounded-card bg-surface border border-line shadow-float p-5 text-left">{children}</div>
     </div>
   );
@@ -93,7 +93,7 @@ export function Alert({ title, message, onClose }: { title: string; message: str
  */
 export function Button({ variant = 'primary', size = 'md', className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'outline' | 'danger'; size?: 'sm' | 'md' | 'lg' }) {
   const styles = {
-    primary: 'bg-brand text-text-on-brand hover:bg-brand-hover disabled:bg-line-strong disabled:text-text-tertiary',
+    primary: 'bg-brand text-text-on-brand hover:bg-brand-hover disabled:bg-surface-sunken disabled:text-text-tertiary disabled:border disabled:border-line',
     secondary: 'bg-surface-raised border border-line-strong text-text hover:bg-surface-sunken disabled:text-text-tertiary',
     outline: 'bg-transparent border border-line-control text-text hover:bg-surface-raised disabled:text-text-tertiary',
     danger: 'bg-danger text-white hover:brightness-110 disabled:opacity-50',
@@ -152,7 +152,7 @@ export const BIG_CASH = 50_000;
 
 /** 금액: font-num 600, 5만 이상 warning */
 export function Cash({ value, className = '' }: { value: number; className?: string }) {
-  return <span className={`font-num font-semibold tabular-nums ${value >= BIG_CASH ? 'text-warning' : ''} ${className}`}>{formatCash(value)}</span>;
+  return <span className={`font-num font-semibold tabular-nums ${value >= BIG_CASH ? 'text-warning-text' : ''} ${className}`}>{formatCash(value)}</span>;
 }
 
 export function Empty({ children }: { children: ReactNode }) {

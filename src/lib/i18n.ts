@@ -56,6 +56,8 @@ const EN: Record<string, string> = {
   '알림': 'Notifications',
   '모두 읽음': 'Mark all read',
   '레이아웃 프리셋': 'Layout presets',
+  '프리셋': 'Presets',
+  '공지': 'Notice',
   '현재 상태': 'Current',
   '저장된 프리셋': 'Saved presets',
   '프리셋 이름': 'Preset name',

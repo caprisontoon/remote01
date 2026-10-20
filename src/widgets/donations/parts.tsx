@@ -14,7 +14,7 @@ export function KindDot({ kind, className = '' }: { kind: DonationKind; classNam
   return (
     <span className={`flex items-center gap-2 min-w-0 ${className}`}>
       <span className="w-2 h-2 rounded-[2px] shrink-0" style={{ background: kindColor(kind) }} />
-      <span className="truncate">{KIND_LABEL[kind]}</span>
+      <span className="truncate" title={KIND_LABEL[kind]}>{KIND_LABEL[kind]}</span>
     </span>
   );
 }
@@ -29,7 +29,10 @@ export function KindTag({ kind, label }: { kind: DonationKind; label?: string })
   );
 }
 
-/** 행 기능 버튼: 재생 / 차단(차단 해제) / 벽지 (p41 ④-1, p39 표). */
+/**
+ * 행 기능 버튼: 재생 / 차단(차단 해제) / 벽지 (p41 ④-1, p39 표).
+ * 차단은 평소 외곽선(빨간 아이콘)이고, 버튼에 마우스를 올렸을 때만 빨간 바탕이 된다 — 목록을 훑을 때 시선을 뺏지 않게.
+ */
 export function RowButtons({ d, blocked, compact }: { d: Donation; blocked: boolean; compact?: boolean }) {
   const t = useT();
   const showBlock = useSettings((s) => s.showBlockButton);
@@ -51,7 +54,7 @@ export function RowButtons({ d, blocked, compact }: { d: Donation; blocked: bool
       <Tooltip key="b" label={blocked ? t('차단 해제') : t('차단')}>
         <button
           aria-label={blocked ? t('차단 해제') : t('차단')}
-          className={`${btn} ${size} ${blocked ? 'bg-surface-raised border border-line-strong text-text hover:bg-surface-sunken' : 'bg-danger text-white hover:brightness-110'}`}
+          className={`${btn} ${size} ${blocked ? 'bg-surface-raised border border-line-strong text-text hover:bg-surface-sunken' : 'bg-transparent border border-line-control text-danger hover:bg-danger hover:border-danger hover:text-white'}`}
           onClick={(e) => { e.stopPropagation(); if (blocked) api.unblock(d.donorId); else api.block(d.donorId); }}
         >
           {blocked ? <Undo2 size={13} /> : <Ban size={13} />}{compact && (blocked ? t('차단 해제') : t('차단'))}

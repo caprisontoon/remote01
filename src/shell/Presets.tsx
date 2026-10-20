@@ -17,12 +17,15 @@ const names = (tiles: Tiles) => (Object.keys(tiles) as WidgetId[]).map((id) => W
 export function PresetsButton() {
   const t = useT();
   return (
+    // 화면 오른쪽 가장자리 손잡이: 아이콘만 있으면 기능이 잘 안 보여 세로 글자 "프리셋"을 함께 둔다
     <button
       aria-label={t('레이아웃 프리셋')}
+      title={t('레이아웃 프리셋')}
       onClick={() => uiStore.set({ presetsOpen: true })}
-      className="fixed right-0 top-1/2 -translate-y-1/2 z-[9000] h-16 w-6 rounded-l-control bg-surface border border-r-0 border-line shadow-float text-text-tertiary hover:text-link hover:w-8 transition-all flex items-center justify-center"
+      className="fixed right-0 top-1/2 -translate-y-1/2 z-[9000] w-7 py-2.5 rounded-l-control bg-surface border border-r-0 border-line shadow-float text-text-secondary hover:text-text hover:bg-surface-raised hover:w-8 transition-all flex flex-col items-center gap-1.5"
     >
-      <Layers size={15} />
+      <Layers size={15} className="shrink-0" />
+      <span className="text-micro font-semibold [writing-mode:vertical-rl] tracking-[0.2em]">{t('프리셋')}</span>
     </button>
   );
 }
@@ -46,7 +49,7 @@ export function PresetsPanel() {
 
   return (
     <div className="fixed inset-0 z-sheet" onPointerDown={(e) => e.target === e.currentTarget && close()}>
-      <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-scrim pointer-events-none" />
       <aside className="pop absolute right-0 top-0 bottom-0 w-[320px] max-w-full bg-surface border-l border-line shadow-float flex flex-col text-text">
         <div className="h-11 flex items-center justify-between pl-4 pr-2 border-b border-line">
           <h2 className="text-title-widget flex items-center gap-2"><Layers size={16} className="text-link" /> {t('레이아웃 프리셋')}</h2>

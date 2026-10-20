@@ -60,8 +60,10 @@ export function Dock() {
       >
         <div className="flex items-center gap-1 p-[6px] rounded-widget bg-surface border border-line shadow-float">
           <Tooltip label={pinned ? 'Dock 고정 해제' : 'Dock 고정'}>
-            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? 'bg-brand-tint text-link' : 'text-text-tertiary hover:text-text hover:bg-surface-raised'}`}>
+            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`relative w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? 'bg-surface-raised text-text' : 'text-text-tertiary hover:text-text hover:bg-surface-raised'}`}>
+              {/* 켜짐 표시는 위젯과 같은 규칙: surface-raised 바탕 + 아래 live 점 */}
               <Pin size={18} className={pinned ? 'fill-current' : ''} />
+              {pinned && <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-pill bg-live" />}
             </button>
           </Tooltip>
           <Tooltip label={t('벽지')}>

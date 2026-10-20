@@ -11,14 +11,16 @@
   --canvas: 242 244 247; /* #F2F4F7 */
   --surface: 255 255 255; /* #FFFFFF */
   --surface-raised: 247 248 250; /* #F7F8FA */
-  --surface-sunken: 247 248 250; /* #F7F8FA */
+  /* 라이트 조정(HANDOFF-01 후속): 표 헤더·hover가 흰 바탕과 구분되도록 #F7F8FA → #F2F4F7 */
+  --surface-sunken: 242 244 247; /* #F2F4F7 */
   --brand-tint: 234 241 255; /* #EAF1FF */
   --brand-tint-line: 201 218 255; /* #C9DAFF */
 
   --line: 228 231 236; /* #E4E7EC */
   --line-subtle: 238 240 243; /* #EEF0F3 */
-  --line-strong: 208 213 221; /* #D0D5DD */
-  --line-control: 208 213 221; /* #D0D5DD */
+  /* 라이트 조정: 보조 버튼·입력칸·꺼진 토글 테두리가 흰 바탕에서 3:1 이상이 되도록 #D0D5DD → #868FA0 */
+  --line-strong: 134 143 160; /* #868FA0 */
+  --line-control: 134 143 160; /* #868FA0 */
 
   --text: 16 24 40; /* #101828 */
   --text-body: 52 64 84; /* #344054 */
@@ -29,12 +31,17 @@
 
   --brand: 47 107 255; /* #2F6BFF */
   --brand-hover: 30 91 230; /* #1E5BE6 */
-  --live: 11 165 236; /* #0BA5EC */
+  /* 라이트 조정: 선택 탭 밑줄·Dock 점이 흰 바탕에서 보이도록 #0BA5EC → #0079B8 */
+  --live: 0 121 184; /* #0079B8 */
   --warning: 247 144 9; /* #F79009 */
+  /* warning 색 글자(5만 이상 금액). 라이트 #F79009는 흰 바탕 대비 2.35:1이라 글자용 진한 단계를 따로 둔다 */
+  --warning-text: 181 71 8; /* #B54708 */
   --text-on-warning: 26 18 5; /* #1A1205 */
   --danger: 217 45 32; /* #D92D20 */
 
   --shadow-float: 0 12px 32px rgba(16, 24, 40, 0.14);
+  /* 모달 뒤 가림막: 라이트는 옅게 */
+  --scrim: rgba(16, 24, 40, 0.3);
   color-scheme: light;
 }
 
@@ -62,10 +69,12 @@
   --brand-hover: 74 128 255; /* #4A80FF */
   --live: 76 195 255; /* #4CC3FF */
   --warning: 255 181 71; /* #FFB547 */
+  --warning-text: 255 181 71; /* #FFB547 */
   --text-on-warning: 26 18 5; /* #1A1205 */
   --danger: 240 68 56; /* #F04438 */
 
   --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --scrim: rgba(0, 0, 0, 0.5);
   color-scheme: dark;
 }
 

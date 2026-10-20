@@ -11,7 +11,7 @@ import { KindDot, ResizableTh, RowButtons, ThumbPreview } from './parts';
 type Hover = { d: Donation; x: number; y: number; mode: 'text' | 'thumb' } | null;
 
 /** 통합 알림·게임 탭 리스트. 넓으면 표, 좁으면 카드(반응형 UI, p50~53). */
-export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: boolean }) {
+export function AlertList({ tab, compact, dense }: { tab: 'all' | 'game'; compact: boolean; dense?: boolean }) {
   const t = useT();
   const now = useNow(15_000);
   const donations = useData((d) => d.donations);
@@ -70,9 +70,10 @@ export function AlertList({ tab, compact }: { tab: 'all' | 'game'; compact: bool
             <thead className="sticky top-0 z-10 bg-surface-sunken">
               <tr>
                 {/* 종류 칸은 최소 120px — "치지직 구독", "유튜브 슈퍼챗", "트위치 레이드"가 잘리지 않게 */}
-                {tab === 'all' && <ResizableTh col="all.kind" width={128} min={120}>{t('후원')}</ResizableTh>}
-                <ResizableTh col={`${tab}.nick`} width={200}>{t('닉네임(ID)')}</ResizableTh>
-                <ResizableTh col={`${tab}.cash`} width={96} className="text-right">{tab === 'game' ? t('후원 금액(원)') : t('후원 캐시')}</ResizableTh>
+                {/* 넓을 때는 "크리에이터TTS 구독"까지 보이는 156px, 중간 폭에서는 최소 120px */}
+                {tab === 'all' && <ResizableTh col="all.kind" width={dense ? 120 : 156} min={120}>{t('후원')}</ResizableTh>}
+                <ResizableTh col={`${tab}.nick`} width={dense ? 150 : 200}>{t('닉네임(ID)')}</ResizableTh>
+                <ResizableTh col={`${tab}.cash`} width={dense ? 88 : 96} className="text-right">{tab === 'game' ? t('후원 금액(원)') : t('후원 캐시')}</ResizableTh>
                 <ResizableTh col={`${tab}.content`}>{t('내용')}</ResizableTh>
                 <th className="w-[7.5rem] h-8 px-[14px] text-caption text-text-secondary text-right whitespace-nowrap">{t('일시')}</th>
               </tr>

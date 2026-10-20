@@ -26,6 +26,9 @@ export function Logo({ className = '' }: { className?: string }) {
 /** 상단 바 아이콘 버튼: 36×36 사각(radius-control) + 1px line */
 const barButton = 'w-9 h-9 rounded-control border border-line flex items-center justify-center text-text-secondary hover:text-text hover:bg-surface-raised transition-colors';
 
+/** 창 버튼: 테두리 없이 hover 때만 바탕 */
+const captionButton = 'w-[42px] h-9 rounded-control flex items-center justify-center text-text-secondary hover:text-text hover:bg-surface-raised transition-colors';
+
 /** 상단 바: 투네이션 BI · 공지 · 알림 · 설정 · (설치형) 압정/창 버튼 (p9, p13) */
 export function TitleBar() {
   const t = useT();
@@ -61,11 +64,14 @@ export function TitleBar() {
                 <Pin size={15} className={pinned ? 'fill-current' : ''} />
               </button>
             </Tooltip>
-            <button aria-label="최소화" onClick={desktop.window.minimize} className={barButton}><Minus size={15} /></button>
-            <button aria-label="최대화" onClick={() => { desktop!.window.toggleMaximize(); setMaximized(!maximized); }} className={barButton}>
-              {maximized ? <Copy size={13} /> : <Square size={13} />}
-            </button>
-            <button aria-label="닫기" onClick={desktop.window.close} className={`${barButton} hover:!bg-danger hover:!text-white hover:border-danger`}><X size={15} /></button>
+            {/* 창 버튼(최소화·최대화·닫기)은 테두리 없는 Windows 기본 형태 */}
+            <div className="flex items-center ml-1">
+              <button aria-label="최소화" onClick={desktop.window.minimize} className={captionButton}><Minus size={16} /></button>
+              <button aria-label="최대화" onClick={() => { desktop!.window.toggleMaximize(); setMaximized(!maximized); }} className={captionButton}>
+                {maximized ? <Copy size={13} /> : <Square size={13} />}
+              </button>
+              <button aria-label="닫기" onClick={desktop.window.close} className={`${captionButton} hover:!bg-danger hover:!text-white`}><X size={16} /></button>
+            </div>
           </>
         )}
       </div>

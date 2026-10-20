@@ -130,7 +130,7 @@ export function AdPopup() {
   const [hideToday, setHideToday] = useState(false);
   const b = banners[i];
   return (
-    <div className="fixed inset-0 z-modal flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-modal flex items-center justify-center bg-scrim p-4">
       <div className="pop w-full max-w-sm rounded-card overflow-hidden bg-surface border border-line shadow-float text-text">
         <div className="relative">
           <button className="block w-full" onClick={() => openUrl(b.url)} aria-label={`${b.title} 새 창`}>

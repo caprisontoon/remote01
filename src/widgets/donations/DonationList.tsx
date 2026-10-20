@@ -23,8 +23,12 @@ export default function DonationList() {
   const unseen = useData((d) => d.unseen);
   const [ref, width] = useWidth<HTMLDivElement>();
   const scale = useSettings((s) => s.textScale) / 100;
-  // 표 → 카드 전환 폭. 종류(120)·닉네임·캐시·일시 칸을 두고도 내용 칸이 남도록 잡고, 글자 크기에 비례해 넓힌다
-  const compact = width > 0 && width < 640 * scale;
+  // 표 → 카드 전환 폭. 절반 폭(약 640px)에서도 표를 유지하고, 그보다 좁을 때만 카드로 바꾼다. 글자 크기에 비례해 넓힌다
+  const compact = width > 0 && width < 520 * scale;
+  // 중간 폭: 표는 유지하되 종류·닉네임 칸 기본 폭을 줄여 내용 칸을 남긴다
+  const dense = width > 0 && width < 900 * scale;
+  // 뽑기 탭은 칸이 하나 더 많아 640px부터 카드로 바꾼다
+  const drawCompact = width > 0 && width < 640 * scale;
   // 좁으면 헤더 버튼은 아이콘만 남긴다 (텍스트 크기 125·150%에서도 탭이 잘리지 않게)
   const narrow = width > 0 && width < 640 * scale;
 
@@ -59,7 +63,7 @@ export default function DonationList() {
         </div>
       </WidgetHeader>
       <div className="flex-1 min-h-0">
-        {tab === 'draw' ? <DrawTab compact={compact} searching={searching} /> : <AlertList tab={tab} compact={compact} />}
+        {tab === 'draw' ? <DrawTab compact={drawCompact} searching={searching} /> : <AlertList tab={tab} compact={compact} dense={dense} />}
       </div>
     </div>
   );
