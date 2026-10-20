@@ -30,6 +30,19 @@ export function useWidth<T extends HTMLElement>() {
   return [ref, width] as const;
 }
 
+/** 요소의 내부 크기(너비·높이)를 따라간다. 위젯이 자기 칸 크기에 맞춰 배치를 고를 때 쓴다. */
+export function useSize<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    if (!ref.current) return;
+    const ro = new ResizeObserver(([e]) => setSize({ w: e.contentRect.width, h: e.contentRect.height }));
+    ro.observe(ref.current);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, size] as const;
+}
+
 /** 바깥 클릭 시 닫기 (모달·드롭다운 공통 정책). */
 export function useOutsideClick<T extends HTMLElement>(onOutside: () => void, active = true) {
   const ref = useRef<T>(null);

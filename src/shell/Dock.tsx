@@ -14,6 +14,14 @@ import { Badge, Tooltip } from '../components/ui';
 export const DOCK_HEIGHT = 60;
 
 /**
+ * 켜짐/꺼짐을 색으로 대비시킨다.
+ * 켜짐 = brand-tint 바탕 + 1px brand-tint-line + link(BI 블루 계열) 아이콘 + 아래 live 점,
+ * 꺼짐 = 바탕 없음 + text-tertiary 아이콘 (hover 때만 surface-raised).
+ */
+const DOCK_ON = 'bg-brand-tint ring-1 ring-inset ring-brand-tint-line text-link';
+const DOCK_OFF = 'text-text-tertiary hover:text-text hover:bg-surface-raised';
+
+/**
  * 리모컨 Dock (p10).
  * 압정 on(기본): 하단에 고정. off: 숨어 있다가 마우스를 올리면 나타나고, 벗어나면 2.5초 뒤 숨는다.
  * 위젯 추가·이동 중에는 압정과 관계없이 숨긴다.
@@ -60,8 +68,8 @@ export function Dock() {
       >
         <div className="flex items-center gap-1 p-[6px] rounded-widget bg-surface border border-line shadow-float">
           <Tooltip label={pinned ? 'Dock 고정 해제' : 'Dock 고정'}>
-            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`relative w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? 'bg-surface-raised text-text' : 'text-text-tertiary hover:text-text hover:bg-surface-raised'}`}>
-              {/* 켜짐 표시는 위젯과 같은 규칙: surface-raised 바탕 + 아래 live 점 */}
+            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`relative w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? DOCK_ON : DOCK_OFF}`}>
+              {/* 켜짐 표시는 위젯과 같은 규칙 (DOCK_ON + 아래 live 점) */}
               <Pin size={18} className={pinned ? 'fill-current' : ''} />
               {pinned && <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-pill bg-live" />}
             </button>
@@ -89,8 +97,8 @@ export function Dock() {
                     pausedQuick
                       ? 'bg-warning text-text-on-warning blink'
                       : on
-                        ? 'bg-surface-raised text-text'
-                        : 'text-text-tertiary hover:text-text hover:bg-surface-raised'
+                        ? DOCK_ON
+                        : DOCK_OFF
                   }`}
                 >
                   <Icon size={18} />
