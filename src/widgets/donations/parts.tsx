@@ -94,7 +94,7 @@ export function ThumbPreview({ d }: { d: Donation }) {
 
 /** 헤더 오른쪽 작은 외곽선 버튼 (필터·정렬) */
 const headButton = (on: boolean) =>
-  `h-[30px] px-2.5 rounded-control border flex items-center gap-1.5 text-caption font-medium whitespace-nowrap transition-colors ${on ? 'border-brand text-link bg-brand-tint' : 'border-line-control text-text-secondary hover:text-text hover:bg-surface-raised'}`;
+  `h-[30px] px-2.5 rounded-control border flex items-center gap-1.5 text-caption font-medium whitespace-nowrap transition-colors ${on ? 'border-brand text-link bg-brand-tint' : 'bg-surface border-line-control text-text-secondary hover:text-text hover:bg-surface-raised'}`;
 
 /** 필터 모달 (p42 ①~③). 체크 즉시 적용, 닫기 또는 바깥 클릭 시 닫힘. */
 export function FilterButton({ iconOnly }: { iconOnly?: boolean }) {

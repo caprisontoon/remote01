@@ -37,7 +37,7 @@ export function DrawToolbar({ searching, onSearchChange, iconOnly }: { searching
   return (
     <div className="flex items-center gap-1.5">
       <Tooltip label={hasConsumable ? t('잔여 수량') : '상품 소진형 뽑기가 없습니다'} side="bottom">
-        <button ref={setAnchor} disabled={!hasConsumable} aria-label={t('잔여 수량')} onClick={() => setStockOpen((v) => !v)} className={`${head} border-line-control text-text-secondary hover:text-text hover:bg-surface-raised`}>
+        <button ref={setAnchor} disabled={!hasConsumable} aria-label={t('잔여 수량')} onClick={() => setStockOpen((v) => !v)} className={`${head} bg-surface border-line-control text-text-secondary hover:text-text hover:bg-surface-raised`}>
           <Box size={14} /> {!iconOnly && t('잔여 수량')}
         </button>
       </Tooltip>
@@ -46,7 +46,7 @@ export function DrawToolbar({ searching, onSearchChange, iconOnly }: { searching
         <DrawStock />
       </Popover>
       <Tooltip label={searching ? t('닫기') : t('검색')} side="bottom">
-        <button aria-label={searching ? '검색 닫기' : '뽑기 검색'} onClick={() => onSearchChange(!searching)} className={`${head} ${searching ? 'border-brand bg-brand-tint text-link' : 'border-line-control text-text-secondary hover:text-text hover:bg-surface-raised'}`}>
+        <button aria-label={searching ? '검색 닫기' : '뽑기 검색'} onClick={() => onSearchChange(!searching)} className={`${head} ${searching ? 'border-brand bg-brand-tint text-link' : 'bg-surface border-line-control text-text-secondary hover:text-text hover:bg-surface-raised'}`}>
           {searching ? <X size={14} /> : <Search size={14} />}
         </button>
       </Tooltip>

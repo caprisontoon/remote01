@@ -13,6 +13,8 @@
   --surface-raised: 247 248 250; /* #F7F8FA */
   /* 라이트 조정(HANDOFF-01 후속): 표 헤더·hover가 흰 바탕과 구분되도록 #F7F8FA → #F2F4F7 */
   --surface-sunken: 242 244 247; /* #F2F4F7 */
+  /* 위젯 제목줄 띠 (HANDOFF-01 후속, 사용자 결정 B안): 본문과 구분되도록 한 단계 다른 색 */
+  --surface-head: 230 233 238; /* #E6E9EE */
   --brand-tint: 234 243 255; /* #EAF3FF */
   --brand-tint-line: 201 225 255; /* #C9E1FF */
 
@@ -57,6 +59,7 @@
   --surface: 23 25 30; /* #17191E */
   --surface-raised: 31 34 40; /* #1F2228 */
   --surface-sunken: 27 30 35; /* #1B1E23 */
+  --surface-head: 35 39 46; /* #23272E */
   --brand-tint: 31 43 62; /* #1F2B3E */
   --brand-tint-line: 39 62 93; /* #273E5D */
 
@@ -218,3 +221,4 @@ textarea,
   outline-offset: 4px;
   border-radius: 4px;
 }
+

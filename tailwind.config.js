@@ -14,7 +14,7 @@ export default {
       white: '#ffffff',
       black: '#000000',
       canvas: v('canvas'),
-      surface: { DEFAULT: v('surface'), raised: v('surface-raised'), sunken: v('surface-sunken') },
+      surface: { DEFAULT: v('surface'), raised: v('surface-raised'), sunken: v('surface-sunken'), head: v('surface-head') },
       line: { DEFAULT: v('line'), subtle: v('line-subtle'), strong: v('line-strong'), control: v('line-control') },
       text: {
         DEFAULT: v('text'),

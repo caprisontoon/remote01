@@ -112,7 +112,7 @@ export function IconButton({ label, className = '', active, ...props }: React.Bu
     <button
       type="button"
       aria-label={label}
-      className={`w-7 h-7 shrink-0 rounded-control flex items-center justify-center transition-colors ${active ? 'bg-brand-tint text-link' : 'text-text-tertiary hover:text-text hover:bg-surface-raised'} ${className}`}
+      className={`w-7 h-7 shrink-0 rounded-control flex items-center justify-center transition-colors ${active ? 'bg-brand-tint text-link' : 'text-text-tertiary hover:text-text hover:bg-text/10'} ${className}`}
       {...props}
     />
   );

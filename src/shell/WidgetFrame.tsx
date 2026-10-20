@@ -29,7 +29,7 @@ const stopOnControl = (e: React.PointerEvent) => {
 
 /**
  * 위젯 공통 틀 (토큰 문서 §5): surface 바탕, 1px line 테두리, radius-widget.
- * 제목줄 44px + 아래 1px line, 제목 왼쪽, 조작 버튼(압정·닫기)은 오른쪽 text-tertiary 아이콘.
+ * 제목줄 44px은 surface-head 띠(본문과 다른 색) + 아래 1px line, 제목 왼쪽, 조작 버튼(압정·닫기)은 오른쪽 text-tertiary 아이콘.
  * 압정은 분리된 창에서만, 닫기는 후원 리스트를 제외한 위젯에만 있다 (p28, p38).
  */
 export function WidgetFrame({
@@ -68,7 +68,7 @@ export function WidgetFrame({
     >
       <header
         onPointerDown={onHeaderPointerDown}
-        className={`h-[44px] shrink-0 flex items-stretch gap-3 pl-[14px] pr-2 border-b border-line select-none ${onHeaderPointerDown ? 'cursor-grab active:cursor-grabbing' : ''} ${headerClassName}`}
+        className={`h-[44px] shrink-0 flex items-stretch gap-3 pl-[14px] pr-2 bg-surface-head border-b border-line select-none ${onHeaderPointerDown ? 'cursor-grab active:cursor-grabbing' : ''} ${headerClassName}`}
       >
         {/* 제목이 먼저 자리를 갖고(한 줄 말줄임), 제목줄 조작은 남는 폭 안에서 줄어든다 */}
         {symbol && <Symbol height={12} className="self-center shrink-0 -mr-1" />}
