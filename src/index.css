@@ -129,6 +129,13 @@ textarea,
 .app-no-drag {
   -webkit-app-region: no-drag;
 }
+/* 창 끌기 손잡이 점무늬 (상단 바 빈 영역) */
+.drag-grip {
+  background-image: radial-gradient(rgb(var(--text-tertiary)) 1px, transparent 1.4px);
+  background-size: 6px 5px;
+  background-position: center;
+  opacity: 0.7;
+}
 
 ::-webkit-scrollbar {
   width: 6px;

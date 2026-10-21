@@ -25,17 +25,24 @@ export function TitleBar() {
   const [maximized, setMaximized] = useState(false);
 
   return (
-    <header className={`relative z-titlebar h-[44px] shrink-0 flex items-center gap-2.5 px-1.5 ${desktop ? 'app-drag' : ''}`}>
-      <button className="app-no-drag" aria-label="투네이션 홈페이지 새 창" onClick={() => openUrl('https://toon.at')}>
+    // 설치형: 상단 바 전체가 창 끌기 영역(app-drag)이고 버튼만 제외(app-no-drag). 위쪽 8px 여백까지 끌기 영역에 넣는다
+    <header className={`relative z-titlebar shrink-0 flex items-center gap-2.5 px-1.5 ${desktop ? 'app-drag -mt-2 pt-2 h-[52px]' : 'h-[44px]'}`}>
+      <button className="app-no-drag shrink-0" aria-label="투네이션 홈페이지 새 창" onClick={() => openUrl('https://toon.at')}>
         <Logo height={20} />
       </button>
       <button
         onClick={() => notice.url && openUrl(notice.url)}
-        className="app-no-drag flex-1 min-w-0 h-8 rounded-dock-item px-3 flex items-center gap-2.5 text-left bg-brand-tint border border-brand-tint-line text-text font-medium"
+        className={`app-no-drag min-w-0 h-8 rounded-dock-item px-3 flex items-center gap-2.5 text-left bg-brand-tint border border-brand-tint-line text-text font-medium ${desktop ? 'flex-[0_1_560px]' : 'flex-1'}`}
       >
         <span className="shrink-0 px-1.5 py-0.5 rounded-tag bg-brand text-text-on-brand text-micro font-bold">{t('공지')}</span>
         <span className="truncate">{notice.text}</span>
       </button>
+      {/* 창 끌기 손잡이: 공지 바가 폭을 다 차지하지 않게 하고, 그 사이에 항상 남는 빈 영역(최소 96px)에 점무늬를 그려 잡는 곳임을 보인다 */}
+      {desktop && (
+        <div aria-hidden title="끌어서 창 이동 · 두 번 클릭하면 최대화" className="flex-1 min-w-[96px] self-stretch flex items-center justify-center">
+          <span className="drag-grip w-14 h-2.5" />
+        </div>
+      )}
       <LiveBadge />
       <div className="app-no-drag flex items-center gap-1.5">
         <AlarmButton />
