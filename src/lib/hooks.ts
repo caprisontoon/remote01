@@ -30,6 +30,20 @@ export function useWidth<T extends HTMLElement>() {
   return [ref, width] as const;
 }
 
+/** 창(뷰포트) 너비. 상단 바·Dock이 좁은 창에서 모양을 바꿀 때 쓴다. */
+export function useViewportWidth() {
+  const [w, setW] = useState(() => window.innerWidth);
+  useEffect(() => {
+    const h = () => setW(window.innerWidth);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
+  }, []);
+  return w;
+}
+
+/** 이 너비보다 좁으면 상단 바·Dock·설정을 모바일처럼 촘촘한 모양으로 바꾼다 */
+export const NARROW_WIDTH = 560;
+
 /** 요소의 내부 크기(너비·높이)를 따라간다. 위젯이 자기 칸 크기에 맞춰 배치를 고를 때 쓴다. */
 export function useSize<T extends HTMLElement>() {
   const ref = useRef<T>(null);

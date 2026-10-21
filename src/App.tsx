@@ -115,9 +115,9 @@ function PcRemote() {
   const pinned = useStore(settingsStore, (s) => s.dockPinned);
   const { settingsOpen, presetsOpen, wallpaperOpen } = useStore(uiStore, (s) => s);
   return (
-    // 리모컨 전체 최소 크기: 그 이하로 줄이면 스크롤 (p9). 설치형 창 최소 크기(750×600)와 맞춘다.
+    // 리모컨 전체 최소 크기: 그 이하로 줄이면 스크롤 (p9). 설치형 창 최소 너비(400px, 모바일 화면 정도)와 맞춘다.
     <div className="h-full w-full overflow-auto">
-      <div className="h-full min-w-[750px] min-h-[560px] flex flex-col pt-2 px-1.5 bg-canvas text-text">
+      <div className="h-full min-w-[400px] min-h-[560px] flex flex-col pt-2 px-1.5 bg-canvas text-text">
         <TitleBar />
         <main className="relative flex-1 min-h-0">
           <Canvas bottomInset={pinned ? DOCK_HEIGHT + 8 : 0} />

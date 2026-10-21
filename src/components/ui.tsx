@@ -214,7 +214,8 @@ export function Popover({ anchor, open, onClose, align = 'left', className = '',
     if (!open || !anchor) return;
     const place = () => {
       const r = anchor.getBoundingClientRect();
-      setPos(align === 'left' ? { top: r.bottom + 6, left: r.left } : { top: r.bottom + 6, right: window.innerWidth - r.right });
+      // 좁은 창에서도 화면 밖으로 나가지 않게 가장자리 8px 안쪽으로 제한한다
+      setPos(align === 'left' ? { top: r.bottom + 6, left: Math.max(8, r.left) } : { top: r.bottom + 6, right: Math.max(8, window.innerWidth - r.right) });
     };
     place();
     window.addEventListener('resize', place);
@@ -236,7 +237,7 @@ export function Popover({ anchor, open, onClose, align = 'left', className = '',
   }, [open, anchor, onClose]);
   if (!open || !pos) return null;
   return createPortal(
-    <div ref={panel} style={{ position: 'fixed', ...pos, maxHeight: `calc(100vh - ${pos.top + 8}px)` }} className={`pop z-popover flex flex-col overflow-hidden rounded-card bg-surface border border-line shadow-float text-text ${className}`}>
+    <div ref={panel} style={{ position: 'fixed', ...pos, maxHeight: `calc(100vh - ${pos.top + 8}px)`, maxWidth: 'calc(100vw - 16px)' }} className={`pop z-popover flex flex-col overflow-hidden rounded-card bg-surface border border-line shadow-float text-text ${className}`}>
       {children}
     </div>,
     document.body,

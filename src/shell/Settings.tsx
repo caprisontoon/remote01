@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { api, settingsStore } from '../state/app';
 import { uiStore } from '../state/ui';
 import { useStore } from '../state/store';
-import { useData } from '../lib/hooks';
+import { NARROW_WIDTH, useData, useViewportWidth } from '../lib/hooks';
 import { useT } from '../lib/i18n';
 import { desktop, isDesktop, openUrl } from '../platform';
 import type { Shortcut, ShortcutAction } from '../types';
@@ -16,6 +16,7 @@ type Tab = 'basic' | 'shortcut' | 'live' | 'info';
 export function SettingsModal({ onClose }: { onClose: () => void }) {
   const t = useT();
   const [tab, setTab] = useState<Tab>('basic');
+  const narrow = useViewportWidth() < NARROW_WIDTH;
   const tabs: { id: Tab; label: string }[] = [
     { id: 'basic', label: '기본' },
     { id: 'shortcut', label: '단축키' },
@@ -24,15 +25,24 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
   ];
   return (
     <Modal title={t('설정')} onClose={onClose} width="max-w-2xl">
-      <div className="flex min-h-[380px]">
-        <nav className="w-40 shrink-0 p-2 space-y-0.5 bg-canvas border-r border-line">
+      {/* 좁은 창: 왼쪽 메뉴 대신 위쪽 밑줄 탭 */}
+      <div className={`flex min-h-[380px] ${narrow ? 'flex-col' : ''}`}>
+        <nav className={narrow ? 'flex shrink-0 px-2 border-b border-line overflow-x-auto [scrollbar-width:none]' : 'w-40 shrink-0 p-2 space-y-0.5 bg-canvas border-r border-line'}>
           {tabs.map((x) => (
-            <button key={x.id} onClick={() => setTab(x.id)} className={`w-full h-[34px] px-3 rounded-control text-left text-body ${tab === x.id ? 'bg-brand-tint text-text font-semibold shadow-[inset_3px_0_0_rgb(var(--live))]' : 'text-text-secondary hover:text-text hover:bg-surface-raised'}`}>
+            <button
+              key={x.id}
+              onClick={() => setTab(x.id)}
+              className={
+                narrow
+                  ? `shrink-0 h-10 px-3 text-body whitespace-nowrap border-b-2 -mb-px ${tab === x.id ? 'border-live text-text font-semibold' : 'border-transparent text-text-secondary hover:text-text'}`
+                  : `w-full h-[34px] px-3 rounded-control text-left text-body ${tab === x.id ? 'bg-brand-tint text-text font-semibold shadow-[inset_3px_0_0_rgb(var(--live))]' : 'text-text-secondary hover:text-text hover:bg-surface-raised'}`
+              }
+            >
               {t(x.label)}
             </button>
           ))}
         </nav>
-        <div className="flex-1 p-5 overflow-auto">{tab === 'basic' ? <BasicSettings /> : tab === 'shortcut' ? <ShortcutSettings /> : tab === 'live' ? <LiveSettings /> : <InfoSettings />}</div>
+        <div className={`flex-1 overflow-auto ${narrow ? 'p-4' : 'p-5'}`}>{tab === 'basic' ? <BasicSettings /> : tab === 'shortcut' ? <ShortcutSettings /> : tab === 'live' ? <LiveSettings /> : <InfoSettings />}</div>
       </div>
     </Modal>
   );

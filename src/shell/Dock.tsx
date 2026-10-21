@@ -4,7 +4,7 @@ import { api, layoutStore, settingsStore } from '../state/app';
 import { uiStore } from '../state/ui';
 import { useStore } from '../state/store';
 import { removeTile } from '../layout/grid';
-import { mmss, useData, useNow } from '../lib/hooks';
+import { mmss, useData, useNow, useViewportWidth } from '../lib/hooks';
 import { useT } from '../lib/i18n';
 import { desktop } from '../platform';
 import type { WidgetId } from '../types';
@@ -40,6 +40,8 @@ export function Dock() {
   const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const forcedHidden = !!placing || dragging;
+  // Dock 전체 폭(약 650px)보다 창이 좁으면 가로 스크롤. 이때 위로 뜨는 툴팁은 잘리므로 브라우저 기본 툴팁(title)을 쓴다
+  const scroll = useViewportWidth() < 680;
   const visible = !forcedHidden && (pinned || hovered);
 
   useEffect(() => () => clearTimeout(hideTimer.current), []);
@@ -64,22 +66,22 @@ export function Dock() {
         aria-label="리모컨 Dock"
         onMouseEnter={() => { clearTimeout(hideTimer.current); setHovered(true); }}
         onMouseLeave={() => { hideTimer.current = setTimeout(() => setHovered(false), 2500); }}
-        className={`fixed left-1/2 -translate-x-1/2 bottom-2 z-dock transition-all duration-300 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-[120%] opacity-0 pointer-events-none'}`}
+        className={`fixed left-1/2 -translate-x-1/2 bottom-2 z-dock max-w-[calc(100vw-16px)] transition-all duration-300 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-[120%] opacity-0 pointer-events-none'}`}
       >
-        <div className="flex items-center gap-1 p-[6px] rounded-widget bg-surface border border-line shadow-float">
+        <div className={`flex items-center gap-1 p-[6px] rounded-widget bg-surface border border-line shadow-float ${scroll ? 'overflow-x-auto [scrollbar-width:none]' : ''}`}>
           <Tooltip label={pinned ? 'Dock 고정 해제' : 'Dock 고정'}>
-            <button aria-label="Dock 압정" aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`relative w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? DOCK_ON : DOCK_OFF}`}>
+            <button aria-label="Dock 압정" title={scroll ? (pinned ? 'Dock 고정 해제' : 'Dock 고정') : undefined} aria-pressed={pinned} onClick={() => api.updateSettings({ dockPinned: !pinned })} className={`relative shrink-0 w-[44px] h-[44px] rounded-dock-item flex items-center justify-center ${pinned ? DOCK_ON : DOCK_OFF}`}>
               {/* 켜짐 표시는 위젯과 같은 규칙 (DOCK_ON + 아래 live 점) */}
               <Pin size={18} className={pinned ? 'fill-current' : ''} />
               {pinned && <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-pill bg-live" />}
             </button>
           </Tooltip>
           <Tooltip label={t('벽지')}>
-            <button aria-label={t('벽지')} onClick={() => uiStore.set({ wallpaperOpen: true })} className="w-[44px] h-[44px] rounded-dock-item flex items-center justify-center text-text-tertiary hover:text-text hover:bg-surface-raised">
+            <button aria-label={t('벽지')} title={scroll ? t('벽지') : undefined} onClick={() => uiStore.set({ wallpaperOpen: true })} className="shrink-0 w-[44px] h-[44px] rounded-dock-item flex items-center justify-center text-text-tertiary hover:text-text hover:bg-surface-raised">
               <Image size={18} />
             </button>
           </Tooltip>
-          <span className="w-px h-[24px] bg-line mx-1" />
+          <span className="shrink-0 w-px h-[24px] bg-line mx-1" />
           {DOCK_ORDER.map((id) => {
             const meta = WIDGETS[id];
             const Icon = meta.icon;
@@ -90,10 +92,11 @@ export function Dock() {
               <Tooltip key={id} label={id === 'vote' && voteLabel ? `${t(meta.title)} · ${voteLabel}` : t(meta.title)}>
                 <button
                   aria-label={t(meta.title)}
+                  title={scroll ? t(meta.title) : undefined}
                   aria-pressed={on}
                   disabled={!!placing && placing !== id}
                   onClick={() => toggle(id)}
-                  className={`relative w-[44px] h-[44px] rounded-dock-item flex items-center justify-center transition-colors disabled:opacity-30 ${
+                  className={`relative shrink-0 w-[44px] h-[44px] rounded-dock-item flex items-center justify-center transition-colors disabled:opacity-30 ${
                     pausedQuick
                       ? 'bg-warning text-text-on-warning blink'
                       : on

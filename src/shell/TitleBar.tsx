@@ -3,11 +3,11 @@ import { useCallback, useState } from 'react';
 import { api } from '../state/app';
 import { uiStore } from '../state/ui';
 import { relativeTime } from '../lib/donation';
-import { useData, useNow, useOutsideClick } from '../lib/hooks';
+import { NARROW_WIDTH, useData, useNow, useOutsideClick, useViewportWidth } from '../lib/hooks';
 import { useT } from '../lib/i18n';
 import { desktop, openUrl } from '../platform';
 import { Badge, Tooltip } from '../components/ui';
-import { Logo } from '../components/Brand';
+import { Logo, Symbol } from '../components/Brand';
 
 export const TITLEBAR_HEIGHT = 44;
 
@@ -23,28 +23,33 @@ export function TitleBar() {
   const notice = useData((d) => d.notice);
   const [pinned, setPinned] = useState(false);
   const [maximized, setMaximized] = useState(false);
+  // 좁은 창(모바일 화면 정도): 로고는 심볼만, 공지는 "공지" 태그만(눌러서 공지 열기), 버튼 간격·창 버튼 폭을 줄인다
+  const narrow = useViewportWidth() < NARROW_WIDTH;
+  const caption = narrow ? captionButton.replace('w-[42px]', 'w-8') : captionButton;
 
   return (
     // 설치형: 상단 바 전체가 창 끌기 영역(app-drag)이고 버튼만 제외(app-no-drag). 위쪽 8px 여백까지 끌기 영역에 넣는다
-    <header className={`relative z-titlebar shrink-0 flex items-center gap-2.5 px-1.5 ${desktop ? 'app-drag -mt-2 pt-2 h-[52px]' : 'h-[44px]'}`}>
+    <header className={`relative z-titlebar shrink-0 flex items-center ${narrow ? 'gap-1.5' : 'gap-2.5'} px-1.5 ${desktop ? 'app-drag -mt-2 pt-2 h-[52px]' : 'h-[44px]'}`}>
       <button className="app-no-drag shrink-0" aria-label="투네이션 홈페이지 새 창" onClick={() => openUrl('https://toon.at')}>
-        <Logo height={20} />
+        {narrow ? <Symbol height={18} /> : <Logo height={20} />}
       </button>
       <button
         onClick={() => notice.url && openUrl(notice.url)}
-        className={`app-no-drag min-w-0 h-8 rounded-dock-item px-3 flex items-center gap-2.5 text-left bg-brand-tint border border-brand-tint-line text-text font-medium ${desktop ? 'flex-[0_1_560px]' : 'flex-1'}`}
+        title={narrow ? notice.text : undefined}
+        aria-label={narrow ? `${t('공지')}: ${notice.text}` : undefined}
+        className={`app-no-drag min-w-0 h-8 rounded-dock-item flex items-center gap-2.5 text-left bg-brand-tint border border-brand-tint-line text-text font-medium ${narrow ? 'shrink-0 px-1.5' : desktop ? 'px-3 flex-[0_1_560px]' : 'px-3 flex-1'}`}
       >
         <span className="shrink-0 px-1.5 py-0.5 rounded-tag bg-brand text-text-on-brand text-micro font-bold">{t('공지')}</span>
-        <span className="truncate">{notice.text}</span>
+        {!narrow && <span className="truncate">{notice.text}</span>}
       </button>
       {/* 창 끌기 손잡이: 공지 바가 폭을 다 차지하지 않게 하고, 그 사이에 항상 남는 빈 영역(최소 96px)에 점무늬를 그려 잡는 곳임을 보인다 */}
       {desktop && (
-        <div aria-hidden title="끌어서 창 이동 · 두 번 클릭하면 최대화" className="flex-1 min-w-[96px] self-stretch flex items-center justify-center">
-          <span className="drag-grip w-14 h-2.5" />
+        <div aria-hidden title="끌어서 창 이동 · 두 번 클릭하면 최대화" className={`flex-1 self-stretch flex items-center justify-center ${narrow ? 'min-w-[40px]' : 'min-w-[96px]'}`}>
+          <span className={`drag-grip h-2.5 ${narrow ? 'w-6' : 'w-14'}`} />
         </div>
       )}
       <LiveBadge />
-      <div className="app-no-drag flex items-center gap-1.5">
+      <div className={`app-no-drag flex items-center ${narrow ? 'gap-1' : 'gap-1.5'}`}>
         <AlarmButton />
         <Tooltip label={t('설정')} side="bottom">
           <button aria-label={t('설정')} onClick={() => uiStore.set({ settingsOpen: true })} className={barButton}>
@@ -53,19 +58,19 @@ export function TitleBar() {
         </Tooltip>
         {desktop && (
           <>
-            <span className="w-px h-5 bg-line mx-0.5" />
+            {!narrow && <span className="w-px h-5 bg-line mx-0.5" />}
             <Tooltip label="항상 맨 앞에" side="bottom">
               <button aria-label="압정" aria-pressed={pinned} onClick={() => { desktop!.window.setPinned(!pinned); setPinned(!pinned); }} className={pinned ? `${barButton} !bg-brand-tint !text-link` : barButton}>
                 <Pin size={15} className={pinned ? 'fill-current' : ''} />
               </button>
             </Tooltip>
             {/* 창 버튼(최소화·최대화·닫기)은 테두리 없는 Windows 기본 형태 */}
-            <div className="flex items-center ml-1">
-              <button aria-label="최소화" onClick={desktop.window.minimize} className={captionButton}><Minus size={16} /></button>
-              <button aria-label="최대화" onClick={() => { desktop!.window.toggleMaximize(); setMaximized(!maximized); }} className={captionButton}>
+            <div className={`flex items-center ${narrow ? '' : 'ml-1'}`}>
+              <button aria-label="최소화" onClick={desktop.window.minimize} className={caption}><Minus size={16} /></button>
+              <button aria-label="최대화" onClick={() => { desktop!.window.toggleMaximize(); setMaximized(!maximized); }} className={caption}>
                 {maximized ? <Copy size={13} /> : <Square size={13} />}
               </button>
-              <button aria-label="닫기" onClick={desktop.window.close} className={`${captionButton} hover:!bg-danger hover:!text-white`}><X size={16} /></button>
+              <button aria-label="닫기" onClick={desktop.window.close} className={`${caption} hover:!bg-danger hover:!text-white`}><X size={16} /></button>
             </div>
           </>
         )}

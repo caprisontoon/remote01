@@ -8,8 +8,9 @@ import { attachedGroup, snap, type Box } from './magnet';
 import { ToonationFeed } from './toonation';
 
 const DEV_URL = process.env.VITE_DEV_SERVER_URL;
-// Ground Control의 최소 창 크기는 750×750. 높이는 기존 600이 더 작아 그대로 둔다.
-const MAIN_MIN = { width: 750, height: 600 };
+// 최소 창 크기: 가로는 모바일 화면 정도(400px)까지 줄일 수 있다 — 좁은 창에서는 상단 바·Dock·설정이 촘촘한 모양으로 바뀐다.
+// 세로는 600px (Ground Control 750보다 작은 기존 값 유지).
+const MAIN_MIN = { width: 400, height: 600 };
 /** 위젯 독립창 최소 크기 (Ground Control 플로팅 위젯과 같은 150×150) */
 const WIDGET_MIN = { width: 150, height: 150 };
 
