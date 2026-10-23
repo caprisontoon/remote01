@@ -10,6 +10,9 @@
 | **모바일 웹 리모컨** | 화면 폭 768px 이하에서 모바일 전용 UI (p88~112) | `npm run dev` 후 모바일 폭 |
 | **관리자 웹** | 이용자·버전 현황, 회원 검색·이용 정지, 점검 일정 (`docs/admin/관리자웹.md`) | `npm run dev` 후 `/admin/` |
 
+**웹에서 바로 보기 (GitHub Pages):** 웹 리모컨 https://caprisontoon.github.io/remote01/?autologin=1 · 관리자 웹 https://caprisontoon.github.io/remote01/admin/
+(`.github/workflows/pages.yml`이 이 브랜치에 올릴 때마다 다시 배포한다. 목업 데이터.)
+
 > 기존 AI Studio 프로토타입(2025-12-29)을 바탕으로 확장했습니다. 이전 코드는 git 기록에 남아 있습니다.
 
 ## 시작하기

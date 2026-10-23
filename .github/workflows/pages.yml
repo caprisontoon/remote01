@@ -1,0 +1,45 @@
+name: pages
+
+# 웹 리모컨(/)과 관리자 웹(/admin/)을 GitHub Pages에 올린다.
+# 같은 주소라 목업 서버(localStorage)를 함께 써서, 관리자 웹의 점검·정지 설정이 웹 리모컨에 바로 반영된다.
+# 결과는 gh-pages 브랜치에 들어가고 https://caprisontoon.github.io/remote01/ 에서 열린다.
+on:
+  push:
+    branches: [main, 'claude/trusting-wozniak-ghvzg2']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run build:admin
+      - name: 사이트 묶기
+        run: |
+          mkdir site
+          cp -r dist/. site/
+          mkdir site/admin
+          cp -r dist-admin/. site/admin/
+          touch site/.nojekyll
+      - name: gh-pages 브랜치에 올리기
+        working-directory: site
+        run: |
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "배포 ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
