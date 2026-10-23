@@ -8,7 +8,7 @@ import type { ShortcutAction, WidgetId } from './types';
 import { Toasts } from './components/ui';
 import { Canvas } from './shell/Canvas';
 import { DOCK_HEIGHT, Dock } from './shell/Dock';
-import { Accounts, AdPopup, Expired, Login, Maintenance, Splash, Update } from './shell/Entry';
+import { Accounts, AdPopup, Expired, Login, Maintenance, Splash, Suspended, Update } from './shell/Entry';
 import { PresetsButton, PresetsPanel } from './shell/Presets';
 import { SettingsModal } from './shell/Settings';
 import { TitleBar } from './shell/TitleBar';
@@ -96,6 +96,7 @@ export default function App() {
         {phase === 'maintenance' && <Maintenance />}
         {phase === 'update' && <Update />}
         {phase === 'expired' && <Expired />}
+        {phase === 'suspended' && <Suspended />}
         <Toasts />
       </>
     );

@@ -29,6 +29,8 @@ export interface RemoteBackend {
   logout(): void;
   installUpdate(): void;
   retryMaintenance(): void;
+  /** 이용 정지 화면에서 로그아웃 */
+  leaveSuspended(): void;
   dismissAd(hideToday: boolean): void;
   setNotice(notice: Notice): void;
 

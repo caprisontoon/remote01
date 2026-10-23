@@ -8,6 +8,7 @@
 | **설치형 리모컨** (Electron) | 위젯 조립형 캔버스 + 위젯 독립창 분리/복귀, 자석, 압정, 전역 단축키 | `npm run dev:desktop` |
 | **PC 웹 리모컨** | 설치형과 같고 창 분리·압정·단축키만 없음 (p6, p86~87) | `npm run dev` |
 | **모바일 웹 리모컨** | 화면 폭 768px 이하에서 모바일 전용 UI (p88~112) | `npm run dev` 후 모바일 폭 |
+| **관리자 웹** | 이용자·버전 현황, 회원 검색·이용 정지, 점검 일정 (`docs/admin/관리자웹.md`) | `npm run dev` 후 `/admin/` |
 
 > 기존 AI Studio 프로토타입(2025-12-29)을 바탕으로 확장했습니다. 이전 코드는 git 기록에 남아 있습니다.
 
@@ -20,6 +21,7 @@ npm run dev:desktop    # 설치형 리모컨 (Vite + Electron)
 npm test               # 단위 테스트 (그리드 엔진, 노출 정책, 투표 검증, 자석)
 npm run typecheck
 npm run dist:win       # Windows 설치 파일 (Windows에서 실행, 또는 CI 아티팩트)
+npm run build:admin    # 관리자 웹 → dist-admin/ (설치형 패키지에는 들어가지 않음)
 ```
 
 Windows 설치 파일(NSIS)은 Wine이 필요해 리눅스에서는 만들 수 없습니다.
@@ -58,6 +60,9 @@ src/
   shell/                타이틀바·공지·알림, 캔버스, Dock, 프리셋, 설정, 진입 화면, 독립창
   widgets/              위젯 11종
   mobile/MobileApp.tsx  모바일 웹 리모컨
+  api/server.ts         관리자 웹 ↔ 리모컨 공용 규칙: 점검 일정·이용 정지 (목업은 localStorage가 서버 역할)
+  api/admin.ts          관리자 웹 서버 연동 인터페이스 (AdminBackend), api/adminMock.ts 목업
+  admin/                관리자 웹 화면 (진입: admin/index.html)
 electron/
   main.ts               독립창 분리/복귀, 드레그 인 감지, 자석, 압정, 단축키, 창 상태 저장
   magnet.ts             자석 스냅·붙은 창 묶음 계산

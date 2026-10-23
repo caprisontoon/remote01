@@ -4,6 +4,18 @@ import type { Donation, PendingItem, QuickKind } from '../types';
 import type { RemoteData } from '../state/data';
 import { APP_VERSION } from '../state/data';
 import type { Store } from '../state/store';
+import { isDesktop } from '../platform';
+import {
+  DEMO_MEMBER_ID,
+  activeMaintenance,
+  activeSanction,
+  formatRange,
+  loadServerState,
+  onServerStateChange,
+  upcomingMaintenance,
+  type Client,
+  type Sanction,
+} from './server';
 import { DRAW_SEARCH_LIMIT, LIST_LIMIT, contentText, tabOf } from '../lib/donation';
 import { voteDurationSeconds } from '../lib/vote';
 import {
@@ -83,8 +95,10 @@ export class MockBackend implements RemoteBackend {
   /** 스플래시 → (점검/업데이트) → 로그인 또는 바로 리모컨. ?maintenance=1, ?update=1, ?expired=1 로 각 화면을 확인할 수 있다. */
   boot(remembered: boolean) {
     const p = params();
+    this.watchServer();
     setTimeout(() => {
       if (p.get('maintenance') === '1') return this.setPhase('maintenance');
+      if (this.checkMaintenance()) return;
       if (p.get('update') === '1') return this.setPhase('update');
       if (p.get('expired') === '1') return this.setPhase('expired');
       if (remembered || p.get('autologin') === '1') return this.enter('통합 로그인');
@@ -97,6 +111,9 @@ export class MockBackend implements RemoteBackend {
   }
 
   private enter(loginMethod: string) {
+    if (this.checkMaintenance()) return;
+    const sanction = activeSanction(loadServerState().sanctions, DEMO_MEMBER_ID, Date.now());
+    if (sanction) return this.showSuspended(sanction);
     const hideAdUntil = Number(safeGet('toona.adHiddenUntil') ?? 0);
     this.set((s) => ({
       session: { ...s.session, phase: 'ready', user: { nickname: '피곤한고양이', loginMethod }, showAd: Date.now() > hideAdUntil && params().get('ad') !== '0' },
@@ -147,7 +164,85 @@ export class MockBackend implements RemoteBackend {
   }
 
   retryMaintenance() {
-    this.setPhase('login');
+    if (this.checkMaintenance()) return this.toast('아직 점검 중입니다. 점검이 끝나면 다시 시도해 주세요.');
+    this.leaveGate();
+  }
+
+  leaveSuspended() {
+    this.set((s) => ({ session: { ...s.session, suspended: undefined } }));
+    this.logout();
+  }
+
+  // ------------------------------------------------------------------ 관리자 웹 운영 정보 (점검·이용 정지)
+
+  /** 실서버에서는 접속 시·주기적으로(또는 푸시로) 받는다. 목업은 관리자 웹이 쓰는 localStorage를 본다. */
+  private watchServer() {
+    const check = () => {
+      this.checkMaintenance();
+      this.checkSuspended();
+      this.applyMaintenanceNotice();
+    };
+    onServerStateChange(check);
+    setInterval(check, 15_000);
+    this.applyMaintenanceNotice();
+  }
+
+  private client(): Client {
+    if (isDesktop) return 'desktop';
+    return typeof window !== 'undefined' && window.innerWidth <= 768 ? 'mobile' : 'web';
+  }
+
+  /** 점검 중이면 점검 화면으로 보내고 true. 점검 화면인데 점검이 끝났으면 화면에서 내보낸다. */
+  private checkMaintenance(): boolean {
+    const phase = this.d.session.phase;
+    if (phase === 'update') return false;
+    const m = activeMaintenance(loadServerState().maintenances, this.client(), Date.now());
+    if (m) {
+      const info = { start: m.start, end: m.end, message: m.message, noticeUrl: m.noticeUrl };
+      this.stop();
+      this.set((s) => ({ session: { ...s.session, phase: 'maintenance', maintenance: info, showAd: false } }));
+      return true;
+    }
+    // 관리자 웹이 점검을 끝냈으면 자동으로 돌아간다 (?maintenance=1 화면 확인용은 그대로 둔다)
+    if (phase === 'maintenance' && this.d.session.maintenance) this.leaveGate();
+    return false;
+  }
+
+  private checkSuspended(): boolean {
+    const phase = this.d.session.phase;
+    if (phase !== 'ready' && phase !== 'suspended') return false;
+    const s = activeSanction(loadServerState().sanctions, DEMO_MEMBER_ID, Date.now());
+    if (s) {
+      this.showSuspended(s);
+      return true;
+    }
+    if (phase === 'suspended') this.leaveGate();
+    return false;
+  }
+
+  private showSuspended(s: Sanction) {
+    this.stop();
+    this.set((st) => ({ session: { ...st.session, phase: 'suspended', suspended: { reason: s.reason, start: s.start, until: s.until }, showAd: false } }));
+  }
+
+  /** 점검·정지 화면을 벗어날 때: 로그인 유지면 바로 리모컨, 아니면 로그인 */
+  private leaveGate() {
+    this.set((s) => ({ session: { ...s.session, phase: 'login', maintenance: undefined, suspended: undefined } }));
+    if (safeGet('toona.keepLogin') || params().get('autologin') === '1') this.enter(this.d.session.user?.loginMethod ?? '통합 로그인');
+  }
+
+  private noticeBeforeMaintenance?: RemoteData['notice'];
+
+  /** 예고 시간 안에 든 점검은 상단 공지 바에 먼저 알린다 */
+  private applyMaintenanceNotice() {
+    const m = upcomingMaintenance(loadServerState().maintenances, this.client(), Date.now());
+    if (m) {
+      this.noticeBeforeMaintenance ??= this.d.notice;
+      this.set({ notice: { text: `[점검 예정] ${formatRange(m.start, m.end)} 리모컨 점검`, url: m.noticeUrl } });
+    } else if (this.noticeBeforeMaintenance) {
+      this.set({ notice: this.noticeBeforeMaintenance });
+      this.noticeBeforeMaintenance = undefined;
+    }
   }
 
   dismissAd(hideToday: boolean) {

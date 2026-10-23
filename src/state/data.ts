@@ -16,8 +16,9 @@ import type {
 } from '../types';
 import { FILTER_KINDS } from '../lib/donation';
 import type { LiveStatus } from '../api/toonation';
+import type { MaintenanceInfo, SuspendedInfo } from '../components/StatusScreens';
 
-export type SessionPhase = 'splash' | 'maintenance' | 'update' | 'login' | 'accounts' | 'expired' | 'ready';
+export type SessionPhase = 'splash' | 'maintenance' | 'update' | 'login' | 'accounts' | 'expired' | 'suspended' | 'ready';
 
 export interface Session {
   phase: SessionPhase;
@@ -25,6 +26,10 @@ export interface Session {
   accounts?: { id: string; nickname: string }[];
   updateProgress?: number;
   showAd: boolean;
+  /** 관리자 웹에서 정한 점검 (점검 화면에 기간·문구를 보여 준다) */
+  maintenance?: MaintenanceInfo;
+  /** 관리자 웹에서 건 이용 정지 */
+  suspended?: SuspendedInfo;
 }
 
 /** 백엔드에서 오는(=모든 창이 공유하는) 상태. */

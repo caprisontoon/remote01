@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Download, RefreshCw, Wrench } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { api } from '../state/app';
 import { useData } from '../lib/hooks';
@@ -6,6 +6,7 @@ import { openUrl } from '../platform';
 import { Alert, Button, fieldClass } from '../components/ui';
 import { thumb } from '../api/mockData';
 import { Logo } from '../components/Brand';
+import { MaintenanceView, SUPPORT_URL, SuspendedView } from '../components/StatusScreens';
 
 const LOGIN_HELP = 'https://toon.at/streamer/login';
 const ID_MAX = 25;
@@ -151,15 +152,23 @@ export function AdPopup() {
   );
 }
 
-/** 점검 화면 (p34) */
+/** 점검 화면 (p34). 관리자 웹에서 정한 점검이면 기간·안내 문구·공지 링크를 함께 보여 준다. */
 export function Maintenance() {
+  const info = useData((d) => d.session.maintenance);
   return (
     <Screen>
-      <div className="text-center">
-        <Wrench size={40} className="mx-auto text-text-tertiary" />
-        <p className="mt-4 text-[0.875rem] font-semibold">현재 점검 중입니다.<br />잠시 기다려 주세요.</p>
-        <Button className="mt-6" onClick={api.retryMaintenance}><span className="inline-flex items-center gap-1"><RefreshCw size={13} /> 새로 고침</span></Button>
-      </div>
+      <MaintenanceView info={info} onRetry={api.retryMaintenance} onOpenNotice={openUrl} />
+    </Screen>
+  );
+}
+
+/** 이용 정지 화면: 관리자 웹에서 정지한 회원 */
+export function Suspended() {
+  const info = useData((d) => d.session.suspended);
+  if (!info) return null;
+  return (
+    <Screen>
+      <SuspendedView info={info} onLogout={api.leaveSuspended} onContact={() => openUrl(SUPPORT_URL)} />
     </Screen>
   );
 }
