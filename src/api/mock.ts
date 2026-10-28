@@ -1,6 +1,6 @@
 // 목업 백엔드: 실제 서버 대신 상태를 바꾸고, 후원 유입·통합 알림창 재생·타이머를 흉내 낸다.
 import type { DrawSearchQuery, DrawSearchResult, RemoteBackend } from './backend';
-import type { Donation, PendingItem, QuickKind } from '../types';
+import type { CrewLog, Donation, PendingItem, QuickKind } from '../types';
 import type { RemoteData } from '../state/data';
 import { APP_VERSION } from '../state/data';
 import type { Store } from '../state/store';
@@ -18,6 +18,7 @@ import {
 } from './server';
 import { DRAW_SEARCH_LIMIT, LIST_LIMIT, contentText, tabOf } from '../lib/donation';
 import { voteDurationSeconds } from '../lib/vote';
+import { START_BLOCK_MESSAGE, donationPoints, eventNote, isCrewLive, rankMembers, startBlockers, validateManual } from '../lib/crew';
 import {
   INCOMING_KINDS,
   crewMembers,
@@ -60,7 +61,15 @@ export function initialData(now = Date.now()): RemoteData {
       { name: '오늘 점심 뭐 먹지?', items: ['짜장면', '짬뽕', '탕수육'], price: 1000, freeTickets: 0, seconds: 300 },
     ],
     vote: { status: 'idle' },
-    crew: { season: '오프오프 시즌', title: '마지막 직급 대전', members: crewMembers() },
+    crew: {
+      season: { name: '오프오프 시즌', open: true, cashPerUnit: 1, pointsPerUnit: 1, rounding: 'round' },
+      title: '마지막 직급 대전',
+      members: crewMembers(),
+      event: { on: true, score: 2, contribution: 1 },
+      goal: { on: true, score: 50000 },
+      totalCash: 0,
+      logs: [],
+    },
     ads: initialAds(),
     adAutoPlay: false,
     wallpaper: [],
@@ -265,6 +274,7 @@ export class MockBackend implements RemoteBackend {
     this.timers.push(setInterval(() => this.incoming(), 7000));
     this.timers.push(setInterval(() => this.tick(), 1000));
     this.timers.push(setInterval(() => this.incomingPending(), 25000));
+    this.timers.push(setInterval(() => this.incomingCrew(), 4000));
   }
 
   private stop() {
@@ -514,6 +524,8 @@ export class MockBackend implements RemoteBackend {
     this.set({ usageMaster: on });
   }
   setUsage(key: keyof RemoteData['usage'], on: boolean) {
+    // 크루 후원을 끄면 진행 중인 크루 방송은 종료된다 (크루 후원 1차 p7·p40). 확인은 화면에서 받는다
+    if (key === 'crew' && !on && isCrewLive(this.d.crew)) this.endCrew();
     this.set((s) => ({ usage: { ...s.usage, [key]: on } }));
   }
   setAlert(key: keyof RemoteData['alerts'], on: boolean) {
@@ -567,16 +579,60 @@ export class MockBackend implements RemoteBackend {
   // ------------------------------------------------------------------ 크루 후원
 
   startCrew() {
-    this.set((s) => ({ crew: { ...s.crew, liveSince: Date.now(), result: undefined } }));
+    const blocks = startBlockers(this.crewGate());
+    if (blocks.length) return this.toast(START_BLOCK_MESSAGE[blocks[0]], 'error');
+    // 후원 점수는 방송마다 0에서 시작, 기여도(시즌 누적)는 이어진다
+    this.set((s) => ({
+      crew: { ...s.crew, liveSince: Date.now(), result: undefined, totalCash: 0, logs: [], members: s.crew.members.map((m) => ({ ...m, score: 0 })) },
+    }));
   }
   endCrew() {
     const c = this.d.crew;
-    const ranking = [...c.members].sort((a, b) => b.score - a.score);
+    if (!isCrewLive(c)) return;
+    const ranking = rankMembers(c.members.filter((m) => m.joined)).map(({ place: _place, ...m }) => m);
     this.set({
       crew: {
         ...c,
         liveSince: undefined,
-        result: { title: `[${c.season}] ${c.title}`, startedAt: c.liveSince ?? Date.now(), endedAt: Date.now(), ranking, totalCash: ranking.reduce((n, m) => n + m.score, 0) },
+        result: { title: `[${c.season?.name ?? ''}] ${c.title ?? ''}`, startedAt: c.liveSince!, endedAt: Date.now(), ranking, totalCash: c.totalCash },
+      },
+    });
+  }
+  adjustCrew(memberId: string, field: 'score' | 'contribution', delta: number) {
+    const c = this.d.crew;
+    const m = c.members.find((x) => x.id === memberId);
+    if (!m || !isCrewLive(c)) return this.toast('방송 중에만 수정할 수 있습니다.', 'error');
+    const check = validateManual(field, m[field], delta < 0 ? -1 : 1, String(Math.abs(delta)));
+    if (!check.ok) return this.toast(check.error, 'error');
+    const log: CrewLog = { id: uid('cl'), kind: 'manual', memberId, name: m.name, score: field === 'score' ? delta : 0, contribution: field === 'contribution' ? delta : 0, at: Date.now() };
+    this.set({ crew: { ...c, members: c.members.map((x) => (x.id === memberId ? { ...x, [field]: check.next } : x)), logs: [log, ...c.logs] } });
+    this.toast('반영되었습니다.');
+  }
+
+  private crewGate() {
+    return { usageMaster: this.d.usageMaster, usageCrew: this.d.usage.crew, crew: this.d.crew };
+  }
+
+  /** 방송 중 크루 후원 유입 흉내: 시즌 비율·점수 이벤트 배수로 점수와 기여도를 쌓는다. 전체 후원이나 크루가 꺼져 있으면 받지 않는다 */
+  private incomingCrew() {
+    const c = this.d.crew;
+    if (!isCrewLive(c) || !this.d.usageMaster || !this.d.usage.crew || !c.season || rand() < 0.4) return;
+    const joined = c.members.filter((m) => m.joined);
+    if (!joined.length) return;
+    const m = pick(joined);
+    const cash = pick([1000, 1000, 3000, 5000, 10000, 50000]);
+    // 마이너스 후원: 후원 점수에는 영향이 없고 기여도만 깎는다 (1차 p3·p25)
+    const minus = rand() < 0.12;
+    const ev = c.event.on ? c.event : { score: 1 as const, contribution: 1 as const };
+    const score = minus ? 0 : donationPoints(cash, c.season, ev.score);
+    const contribution = (minus ? -1 : 1) * donationPoints(cash, c.season, ev.contribution);
+    const log: CrewLog = { id: uid('cl'), kind: 'donation', memberId: m.id, name: m.name, score, contribution, note: eventNote(c.event), at: Date.now() };
+    this.set({
+      crew: {
+        ...c,
+        totalCash: c.totalCash + cash,
+        members: c.members.map((x) => (x.id === m.id ? { ...x, score: x.score + score, contribution: x.contribution + contribution } : x)),
+        logs: [log, ...c.logs].slice(0, 500),
       },
     });
   }

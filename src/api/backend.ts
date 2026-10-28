@@ -78,6 +78,8 @@ export interface RemoteBackend {
   // 크루 후원
   startCrew(): void;
   endCrew(): void;
+  /** 방송 중 크루 후원 점수·기여도 수동 수정 (1.5차 p5). delta는 부호 포함, 점수 이벤트 배수는 적용하지 않는다 */
+  adjustCrew(memberId: string, field: 'score' | 'contribution', delta: number): void;
   closeCrewResult(): void;
 
   // 투네애드

@@ -202,18 +202,55 @@ export interface VoteState {
   reservedAt?: number;
 }
 
+/** 크루 후원 1.5차 기준. 후원 점수 = 이번 방송 점수, 기여도 = 시즌 누적(마이너스 가능) */
 export interface CrewMember {
+  id: string;
   rank: string;
   name: string;
+  /** 이번 방송 참여 (크리에이터 페이지 방송 관리에서 정한다) */
+  joined: boolean;
   score: number;
   contribution: number;
 }
 
+export type CrewMultiplier = 1 | 1.5 | 2 | 3 | 5;
+
+export interface CrewSeason {
+  name: string;
+  /** 진행중이면 true. 종료된 시즌으로는 방송을 시작할 수 없다 (1.5차 p10) */
+  open: boolean;
+  /** 후원 N 캐시당 M 점 */
+  cashPerUnit: number;
+  pointsPerUnit: number;
+  rounding: 'ceil' | 'round' | 'floor';
+}
+
+/** 점수/기여도 내역 한 줄 (1.5차 p6). 후원 = 후원으로 적립, 수동 = 리모컨·크리에이터 페이지에서 수정 */
+export interface CrewLog {
+  id: string;
+  kind: 'donation' | 'manual';
+  memberId: string;
+  name: string;
+  score: number;
+  contribution: number;
+  /** 점수 이벤트 배수 (예: 후원 점수 X2) */
+  note?: string;
+  at: number;
+}
+
 export interface CrewState {
-  season?: string;
+  season?: CrewSeason;
   title?: string;
   members: CrewMember[];
+  /** 점수 이벤트 (버닝): 이후 후원에 배수 적용. 수동 수정에는 적용하지 않는다 */
+  event: { on: boolean; score: CrewMultiplier; contribution: CrewMultiplier };
+  /** 후원 목표: 크루별 목표 점수 대비 달성률 */
+  goal: { on: boolean; score: number };
   liveSince?: number;
+  /** 이번 방송 총 후원 캐시 */
+  totalCash: number;
+  /** 이번 방송 점수/기여도 내역 (최신이 앞) */
+  logs: CrewLog[];
   result?: { title: string; startedAt: number; endedAt: number; ranking: CrewMember[]; totalCash: number };
 }
 

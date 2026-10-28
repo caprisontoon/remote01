@@ -1,5 +1,5 @@
 import { Pin, X } from 'lucide-react';
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useT } from '../lib/i18n';
 import type { WidgetId } from '../types';
@@ -7,6 +7,9 @@ import { WIDGETS, isFixedWidget } from '../widgets/meta';
 import { IconButton, Tooltip } from '../components/ui';
 import { WidgetErrorBoundary } from '../components/ErrorBoundary';
 import { Symbol } from '../components/Brand';
+import { useStore } from '../state/store';
+import { uiStore } from '../state/ui';
+import { FOCUS_MS } from './focusWidget';
 
 /** 위젯 제목줄 안에 위젯이 자기 조작(탭·필터 등)을 놓을 자리. null = 위젯 틀 밖(모바일 전체 화면 등), 'pending' = 틀이 자리를 만드는 중 */
 const HeaderSlot = createContext<HTMLElement | 'pending' | null>(null);
@@ -59,12 +62,21 @@ export function WidgetFrame({
   const t = useT();
   const meta = WIDGETS[id];
   const [slot, setSlot] = useState<HTMLElement | null>(null);
+  // 다른 위젯이 이 위젯을 가리키면(focusWidget) 잠깐 테두리를 강조한다
+  const focusAt = useStore(uiStore, (s) => (s.focus?.id === id ? s.focus.at : 0));
+  const [lit, setLit] = useState(false);
+  useEffect(() => {
+    if (!focusAt) return;
+    setLit(true);
+    const timer = setTimeout(() => setLit(false), FOCUS_MS);
+    return () => clearTimeout(timer);
+  }, [focusAt]);
   return (
     <section
       aria-label={t(meta.title)}
-      className={`h-full flex flex-col overflow-hidden rounded-widget bg-surface border text-text ${
-        floating ? 'border-live shadow-float' : 'border-line'
-      } ${dimmed ? 'opacity-40' : ''}`}
+      className={`h-full flex flex-col overflow-hidden rounded-widget bg-surface border text-text transition-shadow ${
+        floating || lit ? 'border-live shadow-float' : 'border-line'
+      } ${lit ? 'ring-2 ring-live/50' : ''} ${dimmed ? 'opacity-40' : ''}`}
     >
       <header
         onPointerDown={onHeaderPointerDown}

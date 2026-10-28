@@ -1,5 +1,5 @@
 import { ArrowLeft, ChevronRight, Command, Image, Pause, Settings, SkipForward, X } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { api } from '../state/app';
 import { useData } from '../lib/hooks';
 import { useT } from '../lib/i18n';
@@ -15,6 +15,8 @@ import DonationList from '../widgets/donations/DonationList';
 import QuickControl from '../widgets/QuickControl';
 import { MOBILE_ORDER, WIDGETS } from '../widgets/meta';
 import { WIDGET_COMPONENTS } from '../widgets/registry';
+import { useStore } from '../state/store';
+import { uiStore } from '../state/ui';
 
 type Page = { kind: 'widget'; id: WidgetId } | { kind: 'settings' } | { kind: 'setting'; tab: 'basic' | 'shortcut' | 'info' } | null;
 
@@ -29,6 +31,14 @@ export function MobileApp() {
   const paused = useData((d) => d.paused.alert);
   const [sheet, setSheet] = useState<'widgets' | 'quick' | null>(null);
   const [page, setPage] = useState<Page>(null);
+  // 다른 위젯이 가리킨 위젯(예: 크루 → 후원 사용)으로 이동한다. 모바일에는 캔버스가 없으므로 placing은 쓰지 않는다
+  const focus = useStore(uiStore, (s) => s.focus);
+  useEffect(() => {
+    if (!focus) return;
+    setSheet(null);
+    setPage({ kind: 'widget', id: focus.id });
+    uiStore.set({ focus: null, placing: null });
+  }, [focus]);
 
   return (
     <div className="h-full flex flex-col bg-surface text-text">

@@ -34,6 +34,8 @@ export function Dock() {
   const pendingCount = useData((d) => d.pending.length);
   const paused = useData((d) => d.paused);
   const vote = useData((d) => d.vote);
+  const crewLiveSince = useData((d) => d.crew.liveSince);
+  const usageMaster = useData((d) => d.usageMaster);
   const adCount = useData((d) => d.ads.filter((a) => !a.playedAt).length);
   const now = useNow();
   const [hovered, setHovered] = useState(false);
@@ -57,6 +59,10 @@ export function Dock() {
   const anyPaused = paused.alert || paused.drawing || paused.draw;
   const voteLabel =
     vote.status === 'running' && vote.endsAt ? `진행 중 -${mmss(vote.endsAt - now)}` : vote.status === 'paused' ? '정지 중' : vote.status === 'reserved' ? '예약 중' : null;
+
+  // 크루 방송 중: 아이콘 아래 LIVE. 전체 후원이 꺼져 후원을 못 받는 동안은 주황 (위젯을 닫아도 상태가 보이게)
+  const crewLabel = crewLiveSince ? `방송 중 ${mmss(now - crewLiveSince)}${usageMaster ? '' : ' · 후원 받기 중지됨'}` : null;
+  const labelOf = (id: WidgetId, title: string) => (id === 'vote' && voteLabel ? `${title} · ${voteLabel}` : id === 'crew' && crewLabel ? `${title} · ${crewLabel}` : title);
 
   return (
     <>
@@ -89,10 +95,10 @@ export function Dock() {
             const pausedQuick = id === 'quick' && anyPaused;
             const badge = id === 'pending' ? pendingCount : id === 'toneAd' ? adCount : 0;
             return (
-              <Tooltip key={id} label={id === 'vote' && voteLabel ? `${t(meta.title)} · ${voteLabel}` : t(meta.title)}>
+              <Tooltip key={id} label={labelOf(id, t(meta.title))}>
                 <button
-                  aria-label={t(meta.title)}
-                  title={scroll ? t(meta.title) : undefined}
+                  aria-label={labelOf(id, t(meta.title))}
+                  title={scroll ? labelOf(id, t(meta.title)) : undefined}
                   aria-pressed={on}
                   disabled={!!placing && placing !== id}
                   onClick={() => toggle(id)}
@@ -112,6 +118,9 @@ export function Dock() {
                     <span className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1 rounded-tag text-[0.5rem] leading-3 font-bold ${vote.status === 'running' ? 'bg-brand text-text-on-brand' : vote.status === 'paused' ? 'bg-warning text-text-on-warning' : 'bg-line-strong text-text'}`}>
                       {vote.status === 'running' ? '진행' : vote.status === 'paused' ? '정지' : '예약'}
                     </span>
+                  )}
+                  {id === 'crew' && crewLiveSince && (
+                    <span className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1 rounded-tag text-[0.5rem] leading-3 font-bold ${usageMaster ? 'bg-danger text-white' : 'bg-warning text-text-on-warning'}`}>LIVE</span>
                   )}
                 </button>
               </Tooltip>

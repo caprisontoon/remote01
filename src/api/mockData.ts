@@ -187,12 +187,14 @@ export function initialAds(): ToneAd[] {
   return ads;
 }
 
+/** 후원 점수는 방송마다 0에서 시작하고, 기여도는 시즌 누적이다 */
 export function crewMembers(): CrewMember[] {
   return [
-    { rank: '대표', name: '방장킴', score: 12000, contribution: 34 },
-    { rank: '부장', name: '노래하는곰', score: 9000, contribution: 25 },
-    { rank: '차장', name: '드립장인', score: 7000, contribution: 19 },
-    { rank: '대리', name: '조용한막내', score: 5000, contribution: 14 },
-    { rank: '사원', name: '신입이에요', score: 3000, contribution: 8 },
+    { id: 'c1', rank: '대표', name: '방장킴', joined: true, score: 0, contribution: 128000 },
+    { id: 'c2', rank: '부장', name: '노래하는곰', joined: true, score: 0, contribution: 94500 },
+    { id: 'c3', rank: '차장', name: '드립장인', joined: true, score: 0, contribution: 70100 },
+    { id: 'c4', rank: '대리', name: '조용한막내', joined: true, score: 0, contribution: 51000 },
+    { id: 'c5', rank: '사원', name: '신입이에요', joined: true, score: 0, contribution: -3000 },
+    { id: 'c6', rank: '인턴', name: '쉬는중', joined: false, score: 0, contribution: 12000 },
   ];
 }

@@ -12,6 +12,8 @@ export interface UiState {
   settingsOpen: boolean;
   presetsOpen: boolean;
   wallpaperOpen: boolean;
+  /** 다른 위젯이 "이 위젯을 보세요"라고 가리킬 때 (예: 크루 위젯 → 후원 사용). 잠깐 테두리를 강조한다 */
+  focus: { id: WidgetId; at: number } | null;
 }
 
 export const uiStore = createStore<UiState>({
@@ -21,4 +23,5 @@ export const uiStore = createStore<UiState>({
   settingsOpen: false,
   presetsOpen: false,
   wallpaperOpen: false,
+  focus: null,
 });
