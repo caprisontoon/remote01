@@ -27,12 +27,12 @@ npm run dev:desktop    # 설치형 리모컨 (Vite + Electron)
 npm test               # 단위 테스트 (그리드 엔진, 노출 정책, 투표 검증, 자석)
 npm run typecheck
 npm run dist:win       # Windows 설치 파일 (Windows에서 실행, 또는 CI 아티팩트)
-git tag v2.0.1 && git push origin v2.0.1   # 릴리스: 설치 파일을 만들어 GitHub 릴리스에 올림 (release.yml)
+# 릴리스: package.json version을 올려 푸시하면 release.yml이 설치 파일을 만들어 GitHub 릴리스 v<version>에 올림
 npm run build:admin    # 관리자 웹 → dist-admin/ (설치형 패키지에는 들어가지 않음)
 ```
 
 Windows 설치 파일(NSIS)은 Wine이 필요해 리눅스에서는 만들 수 없습니다.
-`.github/workflows/desktop.yml`이 Windows 러너에서 `TOONA-Setup-<버전>.exe`를 만들어 아티팩트로 올립니다. 태그(`v*`)를 올리면 `.github/workflows/release.yml`이 같은 파일을 GitHub 릴리스에 올립니다.
+`.github/workflows/desktop.yml`이 Windows 러너에서 `TOONA-Setup-<버전>.exe`를 만들어 아티팩트로 올립니다. 새 버전(`package.json`의 version)을 푸시하면 `.github/workflows/release.yml`이 같은 파일을 GitHub 릴리스에 올립니다.
 
 ### 화면 확인용 주소 옵션 (목업 백엔드)
 
