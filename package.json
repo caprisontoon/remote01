@@ -48,7 +48,7 @@
   "build": {
     "appId": "at.toon.remocon",
     "productName": "TOONA",
-    "artifactName": "${productName} Setup ${version}.${ext}",
+    "artifactName": "TOONA-Setup-${version}.${ext}",
     "directories": {
       "output": "release",
       "buildResources": "build"

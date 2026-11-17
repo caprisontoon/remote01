@@ -1,0 +1,45 @@
+name: release
+
+# 설치 파일 배포: v로 시작하는 태그(예: v2.0.0)를 올리면 Windows 설치 파일을 만들어 GitHub 릴리스에 올린다.
+# 로그인 없이 받을 수 있는 고정 링크:
+#   최신 버전  https://github.com/caprisontoon/remote01/releases/latest/download/TOONA-Setup.exe
+#   버전별     https://github.com/caprisontoon/remote01/releases/download/<태그>/TOONA-Setup-<버전>.exe
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '릴리스 태그 (예: v2.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run dist:win
+      - name: 릴리스에 올리기
+        shell: bash
+        run: |
+          set -e
+          exe=$(ls release/TOONA-Setup-*.exe)
+          # 버전 없는 이름도 함께 올려 "최신 버전" 링크가 늘 같은 주소가 되게 한다
+          cp "$exe" release/TOONA-Setup.exe
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$exe" release/TOONA-Setup.exe --clobber
+          else
+            gh release create "$TAG" "$exe" release/TOONA-Setup.exe --title "TOONA 리모컨 $TAG" --notes-file .github/release-notes.md --latest
+          fi

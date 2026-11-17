@@ -10,6 +10,9 @@
 | **모바일 웹 리모컨** | 화면 폭 768px 이하에서 모바일 전용 UI (p88~112) | `npm run dev` 후 모바일 폭 |
 | **관리자 웹** | 이용자·버전 현황, 회원 검색·이용 정지, 점검 일정 (`docs/admin/관리자웹.md`) | `npm run dev` 후 `/admin/` |
 
+**설치 파일 받기 (Windows):** https://github.com/caprisontoon/remote01/releases/latest/download/TOONA-Setup.exe
+(릴리스 목록: https://github.com/caprisontoon/remote01/releases · 아직 코드 서명 전이라 스마트 앱 컨트롤이 켜진 PC에서는 설치가 막힌다)
+
 **웹에서 바로 보기 (GitHub Pages):** 웹 리모컨 https://caprisontoon.github.io/remote01/?autologin=1 · 관리자 웹 https://caprisontoon.github.io/remote01/admin/
 (`.github/workflows/pages.yml`이 이 브랜치에 올릴 때마다 다시 배포한다. 목업 데이터.)
 
@@ -24,11 +27,12 @@ npm run dev:desktop    # 설치형 리모컨 (Vite + Electron)
 npm test               # 단위 테스트 (그리드 엔진, 노출 정책, 투표 검증, 자석)
 npm run typecheck
 npm run dist:win       # Windows 설치 파일 (Windows에서 실행, 또는 CI 아티팩트)
+git tag v2.0.1 && git push origin v2.0.1   # 릴리스: 설치 파일을 만들어 GitHub 릴리스에 올림 (release.yml)
 npm run build:admin    # 관리자 웹 → dist-admin/ (설치형 패키지에는 들어가지 않음)
 ```
 
 Windows 설치 파일(NSIS)은 Wine이 필요해 리눅스에서는 만들 수 없습니다.
-`.github/workflows/desktop.yml`이 Windows 러너에서 `TOONA Setup <버전>.exe`를 만들어 아티팩트로 올립니다.
+`.github/workflows/desktop.yml`이 Windows 러너에서 `TOONA-Setup-<버전>.exe`를 만들어 아티팩트로 올립니다. 태그(`v*`)를 올리면 `.github/workflows/release.yml`이 같은 파일을 GitHub 릴리스에 올립니다.
 
 ### 화면 확인용 주소 옵션 (목업 백엔드)
 
