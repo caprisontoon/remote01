@@ -18,6 +18,7 @@ import {
 } from './server';
 import { DRAW_SEARCH_LIMIT, LIST_LIMIT, contentText, tabOf } from '../lib/donation';
 import { voteDurationSeconds } from '../lib/vote';
+import { createChatMock, nextChatDelay } from '../chat/engine';
 import { START_BLOCK_MESSAGE, donationPoints, eventNote, isCrewLive, rankMembers, startBlockers, validateManual } from '../lib/crew';
 import {
   INCOMING_KINDS,
@@ -76,6 +77,7 @@ export function initialData(now = Date.now()): RemoteData {
     toasts: [],
     version: APP_VERSION,
     live: { state: 'off' },
+    chat: [],
   };
 }
 
@@ -86,6 +88,8 @@ export class MockBackend implements RemoteBackend {
   private playQueue: string[] = [];
   private playingUntil = 0;
   private timers: ReturnType<typeof setInterval>[] = [];
+  private chatNext = createChatMock();
+  private chatTimer?: ReturnType<typeof setTimeout>;
   private toastSeq = 1;
 
   constructor(private store: Store<RemoteData>) {
@@ -271,6 +275,7 @@ export class MockBackend implements RemoteBackend {
 
   private start() {
     if (this.timers.length) return;
+    this.startChat();
     this.timers.push(setInterval(() => this.incoming(), 7000));
     this.timers.push(setInterval(() => this.tick(), 1000));
     this.timers.push(setInterval(() => this.incomingPending(), 25000));
@@ -280,6 +285,23 @@ export class MockBackend implements RemoteBackend {
   private stop() {
     this.timers.forEach(clearInterval);
     this.timers = [];
+    clearTimeout(this.chatTimer);
+    this.chatTimer = undefined;
+  }
+
+  /** 목업 방송 채팅: 처음에 10개를 채워 두고, 이후 초당 약 1.2개 (채팅 위젯 프로토타입과 같은 속도) */
+  private startChat() {
+    if (this.chatTimer) return;
+    if (!this.d.chat.length) {
+      const now = Date.now();
+      const seed = Array.from({ length: 10 }, (_, i) => ({ ...this.chatNext(), t: now - (10 - i) * 1200 }));
+      this.set({ chat: seed });
+    }
+    const loop = () => {
+      this.set((s) => ({ chat: [...s.chat.slice(-299), this.chatNext()] }));
+      this.chatTimer = setTimeout(loop, nextChatDelay());
+    };
+    this.chatTimer = setTimeout(loop, 1200);
   }
 
   private incoming() {

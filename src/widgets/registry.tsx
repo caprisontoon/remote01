@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import type { WidgetId } from '../types';
 import Alerts from './Alerts';
+import Chat from './Chat';
 import Crew from './Crew';
 import DonationList from './donations/DonationList';
 import { DrawStock } from './DrawStock';
@@ -30,4 +31,5 @@ export const WIDGET_COMPONENTS: Record<WidgetId, ComponentType> = {
   vote: VoteWidget,
   crew: Crew,
   toneAd: ToneAd,
+  chat: Chat,
 };

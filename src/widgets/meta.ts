@@ -5,6 +5,7 @@ import {
   HandCoins,
   List,
   Megaphone,
+  MessageSquareText,
   Bell,
   Timer,
   Users,
@@ -41,13 +42,14 @@ export const WIDGETS: Record<WidgetId, WidgetMeta> = {
   vote: { id: 'vote', title: '투표', description: '투표 후원 프리셋 설정', icon: Vote },
   crew: { id: 'crew', title: '크루 후원', description: '크루 후원 방송 관리', icon: Users },
   toneAd: { id: 'toneAd', title: '투네애드', description: '투네애드 광고 관리', icon: Megaphone },
+  chat: { id: 'chat', title: '채팅', description: '방송 채팅 모니터링', icon: MessageSquareText },
 };
 
 /** Dock 아이콘 정렬 순서 (p10 ③). 후원 리스트는 닫을 수 없어 Dock에 없다. */
-export const DOCK_ORDER: WidgetId[] = ['quick', 'pending', 'volume', 'usage', 'alerts', 'video', 'drawRemain', 'vote', 'crew', 'toneAd'];
+export const DOCK_ORDER: WidgetId[] = ['quick', 'pending', 'volume', 'usage', 'alerts', 'video', 'drawRemain', 'vote', 'crew', 'toneAd', 'chat'];
 
 /** 모바일 리모컨 위젯 목록 순서 (p107) */
-export const MOBILE_ORDER: WidgetId[] = ['alerts', 'usage', 'volume', 'pending', 'vote', 'drawRemain', 'video', 'toneAd', 'crew'];
+export const MOBILE_ORDER: WidgetId[] = ['alerts', 'usage', 'volume', 'pending', 'vote', 'drawRemain', 'video', 'toneAd', 'crew', 'chat'];
 
 /** 분리·닫기·압정이 없는 위젯 (p38 ※ 후원 리스트 위젯 예외 사항) */
 export const isFixedWidget = (id: WidgetId) => id === 'donations';

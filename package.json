@@ -2,7 +2,7 @@
   "name": "toona-remocon",
   "productName": "TOONA",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "투네이션 크리에이터 리모컨 (설치형 클라이언트 + 웹 리모컨)",
   "author": "Toonation",
   "type": "module",

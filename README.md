@@ -88,6 +88,7 @@ electron/
 | p30~36 스플래시·로그인·계정 선택·광고·점검·업데이트·만료 | `shell/Entry.tsx` |
 | p37~59 후원 리스트 | `widgets/donations/*` |
 | p61 퀵 제어 ~ p84 투네애드 | `widgets/*.tsx` |
+| 채팅 위젯 (모니터링, 채팅 위젯 프로토타입에서 이식) | `widgets/Chat.tsx`, `chat/*` (`docs/chat/채팅위젯.md`) |
 | p88~112 모바일 웹 | `mobile/MobileApp.tsx` (+ 위젯 공용) |
 
 ## 아직 목업인 부분 / 확인이 필요한 부분

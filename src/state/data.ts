@@ -17,6 +17,7 @@ import type {
 import { FILTER_KINDS } from '../lib/donation';
 import type { LiveStatus } from '../api/toonation';
 import type { MaintenanceInfo, SuspendedInfo } from '../components/StatusScreens';
+import type { ChatMsg } from '../chat/engine';
 
 export type SessionPhase = 'splash' | 'maintenance' | 'update' | 'login' | 'accounts' | 'expired' | 'suspended' | 'ready';
 
@@ -61,6 +62,8 @@ export interface RemoteData {
   version: string;
   /** 투네이션 실시간 후원 수신 상태 */
   live: LiveStatus;
+  /** 방송 채팅 (최근 300개, 필터로 숨길 채팅 포함). 채팅 위젯이 보여 준다 */
+  chat: ChatMsg[];
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -75,6 +78,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sort: 'recent',
   columnWidths: {},
   liveAlertbox: '',
+  chatTextScale: 100,
 };
 
-export const APP_VERSION = '2.0.0';
+export const APP_VERSION = '2.0.1'; // package.json version과 맞춘다

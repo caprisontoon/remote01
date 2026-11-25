@@ -12,7 +12,8 @@ export type WidgetId =
   | 'drawRemain'
   | 'vote'
   | 'crew'
-  | 'toneAd';
+  | 'toneAd'
+  | 'chat';
 
 /** 캔버스 좌표. 0~1 비율 값이라 창 크기가 바뀌어도 위젯 비율이 유지된다(p18 유동형 비율 캔버스). */
 export interface Rect {
@@ -317,4 +318,6 @@ export interface Settings {
   columnWidths: Record<string, number>;
   /** 투네이션 알림창 URL 또는 키 (실시간 후원 수신용, 이 기기에만 저장) */
   liveAlertbox: string;
+  /** 채팅 위젯 텍스트 크기(%) 50~200. 이 기기에만 저장 */
+  chatTextScale: number;
 }
