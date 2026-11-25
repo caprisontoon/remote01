@@ -145,6 +145,10 @@ const moveVisibleTo = (x: number, y: number) => window.moveTo(x - insetOf(), y);
 const sameBox = (a: Box, b: Box) => a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 /** 이 시간(ms) 동안 위치가 그대로면 "놓았다"로 본다 */
 const SETTLE_MS = 250;
+/** 메인 창을 따라간 뒤 이만큼 지나서 최종 위치를 확인한다 */
+const FOLLOW_CHECK_MS = 800;
+/** 최종 위치가 이보다 멀면 못 따라간 것으로 본다 (모니터마다 화면 배율이 달라 생기는 작은 어긋남은 넘긴다) */
+const FOLLOW_MISS_PX = 120;
 
 /**
  * 창마다 하나씩 돈다. 자기 위치를 다른 창에 알리고,
@@ -162,8 +166,8 @@ export function startMagnet(key: WinKey) {
   let warned = false;
   /** 메인 창: 이번 이동에서 같이 움직일 분리 창과 메인 창 기준 상대 위치 (이동을 시작할 때 정하고, 멈추면 비운다) */
   let group: Map<WidgetId, { dx: number; dy: number }> | null = null;
-  /** 분리 창: 메인 창을 따라가라고 받은 위치. 다음 확인 때 많이 다르면 다른 모니터로 못 넘어간 것이다 */
-  let placed: { x: number; y: number } | null = null;
+  /** 분리 창: 메인 창을 따라가라고 마지막으로 받은 위치와 시각. 이동이 끝난 뒤에도 많이 다르면 다른 모니터로 못 넘어간 것이다 */
+  let placed: { x: number; y: number; at: number } | null = null;
   let warnedScreen = false;
   const post = (msg: ControlMsg) => control.postMessage(msg);
 
@@ -180,7 +184,7 @@ export function startMagnet(key: WinKey) {
       const mine = m.items.find((it) => it.id === key);
       if (mine) {
         moveVisibleTo(mine.x, mine.y);
-        placed = { x: mine.x, y: mine.y };
+        placed = { x: mine.x, y: mine.y, at: Date.now() };
         moved = false; // 따라 움직인 것은 "사용자가 옮긴 것"이 아니다
       }
     }
@@ -190,9 +194,10 @@ export function startMagnet(key: WinKey) {
 
   const timer = setInterval(() => {
     const b = boxOf();
-    if (placed) {
-      // 메인 창을 따라가다 화면 끝에서 막혔다 = 브라우저가 다른 모니터로 옮기는 것을 막았다 (창 관리 권한 없음)
-      if ((Math.abs(b.x - placed.x) > 40 || Math.abs(b.y - placed.y) > 40) && !warnedScreen) {
+    // 메인 창 이동이 끝난 뒤(마지막 위치를 받고 FOLLOW_CHECK_MS 지남)에만 판단한다. 따라가는 도중의 늦음은 정상이다
+    if (placed && Date.now() - placed.at > FOLLOW_CHECK_MS) {
+      // 그래도 멀리 떨어져 있다 = 화면 끝에서 막혔다 = 브라우저가 다른 모니터로 옮기는 것을 막았다 (창 관리 권한 없음)
+      if ((Math.abs(b.x - placed.x) > FOLLOW_MISS_PX || Math.abs(b.y - placed.y) > FOLLOW_MISS_PX) && !warnedScreen) {
         warnedScreen = true;
         api.toast("분리한 창이 다른 모니터로 따라가지 못했습니다. 주소창 왼쪽 사이트 정보(웹앱은 메뉴 ⋯ → 앱 정보) → 권한에서 '창 관리'를 허용해 주세요.", 'error', 7000);
       }
