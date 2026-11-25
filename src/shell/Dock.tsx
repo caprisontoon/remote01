@@ -7,6 +7,7 @@ import { removeTile } from '../layout/grid';
 import { mmss, useData, useNow, useViewportWidth } from '../lib/hooks';
 import { useT } from '../lib/i18n';
 import { desktop } from '../platform';
+import { closeWidgetWindow } from './webWindows';
 import type { WidgetId } from '../types';
 import { DOCK_ORDER, WIDGETS } from '../widgets/meta';
 import { Badge, Tooltip } from '../components/ui';
@@ -52,7 +53,7 @@ export function Dock() {
   const toggle = (id: WidgetId) => {
     if (placing) return;
     if (tiles[id]) return layoutStore.set({ tiles: removeTile(tiles, id) });
-    if (detached.some((d) => d.id === id)) return desktop?.widgets.close(id);
+    if (detached.some((d) => d.id === id)) return desktop ? desktop.widgets.close(id) : closeWidgetWindow(id);
     uiStore.set({ placing: id });
   };
 

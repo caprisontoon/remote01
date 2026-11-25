@@ -16,6 +16,7 @@ import { WallpaperModal } from './shell/Wallpaper';
 import { DetachedWidget } from './shell/Detached';
 import { MobileApp } from './mobile/MobileApp';
 import { UpdatePrompt } from './shell/UpdatePrompt';
+import { listenWebWindows } from './shell/webWindows';
 import { WIDGETS } from './widgets/meta';
 
 const MOBILE_MAX = 768;
@@ -76,6 +77,12 @@ export default function App() {
       offLiveStatus();
       offLiveDonation();
     };
+  }, []);
+
+  // 웹: 분리한 위젯 창에서 [메인 창으로 되돌리기]를 받는다
+  useEffect(() => {
+    if (desktop || detachedWidgetId) return;
+    return listenWebWindows();
   }, []);
 
   // 저장된 알림창 키가 있으면 로그인 후 자동 연결

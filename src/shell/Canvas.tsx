@@ -10,6 +10,7 @@ import type { CanvasEdge, DockDirection, DropTarget, Rect, Tiles, WidgetId } fro
 import { PANEL_MIN_RATIO, WIDGETS, WIDGET_MIN, isFixedWidget } from '../widgets/meta';
 import { WIDGET_COMPONENTS } from '../widgets/registry';
 import { WidgetFrame } from './WidgetFrame';
+import { canWebDetach, openWidgetWindow } from './webWindows';
 
 const GAP = 8; // gap-canvas
 const FLOAT_W = 360;
@@ -115,6 +116,15 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
   }, [place]);
 
   /** 위젯 헤더 드래그 시작 (캔버스 안 위젯 이동 또는 추가 중인 위젯 배치) */
+  /** 웹: 제목줄 [창 분리] 버튼. 위젯이 있던 자리 근처에 같은 크기로 팝업 창을 연다 */
+  const detachByButton = (id: WidgetId, el: HTMLElement) => {
+    const r = el.getBoundingClientRect();
+    const chromeTop = window.outerHeight - window.innerHeight;
+    const ok = openWidgetWindow(id, { screenX: window.screenX + r.left, screenY: window.screenY + chromeTop + r.top, width: r.width, height: r.height });
+    if (ok) setTiles(removeFrom(layoutStore.get().tiles, id));
+    else api.toast('팝업이 차단되어 창을 열 수 없습니다. 주소창의 팝업 차단 아이콘에서 허용해 주세요.', 'error', 4000);
+  };
+
   const startDrag = (e: React.PointerEvent, id: WidgetId, source: 'tile' | 'placing') => {
     if (e.button !== 0) return;
     const box = ref.current!.getBoundingClientRect();
@@ -142,6 +152,15 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
       if (!active) return;
       const outside = ev.clientX < 0 || ev.clientY < 0 || ev.clientX > window.innerWidth || ev.clientY > window.innerHeight;
       // 설치형: 캔버스 밖으로 끌어내면 독립창으로 분리 (p19 드레그 아웃). 후원 리스트는 분리 불가.
+      // 웹(브라우저·웹앱): 같은 동작을 브라우저 팝업 창으로 (webWindows.ts). 팝업이 막히면 그대로 둔다
+      if (outside && !desktop && canWebDetach() && !isFixedWidget(id)) {
+        const rect = { screenX: ev.screenX - (start.x - frame.left), screenY: ev.screenY - (start.y - frame.top), width: frame.width, height: frame.height };
+        if (openWidgetWindow(id, rect)) {
+          if (source === 'tile') setTiles(removeFrom(layoutStore.get().tiles, id));
+          else uiStore.set({ placing: null });
+        } else api.toast('팝업이 차단되어 창을 열 수 없습니다. 주소창의 팝업 차단 아이콘에서 허용해 주세요.', 'error', 4000);
+        return;
+      }
       if (outside && desktop && !isFixedWidget(id)) {
         const meta = WIDGETS[id];
         if (source === 'tile') setTiles(removeFrom(layoutStore.get().tiles, id));
@@ -215,6 +234,7 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
                 dimmed={isDragged}
                 onHeaderPointerDown={(e) => startDrag(e, id, 'tile')}
                 onClose={() => setTiles(removeFrom(layoutStore.get().tiles, id))}
+                onDetach={!desktop && canWebDetach() && !isFixedWidget(id) ? (el) => detachByButton(id, el) : undefined}
               >
                 <Body />
               </WidgetFrame>
@@ -255,7 +275,7 @@ export function Canvas({ bottomInset }: { bottomInset: number }) {
         {drag && drag.source !== 'external' && (
           <div className="absolute z-50 pointer-events-none opacity-60" style={{ left: drag.x - drag.ox, top: drag.y - drag.oy, width: drag.w, height: drag.h }}>
             <WidgetFrame id={drag.id} floating>
-              <div className="h-full flex items-center justify-center text-caption text-text-tertiary">{drag.outside && desktop ? '놓으면 독립창으로 분리됩니다' : '원하는 위치의 인디케이터에 놓아 주세요'}</div>
+              <div className="h-full flex items-center justify-center text-caption text-text-tertiary">{drag.outside && (desktop || canWebDetach()) && !isFixedWidget(drag.id) ? '놓으면 새 창으로 분리됩니다' : '원하는 위치의 인디케이터에 놓아 주세요'}</div>
             </WidgetFrame>
           </div>
         )}

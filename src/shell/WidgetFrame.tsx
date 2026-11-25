@@ -1,4 +1,4 @@
-import { Pin, X } from 'lucide-react';
+import { ExternalLink, Pin, Undo2, X } from 'lucide-react';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useT } from '../lib/i18n';
@@ -46,6 +46,8 @@ export function WidgetFrame({
   dimmed,
   headerClassName = '',
   symbol,
+  onDetach,
+  onReattach,
 }: {
   id: WidgetId;
   children: ReactNode;
@@ -58,6 +60,10 @@ export function WidgetFrame({
   headerClassName?: string;
   /** 독립창처럼 작은 자리에서 제목 앞에 투네이션 심볼을 보인다 (토큰 문서 §6) */
   symbol?: boolean;
+  /** 웹: [창 분리] 버튼 (설치형은 제목줄을 끌어내서 분리한다). 위젯 틀 요소를 넘긴다 */
+  onDetach?: (frame: HTMLElement) => void;
+  /** 웹 분리 창: [메인 창으로 되돌리기] 버튼 */
+  onReattach?: () => void;
 }) {
   const t = useT();
   const meta = WIDGETS[id];
@@ -88,6 +94,20 @@ export function WidgetFrame({
         {/* 빈 곳은 제목줄과 같이 끌어서 이동, 탭·버튼을 누를 때만 드래그를 막는다 */}
         <div ref={setSlot} className="flex-1 min-w-0 overflow-hidden flex items-stretch gap-2" onPointerDown={stopOnControl} />
         <div className="self-center flex items-center gap-0.5 app-no-drag" onPointerDown={(e) => e.stopPropagation()}>
+          {onReattach && (
+            <Tooltip label="메인 창으로 되돌리기" side="bottom">
+              <IconButton label="메인 창으로 되돌리기" onClick={onReattach}>
+                <Undo2 size={14} />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onDetach && (
+            <Tooltip label="창 분리" side="bottom">
+              <IconButton label="창 분리" onClick={(e) => onDetach((e.currentTarget as HTMLElement).closest('section')!)}>
+                <ExternalLink size={14} />
+              </IconButton>
+            </Tooltip>
+          )}
           {onTogglePin && !isFixedWidget(id) && (
             <Tooltip label={t('압정')} side="bottom">
               <IconButton label={t('압정')} aria-pressed={pinned} active={pinned} onClick={onTogglePin}>
