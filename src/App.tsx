@@ -15,6 +15,7 @@ import { TitleBar } from './shell/TitleBar';
 import { WallpaperModal } from './shell/Wallpaper';
 import { DetachedWidget } from './shell/Detached';
 import { MobileApp } from './mobile/MobileApp';
+import { UpdatePrompt } from './shell/UpdatePrompt';
 import { WIDGETS } from './widgets/meta';
 
 const MOBILE_MAX = 768;
@@ -97,6 +98,7 @@ export default function App() {
         {phase === 'update' && <Update />}
         {phase === 'expired' && <Expired />}
         {phase === 'suspended' && <Suspended />}
+        <UpdatePrompt />
         <Toasts />
       </>
     );
@@ -106,6 +108,7 @@ export default function App() {
     <>
       {mobile ? <MobileApp /> : <PcRemote />}
       {showAd && <AdPopup />}
+      <UpdatePrompt />
       <Toasts />
     </>
   );

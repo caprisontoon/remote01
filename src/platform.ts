@@ -2,6 +2,13 @@
 import type { Donation, Shortcut, WidgetId } from './types';
 import type { LiveStatus } from './api/toonation';
 
+export type UpdateStatus =
+  | { state: 'idle' }
+  | { state: 'available'; version: string }
+  | { state: 'downloading'; version: string; percent: number }
+  | { state: 'downloaded'; version: string }
+  | { state: 'error'; message: string };
+
 export interface DetachOptions {
   screenX: number;
   screenY: number;
@@ -56,6 +63,15 @@ export interface DesktopBridge {
   };
   setShortcuts(list: Shortcut[]): Promise<{ id: string; ok: boolean }[]>;
   onShortcut(cb: (action: string) => void): () => void;
+  /** 자동 업데이트 (electron/updater.ts). 설치된 앱에서만 새 버전을 확인한다 */
+  updates: {
+    status(): Promise<UpdateStatus>;
+    /** 받기 시작. 다 받으면 앱이 닫히고 설치된 뒤 다시 실행된다 */
+    download(): Promise<void>;
+    /** [나중에]: 이번 실행 동안 다시 묻지 않는다 */
+    dismiss(): Promise<void>;
+    onStatus(cb: (s: UpdateStatus) => void): () => void;
+  };
   openExternal(url: string): void;
   quit(): void;
 }

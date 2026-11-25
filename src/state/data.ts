@@ -81,4 +81,5 @@ export const DEFAULT_SETTINGS: Settings = {
   chatTextScale: 100,
 };
 
-export const APP_VERSION = '2.0.1'; // package.json version과 맞춘다
+/** 앱 버전 = package.json version (vite.config.ts가 빌드할 때 넣는다) */
+export const APP_VERSION: string = import.meta.env.VITE_APP_VERSION ?? '0.0.0';

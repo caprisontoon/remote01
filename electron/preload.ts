@@ -43,6 +43,12 @@ contextBridge.exposeInMainWorld('toona', {
     onStatus: (cb: (s: unknown) => void) => on('toonation:status', cb),
     onDonation: (cb: (d: unknown) => void) => on('toonation:donation', cb),
   },
+  updates: {
+    status: () => ipcRenderer.invoke('update:status'),
+    download: () => ipcRenderer.invoke('update:download'),
+    dismiss: () => ipcRenderer.invoke('update:dismiss'),
+    onStatus: (cb: (s: unknown) => void) => on('update:status', cb),
+  },
   openExternal: (url: string) => ipcRenderer.send('app:openExternal', url),
   quit: () => ipcRenderer.send('app:quit'),
 });

@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { attachedGroup, snap, type Box } from './magnet';
 import { ToonationFeed } from './toonation';
+import { setupUpdater } from './updater';
 
 const DEV_URL = process.env.VITE_DEV_SERVER_URL;
 // 최소 창 크기: 가로는 모바일 화면 정도(400px)까지 줄일 수 있다 — 좁은 창에서는 상단 바·Dock·설정이 촘촘한 모양으로 바뀐다.
@@ -310,6 +311,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     state = readState();
     createMain();
+    setupUpdater();
   });
   app.on('will-quit', () => globalShortcut.unregisterAll());
   app.on('window-all-closed', () => app.quit());

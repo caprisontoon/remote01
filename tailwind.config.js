@@ -49,6 +49,8 @@ export default {
         modal: '20000',
         alert: '21000',
         entry: '25000',
+        // 업데이트 알림: 로그인·스플래시 같은 진입 화면 위에도 뜬다
+        update: '26000',
         toast: '30000',
       },
       boxShadow: {

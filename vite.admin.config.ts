@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
+
+process.env.VITE_APP_VERSION ??= JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version;
 
 // 관리자 웹은 리모컨(설치형 패키지에 들어가는 dist/)과 따로 dist-admin/에 만든다.
 // 개발 중에는 리모컨 개발 서버(npm run dev)의 /admin/ 주소로도 열린다.
