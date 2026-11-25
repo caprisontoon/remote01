@@ -72,17 +72,6 @@ export async function requestScreenPermission(): Promise<boolean> {
   }
 }
 
-/** 권한 상태: granted / denied / prompt / unsupported */
-export async function screenPermissionState(): Promise<'granted' | 'denied' | 'prompt' | 'unsupported'> {
-  if (!canRequestScreens()) return 'unsupported';
-  try {
-    const st = await navigator.permissions.query({ name: 'window-management' as PermissionName });
-    return st.state;
-  } catch {
-    return 'prompt';
-  }
-}
-
 /** 웹에서 창 분리를 쓸 수 있는지 (설치형은 Electron 방식, 휴대폰은 창 개념이 없어 제외) */
 export const canWebDetach = () => !isDesktop && typeof window !== 'undefined' && window.innerWidth > 768;
 
@@ -96,8 +85,9 @@ export function openWidgetWindow(id: WidgetId, rect: { screenX: number; screenY:
     existing.focus();
     return true;
   }
-  // 모니터가 여러 개면 처음 분리할 때 '창 관리' 권한을 묻는다 (분리 창이 메인 창을 따라 다른 모니터로 넘어가려면 필요)
-  if (hasMultipleScreens()) void screenPermissionState().then((st) => st === 'prompt' && requestScreenPermission());
+  // 모니터가 여러 개면 분리할 때 '창 관리' 권한을 묻는다 (분리 창이 메인 창을 따라 다른 모니터로 넘어가려면 필요).
+  // 클릭의 사용자 동작이 남아 있을 때 window.open보다 먼저 불러야 권한 창이 뜬다. 이미 허용·차단했으면 다시 묻지 않는다.
+  if (hasMultipleScreens()) void requestScreenPermission();
   const url = `${location.pathname}${location.search}#/widget/${id}`;
   const features = `popup=yes,width=${Math.round(rect.width)},height=${Math.round(rect.height)},left=${Math.round(rect.screenX)},top=${Math.round(rect.screenY)}`;
   const w = window.open(url, `toona-widget-${id}`, features);
@@ -204,7 +194,7 @@ export function startMagnet(key: WinKey) {
       // 메인 창을 따라가다 화면 끝에서 막혔다 = 브라우저가 다른 모니터로 옮기는 것을 막았다 (창 관리 권한 없음)
       if ((Math.abs(b.x - placed.x) > 40 || Math.abs(b.y - placed.y) > 40) && !warnedScreen) {
         warnedScreen = true;
-        api.toast('분리한 창이 다른 모니터로 따라가지 못했습니다. 설정 > 정보에서 [여러 모니터 창 관리 허용]을 눌러 주세요.', 'error', 6000);
+        api.toast("분리한 창이 다른 모니터로 따라가지 못했습니다. 주소창 왼쪽 사이트 정보(웹앱은 메뉴 ⋯ → 앱 정보) → 권한에서 '창 관리'를 허용해 주세요.", 'error', 7000);
       }
       placed = null;
     }

@@ -10,7 +10,6 @@ import type { Shortcut, ShortcutAction } from '../types';
 import { Button, Confirm, IconButton, Modal, Segmented, Toggle, fieldClass } from '../components/ui';
 import { uid } from '../api/mockData';
 import { useInstall } from '../lib/pwa';
-import { canRequestScreens, requestScreenPermission, screenPermissionState } from './webWindows';
 
 type Tab = 'basic' | 'shortcut' | 'live' | 'info';
 
@@ -195,32 +194,6 @@ export function InfoSettings() {
         <dd><button className="text-link font-semibold inline-flex items-center gap-1" onClick={() => openUrl('https://toon.at')}>https://toon.at <ExternalLink size={11} /></button></dd>
       </dl>
       {!desktop && <InstallApp />}
-      {!desktop && canRequestScreens() && <ScreenPermission />}
-    </div>
-  );
-}
-
-/** 웹: 분리한 창이 메인 창을 따라 다른 모니터로 넘어가려면 브라우저 '창 관리' 권한이 필요하다 (webWindows.ts) */
-function ScreenPermission() {
-  const [state, setState] = useState<'granted' | 'denied' | 'prompt' | 'unsupported'>('prompt');
-  useEffect(() => {
-    void screenPermissionState().then(setState);
-  }, []);
-  const ask = async () => {
-    await requestScreenPermission();
-    setState(await screenPermissionState());
-  };
-  return (
-    <div className="rounded-card border border-line bg-surface-raised p-3 space-y-2">
-      <p className="font-semibold">여러 모니터 창 관리</p>
-      <p className="text-caption text-text-secondary">듀얼 모니터에서 자석으로 붙인 분리 창이 메인 창을 따라 다른 모니터로 넘어가려면 브라우저의 '창 관리' 권한이 필요합니다.</p>
-      {state === 'granted' ? (
-        <p className="text-caption font-semibold text-link">허용됨</p>
-      ) : state === 'denied' ? (
-        <p className="text-caption text-text-tertiary">차단되어 있습니다. 주소창 왼쪽의 사이트 정보(자물쇠) 아이콘 → 권한 → '창 관리'를 허용으로 바꾼 뒤 다시 열어 주세요.</p>
-      ) : (
-        <Button size="sm" onClick={() => void ask()}>여러 모니터 창 관리 허용</Button>
-      )}
     </div>
   );
 }
