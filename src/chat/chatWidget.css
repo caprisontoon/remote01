@@ -1,0 +1,206 @@
+/* 채팅 한 줄 표시 규칙. 원본: caprisontoon/total public/chat-widget-app.html (chat widget 구역).
+   원본과 같은 모양을 내기 위해 그대로 옮겼다. 설정 화면 전용 규칙(.tnv-*, .tn-grp-h*, .tnq-*)만 뺐다. */
+/* ============ chat widget (rendered inside stage) ============ */
+.cw-scope{--ff:'Noto Sans KR'; --fs:20px; --fw:700; --sw:2px; --sc:#000; --boxbg:rgba(0,0,0,.45); --rad:8px; --gap:6px; --spd:.25s; --wfs:16px}
+.cw-list{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:flex-end; gap:var(--gap); overflow:hidden; padding-top:4px}
+.cw-list > .cw-msg{flex-shrink:0}
+.cw-list{padding:6px 8px 4px; margin-inline:-8px}
+#wTop, #wBottom{flex-shrink:0}
+.dir-left .cw-list{align-items:flex-start; text-align:left}
+.dir-center .cw-list{align-items:center; text-align:center}
+.dir-right .cw-list{align-items:flex-end; text-align:right}
+.fade-top .cw-list{-webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 26%); mask-image:linear-gradient(to bottom, transparent 0, #000 26%)}
+.cw-msg{font-family:var(--ff); font-size:var(--fs); font-weight:var(--fw); line-height:1.38; color:var(--mc,#fff); max-width:100%; overflow-wrap:anywhere; cursor:pointer}
+.cw-msg.cw-sel{outline:2px solid #ffd54a; outline-offset:2px}
+.box-box .cw-msg{background:var(--boxbg); border-radius:var(--rad); padding:.26em .6em}
+.outlined .cw-nick, .outlined .cw-text, .outlined .cw-w{paint-order:stroke fill; -webkit-text-stroke:var(--sw) var(--sc)}
+.cw-head{display:inline}
+.cw-nick{color:var(--nc,#fff); margin-right:.42em}
+.cw-pf, .cw-badge{display:inline-flex; align-items:center; justify-content:center; height:1.15em; min-width:1.15em; padding:0 .24em; border-radius:.26em;
+  font:700 .6em/1 var(--ui); vertical-align:.2em; margin-right:.24em; -webkit-text-stroke:0; letter-spacing:0}
+.cw-badge i{font-style:normal; margin-left:.18em; opacity:.85}
+.cw-badge.cw-bimg{padding:0; background:none; min-width:0; height:auto; vertical-align:-.12em; font-size:1em; color:inherit}
+.cw-badge.cw-bimg img{height:1.05em; width:auto; display:block}
+.cw-badge.cw-bimg i{font:700 .6em/1 var(--ui); margin-left:.15em}
+.bs-s .cw-badge.cw-bimg{font-size:.85em}
+.bs-l .cw-badge.cw-bimg{font-size:1.2em}
+.bs-s .cw-pf, .bs-s .cw-badge{font-size:.5em}
+.bs-l .cw-pf, .bs-l .cw-badge{font-size:.72em}
+.cw-tnb{border:1px solid rgba(255,255,255,.7); box-shadow:0 0 .4em rgba(120,160,255,.6)}
+.cw-emote{display:inline-block; font-size:1.1em; line-height:1; vertical-align:-.08em; -webkit-text-stroke:0}
+.cw-ev{display:inline-block; font:700 .7em/1.2 var(--ui); padding:.14em .5em; border-radius:.4em; background:#ffcf3f; color:#2a1d00; margin-right:.42em; vertical-align:.14em; -webkit-text-stroke:0}
+.cw-ev.sub{background:#b9a3ff; color:#1b0f3a}
+.cw-ev.tn{background:#2f6bff; color:#fff}
+.cw-ev.cw-tnchip{color:#fff}
+.cw-det{opacity:.92; margin-right:.45em}
+.cw-msg.cw-tn.tn-card{display:block; white-space:normal; color:#fff; background:linear-gradient(135deg, var(--gc), var(--gc2)); border:0;
+  border-radius:calc(var(--rad) + 6px); padding:.55em .85em .65em; box-shadow:0 0 0 2px rgba(255,255,255,.28) inset, 0 .2em .5em rgba(0,0,0,.3)}
+.tn-card .cw-head{display:block; font-size:.82em}
+.tn-card .cw-nick{color:#fff}
+.tn-card .cw-pf{box-shadow:0 0 0 1px rgba(255,255,255,.85)}
+.tn-card .cw-text{display:block}
+.tn-card .cw-ev.cw-tnchip{display:table; background:#fff!important; color:var(--gc)!important; font-size:.8em; margin:.3em 0 .35em}
+.tn-card .cw-det{display:block; opacity:1; font-size:1.02em; margin:0}
+.tn-card .cw-sepdot{display:none}
+.tn-card .cw-msgline{display:block; opacity:.92; font-size:.92em}
+/* 후원 카드 디자인: 강조(기본 그라데이션) · 기본(어두운 배경 + 파란 테두리) · 심플(반투명, 작게) */
+.cw-msg.cw-tn.tnc-strong{box-shadow:0 0 0 2px rgba(255,255,255,.28) inset, 0 .2em .5em rgba(0,0,0,.3), 0 0 .9em rgba(47,107,255,.55)}
+.cw-msg.cw-tn.tnc-soft{background:rgba(14,20,44,.86); box-shadow:0 0 0 1.5px rgba(111,155,255,.95) inset, 0 .2em .5em rgba(0,0,0,.3)}
+.cw-msg.cw-tn.tnc-soft .cw-ev.cw-tnchip{background:var(--gc)!important; color:#fff!important}
+.cw-msg.cw-tn.tnc-simple{background:rgba(255,255,255,.13); box-shadow:0 0 0 1px rgba(255,255,255,.22) inset; padding:.38em .7em .45em; font-size:calc(var(--fs) * .9)}
+.cw-msg.cw-tn.tnc-simple .cw-ev.cw-tnchip{background:var(--gc)!important; color:#fff!important; margin:.2em 0 .25em}
+.cw-msg.cw-tn.tnc-simple .cw-det{font-size:.95em}
+/* 후원자 등급(VIP·VVIP·SVIP) 프리미엄 카드 */
+.cw-msg.cw-tn.tnc-premium{position:relative; overflow:hidden; border:0}
+.cw-msg.cw-tn.tnc-premium::after{position:absolute; top:.45em; right:.6em; font:800 .62em/1 var(--ui); letter-spacing:.06em; padding:.25em .5em; border-radius:.35em; -webkit-text-stroke:0}
+.cw-msg.cw-tn.tnt-vip{background:linear-gradient(135deg,#0f2a6b,#2f6bff 70%,#5b8cff); box-shadow:0 0 0 1.5px #a9c4ff inset, 0 0 .8em rgba(47,107,255,.6)}
+.cw-msg.cw-tn.tnt-vip::after{content:"VIP"; background:rgba(255,255,255,.18); color:#e3ecff}
+.cw-msg.cw-tn.tnt-vip .cw-ev.cw-tnchip{background:#fff!important; color:#1f4fd6!important}
+.cw-msg.cw-tn.tnt-vvip{background:linear-gradient(135deg,#2e0f6b,#7c3aed 55%,#c084fc); box-shadow:0 0 0 1.5px #e2c8ff inset, 0 0 1em rgba(167,111,255,.7)}
+.cw-msg.cw-tn.tnt-vvip::after{content:"VVIP"; background:rgba(255,255,255,.2); color:#f4e8ff}
+.cw-msg.cw-tn.tnt-vvip .cw-ev.cw-tnchip{background:#fff!important; color:#6d28d9!important}
+.cw-msg.cw-tn.tnt-svip{background:linear-gradient(135deg,#140d02,#3b2a07 55%,#1c1404); box-shadow:0 0 0 2px #f2c94c inset, 0 0 1.2em rgba(242,201,76,.6)}
+.cw-msg.cw-tn.tnt-svip::after{content:"SVIP"; background:linear-gradient(135deg,#ffe08a,#ff9f1c); color:#3a2400}
+.cw-msg.cw-tn.tnt-svip .cw-nick{color:#ffd76a!important}
+.cw-msg.cw-tn.tnt-svip .cw-ev.cw-tnchip{background:linear-gradient(135deg,#ffe08a,#ff9f1c)!important; color:#3a2400!important}
+.cw-msg.cw-tn.tnt-svip::before{content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; background:linear-gradient(100deg, transparent, rgba(255,230,160,.28), transparent); transform:skewX(-18deg); animation:tnSheen 3.2s ease-in-out infinite; pointer-events:none}
+@keyframes tnSheen{0%{left:-60%} 55%,100%{left:130%}}
+@media (prefers-reduced-motion: reduce){ .cw-msg.cw-tn.tnt-svip::before{animation:none; display:none} }
+div.tnv-card{cursor:default}
+.al-oneline .cw-msg{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.al-start .cw-msg{display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:.42em; align-items:baseline}
+.al-start .cw-nick{margin-right:0}
+.al-stack .cw-head{display:block; font-size:.8em}
+.al-stack .cw-text{display:block}
+/* themes */
+.th-neon .cw-msg{border:1.5px solid var(--nc); box-shadow:0 0 .55em var(--nc), inset 0 0 .45em rgba(255,255,255,.08)}
+.th-card .cw-msg{box-shadow:0 .2em .7em rgba(0,0,0,.3)}
+.th-minimal .cw-msg{letter-spacing:.01em}
+/* 심플: 기본 박스보다 연한 반투명 박스 + 외곽선 없음, 닉네임은 작게 + 메시지와 간격 (기존 '한 줄 심플') */
+.th-basic .cw-msg:not(.tn-card), .th-simple .cw-msg:not(.tn-card){align-self:stretch}
+.th-simple .cw-msg:not(.tn-card) .cw-nick{font-size:.8em; margin-right:.75em}
+.th-simple.colon .cw-msg:not(.tn-card) .cw-nick, .th-simple.al-start .cw-msg:not(.tn-card) .cw-nick{margin-right:0}
+.cw-ava, .cw-time{display:none}
+/* 메신저(클래스 th-kakao): 닉네임은 말풍선 밖, 메시지는 흰 말풍선 (스트리머는 노란 말풍선) */
+.th-kakao .cw-msg:not(.tn-card){display:block!important; width:100%; background:none!important; padding:0!important; box-shadow:none}
+.th-kakao .cw-msg:not(.tn-card) .cw-head{display:block; font-size:.72em; margin:0 0 .18em .15em}
+.th-kakao .cw-msg:not(.tn-card) .cw-text{display:inline-block; position:relative; max-width:calc(100% - .4em); margin-left:.35em; background:#ffffff; color:var(--mc); border-radius:.75em; padding:.3em .7em; -webkit-text-stroke:0; box-shadow:0 .1em .3em rgba(0,0,0,.18); text-align:left}
+.th-kakao .cw-msg:not(.tn-card) .cw-text::before{content:""; position:absolute; left:-.3em; top:.5em; border-style:solid; border-width:.32em .34em .32em 0; border-color:transparent #ffffff transparent transparent}
+.th-kakao .cw-msg.r-streamer:not(.tn-card) .cw-text{background:#fee500}
+.th-kakao .cw-msg.r-streamer:not(.tn-card) .cw-text::before{border-right-color:#fee500}
+.th-kakao.al-oneline .cw-msg .cw-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* 디스코드: 프로필 원 + 닉네임 + 메시지 */
+.th-discord .cw-msg:not(.tn-card){display:grid!important; grid-template-columns:2em minmax(0,1fr); column-gap:.6em; align-items:start; width:100%; padding:.4em .7em!important; font-weight:400}
+.th-discord .cw-msg:not(.tn-card) .cw-ava{display:grid; place-items:center; grid-row:span 2; width:2.3em; height:2.3em; border-radius:50%; background:var(--pc); color:#fff; font:700 .85em/1 var(--ui); -webkit-text-stroke:0}
+.th-discord .cw-msg:not(.tn-card) .cw-head{display:block; font-size:.92em}
+.th-discord .cw-msg .cw-nick{font-weight:600}
+.th-discord .cw-msg:not(.tn-card) .cw-text{display:block}
+/* 오버워치: 기울어진 패널 + [닉네임]: */
+.th-ow .cw-msg:not(.tn-card){position:relative; isolation:isolate; background:none!important; padding:.22em 1em .22em .75em!important; font-style:italic}
+.th-ow .cw-msg:not(.tn-card)::before{content:""; position:absolute; inset:0; z-index:-1; transform:skewX(-14deg); background:linear-gradient(90deg, rgba(14,22,40,.9), rgba(14,22,40,.45)); border-left:.28em solid #f99e1a}
+.th-ow .cw-msg .cw-nick::before{content:"["}
+.th-ow .cw-msg .cw-nick::after{content:"]:"}
+.th-ow .cw-msg .cw-nick{margin-right:.35em}
+/* 칠판: 나무 테두리의 초록 칠판 위에 분필 글씨 */
+.th-chalk .cw-list{background:#25402f; background-image:radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.07), transparent 60%); border:.4em solid #8a5a33; border-radius:8px; box-shadow:inset 0 0 1.4em rgba(0,0,0,.5), 0 .2em .6em rgba(0,0,0,.4); padding:.6em .8em; margin-inline:0}
+.th-chalk .cw-msg:not(.tn-card){font-weight:400; text-shadow:0 0 1px rgba(255,255,255,.55), 0 0 6px rgba(255,255,255,.18)}
+/* 롤: 깎인 모서리 + 금색 테두리 */
+.th-lol .cw-msg:not(.tn-card){background:linear-gradient(180deg, rgba(1,10,19,.95), var(--boxbg))!important; border:1px solid #785a28; border-radius:0!important; padding:.28em .75em!important; box-shadow:inset 0 0 .6em rgba(200,170,110,.18);
+  clip-path:polygon(.45em 0,100% 0,100% calc(100% - .45em),calc(100% - .45em) 100%,0 100%,0 .45em)}
+/* 배그: 어두운 패널 + 노란 왼쪽 바 */
+.th-pubg .cw-msg:not(.tn-card){background:var(--boxbg)!important; border-left:.24em solid #f2a900; border-radius:2px!important; padding:.24em .7em!important; text-shadow:0 1px 2px rgba(0,0,0,.6)}
+/* 크리스마스: 빨강·초록 번갈아 + 금색 테두리 + 눈송이 */
+.th-xmas .cw-msg:not(.tn-card){position:relative; background:linear-gradient(135deg,#c62828,#8e1414)!important; border:2px solid #f1d27a; border-radius:.8em!important; padding:.3em .8em!important; box-shadow:0 .15em .45em rgba(0,0,0,.3)}
+.th-xmas .cw-msg.alt:not(.tn-card){background:linear-gradient(135deg,#2e7d32,#1b5e20)!important}
+.th-xmas .cw-msg:not(.tn-card)::after{content:"❄"; position:absolute; right:.5em; top:-.55em; font-size:.75em; color:#fff; text-shadow:0 0 4px rgba(255,255,255,.8); -webkit-text-stroke:0}
+/* 표시 방향 '오른쪽': 메시지 → 닉네임 → 배지 순으로 좌우를 뒤집어 닉네임이 오른쪽 끝에 오도록 */
+.dir-right .cw-msg:not(.tn-card){display:flex; flex-direction:row-reverse; align-items:baseline; column-gap:.42em; text-align:right}
+.dir-right .cw-msg .cw-head{display:inline-flex; flex-direction:row-reverse; align-items:baseline; flex:0 0 auto; white-space:nowrap}
+.dir-right .cw-msg .cw-nick{margin-right:0}
+.dir-right .cw-pf, .dir-right .cw-badge{margin-right:0; margin-left:.24em}
+.dir-right .cw-msg:not(.tn-card) .cw-text{min-width:0; flex:0 1 auto}
+.dir-right .cw-ev{margin-right:0; margin-left:.42em}
+.al-oneline.dir-right .cw-msg .cw-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.al-stack.dir-right .cw-msg:not(.tn-card){flex-direction:column; align-items:flex-end}
+.al-start.dir-right .cw-msg:not(.tn-card){display:grid; grid-template-columns:minmax(0,1fr) auto}
+.al-start.dir-right .cw-msg .cw-head{order:2}
+/* 후원 카드는 오른쪽에 붙기만 하고 카드 안 구성은 그대로 */
+.dir-right .cw-msg.tn-card{text-align:left}
+.dir-right .cw-msg.tn-card .cw-head{display:block; white-space:normal}
+.dir-right .cw-msg.tn-card .cw-nick{margin-right:.42em}
+.dir-right .cw-msg.tn-card .cw-pf, .dir-right .cw-msg.tn-card .cw-badge{margin-left:0; margin-right:.24em}
+.th-kakao.dir-right .cw-msg:not(.tn-card) .cw-text{margin-left:0; margin-right:.35em}
+.th-kakao.dir-right .cw-msg:not(.tn-card) .cw-text::before{left:auto; right:-.3em; border-width:.32em 0 .32em .34em; border-color:transparent transparent transparent #ffffff}
+.th-kakao.dir-right .cw-msg.r-streamer:not(.tn-card) .cw-text::before{border-left-color:#fee500}
+.th-kakao.dir-right .cw-msg:not(.tn-card) .cw-head{display:flex; justify-content:flex-start}
+.th-discord.dir-right .cw-msg:not(.tn-card){grid-template-columns:minmax(0,1fr) 2em}
+.th-discord.dir-right .cw-msg:not(.tn-card) .cw-ava{grid-column:2; grid-row:1 / span 2}
+.th-discord.dir-right .cw-msg:not(.tn-card) .cw-head, .th-discord.dir-right .cw-msg:not(.tn-card) .cw-text{grid-column:1; text-align:right}
+.th-discord.dir-right .cw-msg:not(.tn-card) .cw-head{display:flex; justify-content:flex-start}
+.th-ow.dir-right .cw-msg .cw-nick::after{content:"]"}
+.th-ow.dir-right .cw-msg .cw-nick{margin-right:0}
+/* 닉네임 구분선 ':' ('한 줄' 정렬에서만) */
+.colon .cw-msg .cw-nick{margin-right:0}
+.colon .cw-msg .cw-head::after{content:":"; margin:0 .4em 0 .08em; color:var(--mc,#fff)}
+.outlined.colon .cw-msg .cw-head::after{paint-order:stroke fill; -webkit-text-stroke:var(--sw) var(--sc)}
+.dir-right.colon .cw-msg .cw-head::after{margin:0 .3em 0 0}
+.colon .cw-msg.tn-card .cw-head::after, .th-kakao.colon .cw-head::after, .th-discord.colon .cw-head::after, .th-ow.colon .cw-head::after{content:none}
+.colon .cw-msg.tn-card .cw-nick, .th-kakao.colon .cw-nick, .th-discord.colon .cw-nick{margin-right:.42em}
+.th-ow.colon .cw-msg .cw-nick{margin-right:.35em}
+/* toonation donation card */
+.cw-msg.cw-tncard{display:block; white-space:normal; color:#fff; background:linear-gradient(135deg, rgba(47,107,255,.95), rgba(123,77,255,.95)); border-radius:calc(var(--rad) + 4px); padding:.5em .75em; border:0; box-shadow:0 0 0 2px rgba(255,255,255,.35) inset, 0 .3em 1em rgba(47,107,255,.4)}
+.cw-tncard .cw-head{display:block}
+.cw-tncard .cw-text{display:block}
+.cw-tncard .cw-ev.tn{display:block; width:fit-content; background:#fff; color:#2443c8; font-size:.82em; margin:.2em 0 .3em}
+.cw-msg.cw-pinned{outline:2px solid rgba(255,212,74,.95); outline-offset:1px}
+.cw-pinlabel{display:inline-block; font:700 .6em/1.2 var(--ui); background:#ffd44a; color:#2a1d00; border-radius:.3em; padding:.1em .4em; margin-right:.4em; vertical-align:.2em; -webkit-text-stroke:0}
+/* widgets */
+.cw-w{font-family:var(--ff); font-weight:var(--fw); font-size:var(--wfs); color:#fff; background:rgba(8,12,24,.72); border-radius:var(--rad); padding:.35em .7em; display:flex; align-items:center; gap:.6em; flex-wrap:wrap; max-width:100%}
+.cw-wl{font:700 .7em/1 var(--ui); padding:.25em .5em; border-radius:.35em; background:rgba(255,255,255,.16); -webkit-text-stroke:0}
+.cw-viewers b, .cw-timer .cw-tval{font-variant-numeric:tabular-nums}
+.cw-vc{display:inline-flex; align-items:center; gap:.3em}
+.cw-vc .cw-pf{margin:0; vertical-align:0}
+.cw-vt{margin-left:auto}
+.cw-notice{flex-wrap:nowrap}
+.cw-notice .cw-ntext{min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; flex:1}
+.ns-accent .cw-notice{background:linear-gradient(90deg,#2f6bff,#6a5cff)}
+.ns-ticker .cw-notice .cw-ntext{text-overflow:clip}
+.ns-ticker .cw-notice .cw-ntext span{display:inline-block; padding-left:100%; animation:cwTicker 12s linear infinite}
+.cw-timer{justify-content:space-between}
+.cw-timer .cw-tval{font-size:1.25em}
+.cw-timer.done .cw-tval{color:#ff6b7f; animation:cwBlink 1s steps(2) infinite}
+/* motion */
+.fx-fade .cw-enter{animation:cwFade var(--spd) ease-out}
+.fx-slide .cw-enter{animation:cwSlide var(--spd) ease-out}
+.fx-slide.dir-right .cw-enter{animation-name:cwSlideR}
+.fx-up .cw-enter{animation:cwUp var(--spd) ease-out}
+.fx-pop .cw-enter{animation:cwPop var(--spd) cubic-bezier(.2,1.4,.4,1)}
+.fxo-fade .cw-exit{animation:cwFadeOut .4s ease-in forwards}
+.fxo-slide .cw-exit{animation:cwSlideOut .4s ease-in forwards}
+.fxo-slide.dir-right .cw-exit{animation-name:cwSlideOutR}
+.fxo-up .cw-exit{animation:cwUpOut .4s ease-in forwards}
+.fxo-pop .cw-exit{animation:cwPopOut .4s ease-in forwards}
+.fxo-none .cw-exit{display:none}
+.cw-nick.nbg{background:#fff; border-radius:.3em; padding:0 .3em; -webkit-text-stroke:0; text-shadow:none}
+@keyframes cwFade{from{opacity:0}}
+@keyframes cwSlide{from{opacity:0; transform:translateX(-1.4em)}}
+@keyframes cwSlideR{from{opacity:0; transform:translateX(1.4em)}}
+@keyframes cwUp{from{opacity:0; transform:translateY(.9em)}}
+@keyframes cwPop{from{opacity:0; transform:scale(.8)}}
+@keyframes cwFadeOut{to{opacity:0}}
+@keyframes cwSlideOut{to{opacity:0; transform:translateX(-1.4em)}}
+@keyframes cwSlideOutR{to{opacity:0; transform:translateX(1.4em)}}
+@keyframes cwUpOut{to{opacity:0; transform:translateY(-.9em)}}
+@keyframes cwPopOut{to{opacity:0; transform:scale(.8)}}
+@keyframes cwTicker{to{transform:translateX(-100%)}}
+@keyframes cwBlink{50%{opacity:.3}}
+@media (prefers-reduced-motion: reduce){ .cw-enter, .cw-exit{animation:none!important} .ns-ticker .cw-notice .cw-ntext span{animation:none; padding-left:0} .cw-timer.done .cw-tval{animation:none} }
+
+/* ============ 리모컨 채팅 위젯 전용 (원본 .rc-* 중 목록 부분) ============ */
+/* 채팅 기본 폰트 제주고딕은 오프라인에서도 같게 보이도록 앱에 넣는다 (SIL OFL 1.1, src/assets/fonts/OFL-JejuGothic.txt) */
+@font-face{font-family:'Jeju Gothic'; font-style:normal; font-weight:400; font-display:swap; src:url('../assets/fonts/JejuGothic-Regular.woff2') format('woff2')}
+.cw-scope.rc-scope{position:absolute; inset:0; --ui:'Pretendard Variable', Pretendard, 'Malgun Gothic', sans-serif}
+/* 모니터링용: 최근 150개를 스크롤해서 본다 (원본 #rcList) */
+.cw-list.rc-list{height:100%; overflow-y:auto; justify-content:flex-start; margin:0; padding:10px; scrollbar-width:thin}
+.cw-list.rc-list::before{content:''; flex:1}
+.rc-list .cw-msg{cursor:default}
