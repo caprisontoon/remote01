@@ -6,6 +6,7 @@
 // 자석(p27)도 설치형과 같은 규칙(electron/magnet.ts)을 쓴다. 단, 브라우저는 창 끌기 중간에 끼어들 수 없어서
 // 분리한 창을 옮기고 놓은 뒤에 가까운 창 모서리로 붙고, 메인 창을 옮기면 붙어 있던 분리 창이 뒤따라 움직인다.
 import { attachedGroup, snap, type Box } from '../../electron/magnet';
+import { api } from '../state/app';
 import { isDesktop } from '../platform';
 import { uiStore } from '../state/ui';
 import type { WidgetId } from '../types';
@@ -101,7 +102,20 @@ export function listenWebWindows() {
 
 // ------------------------------------------------------------------ 자석
 
-const boxOf = (): Box => ({ x: window.screenX, y: window.screenY, width: window.outerWidth, height: window.outerHeight });
+/**
+ * Windows 창은 좌·우·아래에 보이지 않는 크기 조절 테두리(약 7~8px)가 있고, screenX·outerWidth에 이 부분이 들어간다.
+ * 그대로 맞대면 눈에 보이는 모서리 사이에 틈이 생기므로, 보이는 영역 기준으로 붙인다.
+ * 테두리 폭 = (outerWidth − innerWidth) / 2 (Windows의 브라우저·웹앱 창은 좌우 프레임이 보이지 않는다)
+ */
+const IS_WINDOWS = typeof navigator !== 'undefined' && /Windows/i.test(navigator.userAgent);
+const insetOf = () => (IS_WINDOWS ? Math.max(0, Math.round((window.outerWidth - window.innerWidth) / 2)) : 0);
+/** 눈에 보이는 창 영역 (화면 좌표) */
+const boxOf = (): Box => {
+  const i = insetOf();
+  return { x: window.screenX + i, y: window.screenY, width: window.outerWidth - 2 * i, height: window.outerHeight - i };
+};
+/** 보이는 영역의 왼쪽 위를 그 위치로 옮긴다 (moveTo는 바깥 테두리 기준) */
+const moveVisibleTo = (x: number, y: number) => window.moveTo(x - insetOf(), y);
 const sameBox = (a: Box, b: Box) => a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 /** 이 시간(ms) 동안 위치가 그대로면 "놓았다"로 본다 */
 const SETTLE_MS = 250;
@@ -117,6 +131,9 @@ export function startMagnet(key: WinKey) {
   let last = boxOf();
   let moved = false;
   let movedAt = 0;
+  /** 자석으로 옮기라고 한 위치. 다음 확인 때 그대로면 브라우저가 창 이동을 막은 것이다 */
+  let pending: { from: Box; to: Box } | null = null;
+  let warned = false;
   const post = (msg: ControlMsg) => control.postMessage(msg);
 
   const onMsg = (e: MessageEvent<ControlMsg>) => {
@@ -138,6 +155,13 @@ export function startMagnet(key: WinKey) {
 
   const timer = setInterval(() => {
     const b = boxOf();
+    if (pending) {
+      if (sameBox(b, pending.from) && !warned) {
+        warned = true;
+        api.toast('이 브라우저는 창 이동을 허용하지 않아 자석 기능을 쓸 수 없습니다.', 'error', 4000);
+      }
+      pending = null;
+    }
     if (!sameBox(b, last)) {
       const prev = last;
       last = b;
@@ -157,7 +181,10 @@ export function startMagnet(key: WinKey) {
     if (key !== 'main' && moved && Date.now() - movedAt > SETTLE_MS) {
       moved = false;
       const s = snap(b, [...others].filter(([k]) => k !== key).map(([, v]) => v));
-      if (s.x !== b.x || s.y !== b.y) window.moveTo(s.x, s.y);
+      if (s.x !== b.x || s.y !== b.y) {
+        pending = { from: b, to: s };
+        moveVisibleTo(s.x, s.y);
+      }
     }
   }, 100);
 
