@@ -13,6 +13,7 @@
 **설치 파일 받기 (Windows):** https://github.com/caprisontoon/remote01/releases/latest/download/TOONA-Setup.exe
 (릴리스 목록: https://github.com/caprisontoon/remote01/releases · 아직 코드 서명 전이라 스마트 앱 컨트롤이 켜진 PC에서는 설치가 막힌다)
 2.0.2부터 설치형은 실행할 때 새 버전을 확인해 업데이트를 묻는다 (`docs/desktop/자동업데이트.md`).
+**스마트 앱 컨트롤이 켜진 PC:** 설치형 대신 웹 리모컨을 Edge·Chrome에서 '앱으로 설치'(PWA)하면 서명 없이 앱처럼 쓸 수 있다 (`docs/desktop/웹앱설치.md`).
 
 **웹에서 바로 보기 (GitHub Pages):** 웹 리모컨 https://caprisontoon.github.io/remote01/?autologin=1 · 관리자 웹 https://caprisontoon.github.io/remote01/admin/
 (`.github/workflows/pages.yml`이 이 브랜치에 올릴 때마다 다시 배포한다. 목업 데이터.)

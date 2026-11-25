@@ -9,6 +9,7 @@ import { desktop, isDesktop, openUrl } from '../platform';
 import type { Shortcut, ShortcutAction } from '../types';
 import { Button, Confirm, IconButton, Modal, Segmented, Toggle, fieldClass } from '../components/ui';
 import { uid } from '../api/mockData';
+import { useInstall } from '../lib/pwa';
 
 type Tab = 'basic' | 'shortcut' | 'live' | 'info';
 
@@ -192,6 +193,29 @@ export function InfoSettings() {
         <dt className="text-text-secondary">공식 홈페이지</dt>
         <dd><button className="text-link font-semibold inline-flex items-center gap-1" onClick={() => openUrl('https://toon.at')}>https://toon.at <ExternalLink size={11} /></button></dd>
       </dl>
+      {!desktop && <InstallApp />}
+    </div>
+  );
+}
+
+/** 웹 리모컨을 PC·휴대폰에 앱처럼 설치 (PWA). 서명이 필요 없어 스마트 앱 컨트롤이 켜진 PC에서도 쓸 수 있다 */
+function InstallApp() {
+  const { canInstall, installed, install } = useInstall();
+  return (
+    <div className="rounded-card border border-line bg-surface-raised p-3 space-y-2">
+      <p className="font-semibold">앱으로 설치</p>
+      {installed ? (
+        <p className="text-caption text-text-secondary">설치된 앱으로 실행 중입니다. 새 버전은 다음에 열 때 자동으로 반영됩니다.</p>
+      ) : (
+        <>
+          <p className="text-caption text-text-secondary">웹 리모컨을 시작 메뉴·작업 표시줄에서 여는 앱으로 설치합니다. 설치 파일이 필요 없고, 새 버전은 자동으로 반영됩니다.</p>
+          {canInstall ? (
+            <Button size="sm" onClick={() => void install()}>앱으로 설치</Button>
+          ) : (
+            <p className="text-caption text-text-tertiary">Edge·Chrome 주소창 오른쪽의 [앱 설치] 아이콘을 누르거나, 메뉴(⋯) → 앱 → 이 사이트를 앱으로 설치를 선택하세요.</p>
+          )}
+        </>
+      )}
     </div>
   );
 }
