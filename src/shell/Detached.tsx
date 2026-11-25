@@ -8,7 +8,7 @@ import { WidgetFrame } from './WidgetFrame';
 import { Toasts } from '../components/ui';
 import { useEffect } from 'react';
 import { WIDGETS } from '../widgets/meta';
-import { requestReattach } from './webWindows';
+import { requestReattach, startMagnet } from './webWindows';
 
 /**
  * 독립창으로 분리된 위젯.
@@ -22,7 +22,7 @@ export function DetachedWidget({ id }: { id: WidgetId }) {
 
   useEffect(() => {
     document.title = `${WIDGETS[id].title} · TOONA 리모컨`;
-    if (!desktop) return;
+    if (!desktop) return startMagnet(id); // 웹: 자석
     desktop.widgets.list().then((list) => uiStore.set({ detached: list }));
     return desktop.widgets.onChanged((list) => uiStore.set({ detached: list }));
   }, []);
