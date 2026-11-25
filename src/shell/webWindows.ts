@@ -5,6 +5,7 @@
 // 웹에서는 창을 항상 위에 둘 수 없어서 압정은 없다.
 // 자석(p27)도 설치형과 같은 규칙(electron/magnet.ts)을 쓴다. 단, 브라우저는 창 끌기 중간에 끼어들 수 없어서
 // 분리한 창을 옮기고 놓은 뒤에 가까운 창 모서리로 붙고, 메인 창을 옮기면 붙어 있던 분리 창이 뒤따라 움직인다.
+// 다른 모니터로 함께 넘어가려면 브라우저의 '창 관리' 권한이 필요하다 (requestScreenPermission).
 import { attachedGroup, snap, type Box } from '../../electron/magnet';
 import { api } from '../state/app';
 import { isDesktop } from '../platform';
@@ -20,8 +21,8 @@ type ControlMsg =
   /** 창 위치·크기 알림 (화면 좌표, 바깥 테두리 기준) */
   | { type: 'bounds'; from: WinKey; box: Box }
   | { type: 'bye'; from: WinKey }
-  /** 메인 창이 움직였을 때 붙어 있던 분리 창들이 같이 움직인다 */
-  | { type: 'follow'; ids: WidgetId[]; dx: number; dy: number };
+  /** 메인 창이 움직였을 때 붙어 있던 분리 창들을 메인 창 기준 같은 자리로 옮긴다 (보이는 영역 왼쪽 위, 화면 좌표) */
+  | { type: 'place'; items: { id: WidgetId; x: number; y: number }[] };
 
 const control = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel(CONTROL);
 
@@ -49,6 +50,39 @@ function watch() {
   }, 600);
 }
 
+// ------------------------------------------------------------------ 여러 모니터 (창 관리 권한)
+
+type ScreenWindow = Window & { getScreenDetails?: () => Promise<unknown> };
+/** 모니터가 두 개 이상인지 (브라우저가 알려 줄 때만) */
+export const hasMultipleScreens = () => typeof window !== 'undefined' && (window.screen as Screen & { isExtended?: boolean }).isExtended === true;
+export const canRequestScreens = () => typeof window !== 'undefined' && typeof (window as ScreenWindow).getScreenDetails === 'function';
+
+/**
+ * 브라우저는 웹페이지가 창을 다른 모니터로 옮기지 못하게 막는다(지금 화면 안으로 되돌림).
+ * '창 관리'(window-management) 권한을 허용하면 분리 창이 메인 창을 따라 다른 모니터로 넘어갈 수 있다.
+ * 클릭 같은 사용자 동작 안에서 불러야 권한 창이 뜬다. 허용되면 true.
+ */
+export async function requestScreenPermission(): Promise<boolean> {
+  if (!canRequestScreens()) return false;
+  try {
+    await (window as ScreenWindow).getScreenDetails!();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** 권한 상태: granted / denied / prompt / unsupported */
+export async function screenPermissionState(): Promise<'granted' | 'denied' | 'prompt' | 'unsupported'> {
+  if (!canRequestScreens()) return 'unsupported';
+  try {
+    const st = await navigator.permissions.query({ name: 'window-management' as PermissionName });
+    return st.state;
+  } catch {
+    return 'prompt';
+  }
+}
+
 /** 웹에서 창 분리를 쓸 수 있는지 (설치형은 Electron 방식, 휴대폰은 창 개념이 없어 제외) */
 export const canWebDetach = () => !isDesktop && typeof window !== 'undefined' && window.innerWidth > 768;
 
@@ -62,6 +96,8 @@ export function openWidgetWindow(id: WidgetId, rect: { screenX: number; screenY:
     existing.focus();
     return true;
   }
+  // 모니터가 여러 개면 처음 분리할 때 '창 관리' 권한을 묻는다 (분리 창이 메인 창을 따라 다른 모니터로 넘어가려면 필요)
+  if (hasMultipleScreens()) void screenPermissionState().then((st) => st === 'prompt' && requestScreenPermission());
   const url = `${location.pathname}${location.search}#/widget/${id}`;
   const features = `popup=yes,width=${Math.round(rect.width)},height=${Math.round(rect.height)},left=${Math.round(rect.screenX)},top=${Math.round(rect.screenY)}`;
   const w = window.open(url, `toona-widget-${id}`, features);
@@ -134,6 +170,11 @@ export function startMagnet(key: WinKey) {
   /** 자석으로 옮기라고 한 위치. 다음 확인 때 그대로면 브라우저가 창 이동을 막은 것이다 */
   let pending: { from: Box; to: Box } | null = null;
   let warned = false;
+  /** 메인 창: 이번 이동에서 같이 움직일 분리 창과 메인 창 기준 상대 위치 (이동을 시작할 때 정하고, 멈추면 비운다) */
+  let group: Map<WidgetId, { dx: number; dy: number }> | null = null;
+  /** 분리 창: 메인 창을 따라가라고 받은 위치. 다음 확인 때 많이 다르면 다른 모니터로 못 넘어간 것이다 */
+  let placed: { x: number; y: number } | null = null;
+  let warnedScreen = false;
   const post = (msg: ControlMsg) => control.postMessage(msg);
 
   const onMsg = (e: MessageEvent<ControlMsg>) => {
@@ -145,9 +186,13 @@ export function startMagnet(key: WinKey) {
       if (isNew) post({ type: 'bounds', from: key, box: last }); // 새로 열린 창에 내 위치를 알려 준다
     }
     if (m.type === 'bye') others.delete(m.from);
-    if (m.type === 'follow' && key !== 'main' && m.ids.includes(key)) {
-      window.moveBy(m.dx, m.dy);
-      moved = false; // 따라 움직인 것은 "사용자가 옮긴 것"이 아니다
+    if (m.type === 'place' && key !== 'main') {
+      const mine = m.items.find((it) => it.id === key);
+      if (mine) {
+        moveVisibleTo(mine.x, mine.y);
+        placed = { x: mine.x, y: mine.y };
+        moved = false; // 따라 움직인 것은 "사용자가 옮긴 것"이 아니다
+      }
     }
   };
   control.addEventListener('message', onMsg);
@@ -155,6 +200,14 @@ export function startMagnet(key: WinKey) {
 
   const timer = setInterval(() => {
     const b = boxOf();
+    if (placed) {
+      // 메인 창을 따라가다 화면 끝에서 막혔다 = 브라우저가 다른 모니터로 옮기는 것을 막았다 (창 관리 권한 없음)
+      if ((Math.abs(b.x - placed.x) > 40 || Math.abs(b.y - placed.y) > 40) && !warnedScreen) {
+        warnedScreen = true;
+        api.toast('분리한 창이 다른 모니터로 따라가지 못했습니다. 설정 > 정보에서 [여러 모니터 창 관리 허용]을 눌러 주세요.', 'error', 6000);
+      }
+      placed = null;
+    }
     if (pending) {
       if (sameBox(b, pending.from) && !warned) {
         warned = true;
@@ -167,17 +220,23 @@ export function startMagnet(key: WinKey) {
       last = b;
       post({ type: 'bounds', from: key, box: b });
       if (key === 'main' && (b.x !== prev.x || b.y !== prev.y)) {
-        const popups = new Map([...others].filter(([k]) => k !== 'main')) as Map<WidgetId, Box>;
-        const ids = attachedGroup(prev, popups);
-        if (ids.length) {
-          post({ type: 'follow', ids, dx: b.x - prev.x, dy: b.y - prev.y });
-          ids.forEach((id) => others.set(id, { ...popups.get(id)!, x: popups.get(id)!.x + b.x - prev.x, y: popups.get(id)!.y + b.y - prev.y }));
+        // 이동을 시작할 때 붙어 있던 창들을 정해 두고, 끝날 때까지 메인 창 기준 같은 자리로 옮긴다
+        // (중간에 화면 끝 등에서 잠깐 막혀도 무리에서 빠지지 않는다)
+        if (!group) {
+          const popups = new Map([...others].filter(([k]) => k !== 'main')) as Map<WidgetId, Box>;
+          group = new Map(attachedGroup(prev, popups).map((id) => [id, { dx: popups.get(id)!.x - prev.x, dy: popups.get(id)!.y - prev.y }]));
+        }
+        if (group.size) {
+          const items = [...group].map(([id, o]) => ({ id, x: b.x + o.dx, y: b.y + o.dy }));
+          post({ type: 'place', items });
+          items.forEach((it) => others.set(it.id, { ...others.get(it.id)!, x: it.x, y: it.y }));
         }
       }
       moved = true;
       movedAt = Date.now();
       return;
     }
+    if (key === 'main' && group && Date.now() - movedAt > SETTLE_MS) group = null;
     if (key !== 'main' && moved && Date.now() - movedAt > SETTLE_MS) {
       moved = false;
       const s = snap(b, [...others].filter(([k]) => k !== key).map(([, v]) => v));
