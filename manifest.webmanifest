@@ -1,0 +1,17 @@
+{
+  "name": "TOONA 리모컨",
+  "short_name": "TOONA 리모컨",
+  "description": "투네이션 크리에이터 리모컨",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0E0F12",
+  "theme_color": "#0E0F12",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
