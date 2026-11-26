@@ -1,8 +1,7 @@
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, RotateCcw } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { api } from '../state/app';
 import { useData, useSettings } from '../lib/hooks';
-import { WidgetHeader } from '../shell/WidgetFrame';
 import { CHAT_MAX, CHAT_SIZE_MAX, CHAT_SIZE_MIN, CHAT_SIZE_STEP, clampChatSize, msgHtml, scopeOf, visible } from '../chat/engine';
 import '../chat/chatWidget.css';
 
@@ -81,9 +80,6 @@ export default function Chat() {
 
   return (
     <div className="h-full flex flex-col">
-      <WidgetHeader>
-        <span className="self-center shrink-0 px-[5px] py-[3px] rounded-tag bg-danger text-white text-[10.5px] leading-none font-bold">LIVE</span>
-      </WidgetHeader>
       <div className="shrink-0 flex items-center gap-2 px-3 py-2 border-b border-line text-caption text-text-secondary">
         <span className="whitespace-nowrap">텍스트 크기</span>
         <button type="button" aria-label="텍스트 작게" disabled={pct <= CHAT_SIZE_MIN} onClick={() => setSize(pct - CHAT_SIZE_STEP)} className="w-6 h-6 shrink-0 rounded-control border border-line-strong bg-surface-raised text-text flex items-center justify-center disabled:opacity-40">
@@ -104,6 +100,10 @@ export default function Chat() {
           <Plus size={13} />
         </button>
         <output className="min-w-[40px] text-right font-num font-semibold text-text tabular-nums">{pct}%</output>
+        {/* 기본 크기(100%)로 되돌리기 */}
+        <button type="button" aria-label="텍스트 크기 100%로 맞추기" title="100%로 맞추기" disabled={pct === 100} onClick={() => setSize(100)} className="w-6 h-6 shrink-0 rounded-control border border-line-strong bg-surface-raised text-text flex items-center justify-center disabled:opacity-40">
+          <RotateCcw size={12} />
+        </button>
       </div>
       <div className="relative flex-1 min-h-0 overflow-hidden">
         <div className={`${scope.className} rc-scope`} style={scope.style as React.CSSProperties}>
